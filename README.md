@@ -3,8 +3,6 @@
 Plataforma diseñada para optimizar la gestión de habitaciones, clientes y reservas.
 Incluye funcionalidades para **check-in / check-out**, **facturación automática** y **reportes de ocupación**, con una arquitectura moderna y escalable basada en **Clean Architecture**.
 
-![Hotel Resort y Playa](https://github.com/user-attachments/assets/9f791e6c-8d5b-4ac0-9b98-ef1ec681e40d)
-
 ---
 
 ## 📚 Tabla de Contenidos
