@@ -1,7 +1,7 @@
 using System;
-using System.Collections.Generic; // Agregue esto para usar IEnumerable<Reserva>
+using System.Collections.Generic;
 using HotelReservation.Domain;
-using HotelReservation.Persistence.Repositories; 
+using HotelReservation.Persistence.Repositories;
 
 namespace HotelReservation.Application.Services
 {
@@ -14,16 +14,14 @@ namespace HotelReservation.Application.Services
             _repo = repo;
         }
 
-        // El método que ya tiene para crear
+        //  Crear una nueva reserva
         public Guid CrearReserva(CrearReservaDTO dto)
         {
-            // ... (su lógica de CrearReserva) ...
-            
             if (dto.FechaInicio >= dto.FechaFin)
-                throw new Exception("Fechas inválidas.");
+                throw new Exception("Las fechas de inicio y fin son inválidas.");
 
             if (!_repo.HabitacionDisponible(dto.HabitacionId, dto.FechaInicio, dto.FechaFin))
-                throw new Exception("La habitación no está disponible en ese rango.");
+                throw new Exception("La habitación no está disponible en ese rango de fechas.");
 
             var noches = (dto.FechaFin - dto.FechaInicio).Days;
             var total = dto.PrecioPorNoche * noches;
@@ -43,11 +41,16 @@ namespace HotelReservation.Application.Services
             return _repo.CrearReserva(reserva);
         }
 
-       
+        //  Obtener todas las reservas simples
         public IEnumerable<Reserva> ObtenerReservas()
         {
-        
-            return _repo.ObtenerReservas(); 
+            return _repo.ObtenerReservas();
+        }
+
+        // NUEVO MÉTODO - Obtener reservas con información detallada
+        public IEnumerable<object> ObtenerReservasConDetalles()
+        {
+            return _repo.ObtenerReservasConDetalles();
         }
     }
 }
