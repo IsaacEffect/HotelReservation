@@ -17,21 +17,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{A85EDE3A-8
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Persistence", "Persistence", "{28369E9D-1654-4563-8C78-1E940271E010}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelReservation.Api", "HotelReservation.Api\HotelReservation.Api.csproj", "{8FF9BF88-CBD5-4A1F-BFE0-DEB2A6EF559F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelReservation.Api", "HotelReservation.Api\HotelReservation.Api.csproj", "{8FF9BF88-CBD5-4A1F-BFE0-DEB2A6EF559F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelReservation.Application", "HotelReservation.Application\HotelReservation.Application.csproj", "{023A1E4B-2256-4AB3-B918-F33CE028AE7E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelReservation.Application", "HotelReservation.Application\HotelReservation.Application.csproj", "{023A1E4B-2256-4AB3-B918-F33CE028AE7E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelReservation.Domain", "HotelReservation.Domain\HotelReservation.Domain.csproj", "{1BF3B067-6933-4BDF-8C07-1EFB3BBA6334}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelReservation.Domain", "HotelReservation.Domain\HotelReservation.Domain.csproj", "{1BF3B067-6933-4BDF-8C07-1EFB3BBA6334}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelReservation.Infrastructure", "HotelReservation.Infrastructure\HotelReservation.Infrastructure.csproj", "{494AF770-50F4-4596-B098-B077F377BFD4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelReservation.Infrastructure", "HotelReservation.Infrastructure\HotelReservation.Infrastructure.csproj", "{494AF770-50F4-4596-B098-B077F377BFD4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelReservation.IOC", "HotelReservation.IOC\HotelReservation.IOC.csproj", "{CEB718B2-48CB-4E51-9256-AF332B219E7D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelReservation.IOC", "HotelReservation.IOC\HotelReservation.IOC.csproj", "{CEB718B2-48CB-4E51-9256-AF332B219E7D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelReservation.Persistence", "HotelReservation.Persistence\HotelReservation.Persistence.csproj", "{CF7979A0-986B-4116-89E7-4C178EB6FD1D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelReservation.Persistence", "HotelReservation.Persistence\HotelReservation.Persistence.csproj", "{CF7979A0-986B-4116-89E7-4C178EB6FD1D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelReservation.Application.Test", "HotelReservation.Application.Test\HotelReservation.Application.Test.csproj", "{B966F73A-9E5B-4DA6-9358-B931D81E8D9F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelReservation.Application.Test", "HotelReservation.Application.Test\HotelReservation.Application.Test.csproj", "{B966F73A-9E5B-4DA6-9358-B931D81E8D9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelReservation.Persistence.Test", "HotelReservation.Persistence.Test\HotelReservation.Persistence.Test.csproj", "{329E9240-7C22-4F07-B8ED-22F25CDF79C2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelReservation.Persistence.Test", "HotelReservation.Persistence.Test\HotelReservation.Persistence.Test.csproj", "{329E9240-7C22-4F07-B8ED-22F25CDF79C2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{A2A7C116-00B9-4ABB-81B4-C6361C01B44C}"
 EndProject

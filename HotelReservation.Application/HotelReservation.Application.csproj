@@ -8,6 +8,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HotelReservation.Domain\HotelReservation.Domain.csproj" />
+    <ProjectReference Include="..\HotelReservation.Persistence\HotelReservation.Persistence.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DTOs\" />
+    <Folder Include="Implementations\" />
   </ItemGroup>
 
 </Project>
