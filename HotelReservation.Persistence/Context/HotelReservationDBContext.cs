@@ -1,4 +1,5 @@
 ﻿using HotelReservation.Domain.Entities;
+using HotelReservation.Persistence.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotelReservation.Persistence.Context
@@ -11,7 +12,9 @@ namespace HotelReservation.Persistence.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.ApplyConfiguration(new ClienteConfiguration());
+            modelBuilder.ApplyConfiguration(new ClienteConfiguration());
+            modelBuilder.ApplyConfiguration(new UsuarioConfiguration());
+            modelBuilder.ApplyConfiguration(new RolConfiguration());
         }
     }
 }

@@ -7,10 +7,11 @@
         public string Apellido { get; set; } = string.Empty;
         public string Correo { get; set; } = string.Empty;
         public string Contraseña { get; set; } = string.Empty;
+        public bool Estado { get; set; } = true;
 
         public Guid IdRol { get; set; }
         public virtual Rol? Rol { get; set; }
 
-        public virtual ICollection<Reserva>? Reservas { get; set; }
+        //public virtual ICollection<Reserva>? Reservas { get; set; }
     }
 }

@@ -8,8 +8,9 @@
         public string Correo { get; set; } = string.Empty;
         public string? Telefono { get; set; }
         public string? DocumentoIdentidad { get; set; }
+        public bool Estado { get; set; } = true;
 
-        public virtual ICollection<Reserva>? Reservas { get; set; }
-        public virtual ICollection<HistorialReserva>? HistorialReservas { get; set; }
+        //public virtual ICollection<Reserva>? Reservas { get; set; }
+        //public virtual ICollection<HistorialReserva>? HistorialReservas { get; set; }
     }
 }
