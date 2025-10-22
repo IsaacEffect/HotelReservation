@@ -12,7 +12,7 @@ namespace HotelReservation.IOC.Modules
         public static void RegisterUsuarios(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IUsuarioService, UsuarioService>();
-            //services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
         }
     }
 }

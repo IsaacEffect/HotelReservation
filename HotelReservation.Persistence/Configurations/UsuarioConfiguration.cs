@@ -10,13 +10,11 @@ namespace HotelReservation.Persistence.Configurations
         {
             builder.ToTable("Usuarios");
 
-            builder.Property(c => c.IdUsuario).HasColumnName("Id");
-            builder.Property(c => c.Nombre).HasColumnName("Nombre");
-            builder.Property(c => c.Apellido).HasColumnName("Apellido");
-            builder.Property(c => c.Correo).HasColumnName("Correo");
-            builder.Property(c => c.Contraseña).HasColumnName("Contraseña");
-
             builder.HasKey(u => u.IdUsuario);
+
+            builder.Property(u => u.IdUsuario)
+                .HasColumnName("Id")
+                .HasDefaultValueSql("NEWID()");
 
             builder.Property(u => u.Nombre)
                 .IsRequired()
@@ -30,22 +28,21 @@ namespace HotelReservation.Persistence.Configurations
                 .IsRequired()
                 .HasMaxLength(120);
 
-            builder.HasIndex(u => u.Correo)
-                .IsUnique();
+            builder.HasIndex(u => u.Correo).IsUnique();
 
             builder.Property(u => u.Contraseña)
                 .IsRequired()
                 .HasMaxLength(255);
 
-            builder.Property(u => u.Estado)
-                .IsRequired()
-                .HasDefaultValue(true);
+            builder.Property(u => u.RolId)
+                .HasColumnName("RolId")
+                .IsRequired();
 
+            // Relación con Rol
             builder.HasOne(u => u.Rol)
                 .WithMany(r => r.Usuarios)
-                .HasForeignKey(u => u.IdRol)
+                .HasForeignKey(u => u.RolId)
                 .OnDelete(DeleteBehavior.Cascade);
-        }    
+        }
     }
 }
-

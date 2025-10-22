@@ -12,7 +12,7 @@ namespace HotelReservation.IOC.Modules
         public static void RegisterRoles(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IRolService, RolService>();
-            //services.AddScoped<IRolRepository, RolRepository>();
+            services.AddScoped<IRolRepository, RolRepository>();
         }
     }
 }

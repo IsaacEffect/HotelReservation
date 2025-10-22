@@ -3,8 +3,8 @@
     public interface IUnitOfWork
     {
         IClienteRepository Clientes { get; }
-        //IUsuarioRepository Usuarios { get; }
-        //IRolRepository Roles { get; }
+        IUsuarioRepository Usuarios { get; }
+        IRolRepository Roles { get; }
         Task<int> SaveChangesAsync();
     }
 }

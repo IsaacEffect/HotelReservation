@@ -11,8 +11,8 @@ namespace HotelReservation.IOC
         public static void RegisterServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.RegisterClientes(configuration);
-            //services.RegisterUsuarios(configuration);
-            //services.RegisterRoles(configuration);
+            services.RegisterUsuarios(configuration);
+            services.RegisterRoles(configuration);
             services.RegisterDbContext(configuration);
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 

@@ -9,7 +9,7 @@
         public string Contraseña { get; set; } = string.Empty;
         public bool Estado { get; set; } = true;
 
-        public Guid IdRol { get; set; }
+        public Guid RolId { get; set; }
         public virtual Rol? Rol { get; set; }
 
         //public virtual ICollection<Reserva>? Reservas { get; set; }

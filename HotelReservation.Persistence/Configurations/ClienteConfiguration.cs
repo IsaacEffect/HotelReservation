@@ -10,14 +10,11 @@ namespace HotelReservation.Persistence.Configurations
         {
             builder.ToTable("Clientes");
 
-            builder.Property(c => c.IdCliente).HasColumnName("Id");
-            builder.Property(c => c.Nombre).HasColumnName("Nombre");
-            builder.Property(c => c.Apellido).HasColumnName("Apellido");
-            builder.Property(c => c.Correo).HasColumnName("Correo");
-            builder.Property(c => c.Telefono).HasColumnName("Telefono");
-            builder.Property(c => c.DocumentoIdentidad).HasColumnName("DocumentoIdentidad");
-
             builder.HasKey(c => c.IdCliente);
+
+            builder.Property(c => c.IdCliente)
+                .HasColumnName("Id")
+                .HasDefaultValueSql("NEWID()");
 
             builder.Property(c => c.Nombre)
                 .IsRequired()

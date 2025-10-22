@@ -10,14 +10,16 @@ namespace HotelReservation.Persistence.Configurations
         {
             builder.ToTable("Roles");
 
-            builder.Property(c => c.IdRol).HasColumnName("Id");
-            builder.Property(c => c.NombreRol).HasColumnName("NombreRol");
+            builder.HasKey(r => r.RolId);
 
-            builder.HasKey(r => r.IdRol);
+            builder.Property(r => r.RolId)
+                .HasColumnName("Id")
+                .HasDefaultValueSql("NEWID()");
 
             builder.Property(r => r.NombreRol)
                 .IsRequired()
-                .HasMaxLength(50);
+                .HasMaxLength(50)
+                .HasColumnName("NombreRol");
         }
     }
 }
