@@ -1,3 +1,5 @@
+using HotelReservation.Persistence.Repositories;
+using HotelReservation.Application.Services;
 
 namespace HotelReservation.Api
 {
@@ -7,16 +9,18 @@ namespace HotelReservation.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
+            // 1️⃣ Agregar controladores y Swagger
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // 2️⃣ Registrar las dependencias del proyecto (inyección de dependencias)
+            builder.Services.AddScoped<ReservaRepository>();
+            builder.Services.AddScoped<ReservaService>();
+
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // 3️⃣ Configurar el pipeline HTTP
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -24,10 +28,9 @@ namespace HotelReservation.Api
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
 
-
+            // 4️⃣ Mapear los controladores (endpoints)
             app.MapControllers();
 
             app.Run();
