@@ -12,6 +12,6 @@ namespace HotelReservation.Domain.Entities
         public string MetodoPago { get; set; }
 
         public Reserva Reserva { get; set; }
-        public ICollection<DetalleFactura> Detalles { get; set; }
+        public ICollection<DetalleFactura> Detalles { get; set; } = new List<DetalleFactura>();
     }
 }

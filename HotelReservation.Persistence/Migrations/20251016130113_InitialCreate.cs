@@ -228,7 +228,7 @@ namespace HotelReservation.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DetalleFacturas",
+                name: "DetalleFactura",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),

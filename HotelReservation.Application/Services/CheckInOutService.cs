@@ -34,7 +34,7 @@ namespace HotelReservation.Application.Services
             };
 
             reserva.Habitacion.Estado = "Ocupada";
-            _context.CheckInOuts.Add(checkIn);
+            _context.CheckInOut.Add(checkIn);
             await _context.SaveChangesAsync();
         }
 
@@ -42,13 +42,13 @@ namespace HotelReservation.Application.Services
         {
             var reserva = await _context.Reservas
                 .Include(r => r.Habitacion)
-                .Include(r => r.Detalles)
+                .Include(r => r.Detalles) // DetalleReserva
                 .FirstOrDefaultAsync(r => r.Id == reservaId);
 
             if (reserva == null)
                 throw new Exception("Reserva no encontrada.");
 
-            var checkOut = await _context.CheckInOuts
+            var checkOut = await _context.CheckInOut
                 .FirstOrDefaultAsync(c => c.ReservaId == reservaId);
 
             if (checkOut == null)
@@ -65,7 +65,7 @@ namespace HotelReservation.Application.Services
                 .Select(h => h.Categoria.PrecioPorNoche)
                 .FirstOrDefaultAsync();
 
-            var totalServicios = reserva.Detalles.Sum(d => d.Subtotal);
+            var totalServicios = reserva.Detalles.Sum(d => d.Cantidad * d.PrecioUnitario); // Subtotal calculado
             var totalEstancia = noches * precioPorNoche;
             var totalFinal = totalEstancia + totalServicios;
 
@@ -77,11 +77,16 @@ namespace HotelReservation.Application.Services
                 Id = Guid.NewGuid(),
                 ReservaId = reservaId,
                 FechaEmision = DateTime.Now,
-                MetodoPago = "Efectivo", // puedes parametrizar esto
+                MetodoPago = "Efectivo",
                 MontoTotal = totalFinal
             };
 
             _context.Facturas.Add(factura);
+            await _context.SaveChangesAsync(); // Guarda la factura primero
+            Console.WriteLine($"Factura guardada con ID: {factura.Id}");
+
+            // Insertar detalles de factura
+            Console.WriteLine($"Detalles encontrados: {reserva.Detalles.Count}");
 
             foreach (var detalle in reserva.Detalles)
             {
@@ -91,13 +96,23 @@ namespace HotelReservation.Application.Services
                     FacturaId = factura.Id,
                     Descripcion = detalle.Descripcion,
                     Cantidad = detalle.Cantidad,
-                    PrecioUnitario = detalle.PrecioUnitario,
-                    Subtotal = detalle.Subtotal
+                    PrecioUnitario = detalle.PrecioUnitario
+                    // Subtotal se calcula automáticamente en SQL Server
                 };
+
                 _context.DetalleFacturas.Add(detalleFactura);
             }
 
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync(); // Guarda los detalles después
+                Console.WriteLine("Detalles de factura guardados correctamente.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error al guardar DetalleFactura: " + ex.InnerException?.Message ?? ex.Message);
+                throw;
+            }
         }
     }
 }

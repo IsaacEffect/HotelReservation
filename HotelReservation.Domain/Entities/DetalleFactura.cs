@@ -1,7 +1,8 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HotelReservation.Domain.Entities
 {
+    [Table("DetalleFactura")]
     public class DetalleFactura
     {
         public Guid Id { get; set; }
