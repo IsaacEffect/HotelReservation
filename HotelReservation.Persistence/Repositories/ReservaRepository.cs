@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using HotelReservation.Domain;
+using HotelReservation.Domain.Entities;
 using Microsoft.Extensions.Configuration;
+using System.Data.SqlClient;
 
 namespace HotelReservation.Persistence.Repositories
 {
