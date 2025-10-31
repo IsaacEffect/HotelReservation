@@ -1,4 +1,5 @@
-namespace HotelReservation.Domain
+namespace HotelReservation.Application.Dtos
+
 {
     public class ActualizarReservaDTO
     {

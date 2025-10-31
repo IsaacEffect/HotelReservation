@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using HotelReservation.Domain;
+using HotelReservation.Application.Dtos;
 using HotelReservation.Domain.Entities;
 using HotelReservation.Persistence.Repositories;
 
