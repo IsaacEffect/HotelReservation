@@ -92,7 +92,7 @@ namespace HotelReservation.Api
             app.UseHttpsRedirection();
 
             // Middlewares de autenticación y autorización (usuarios)
-            app.UseAuthentication(); 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();
