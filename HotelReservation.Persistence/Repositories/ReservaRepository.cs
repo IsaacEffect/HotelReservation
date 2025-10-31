@@ -10,7 +10,7 @@ namespace HotelReservation.Persistence.Repositories
 
         public ReservaRepository(IConfiguration configuration)
         {
-            _connectionString = configuration.GetConnectionString("DefaultConnection")!;
+            _connectionString = configuration.GetConnectionString("HotelDBConnection")!;
         }
 
         public bool HabitacionDisponible(Guid habitacionId, DateTime fechaInicio, DateTime fechaFin)
