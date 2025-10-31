@@ -11,9 +11,4 @@
     <ProjectReference Include="..\HotelReservation.Persistence\HotelReservation.Persistence.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DTOs\" />
-    <Folder Include="Implementations\" />
-  </ItemGroup>
-
 </Project>
