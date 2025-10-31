@@ -54,5 +54,21 @@ namespace HotelReservation.Persistence.Repositories
             _context.Clientes.Update(cliente);
             await Task.CompletedTask;
         }
+
+        public async Task<Cliente?> GetByEmailAsync(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return null;
+
+            var normalizedEmail = email.Trim().ToLowerInvariant();
+
+            return await _context.Clientes
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c =>
+                    c.Estado &&
+                    c.Correo != null &&
+                    c.Correo.Trim().ToLowerInvariant() == normalizedEmail);
+        }
+
     }
 }

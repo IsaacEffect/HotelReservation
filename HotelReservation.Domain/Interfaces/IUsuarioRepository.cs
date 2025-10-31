@@ -6,7 +6,7 @@ namespace HotelReservation.Domain.Interfaces
     {
         Task<IEnumerable<Usuario>> GetAllAsync();
         Task<Usuario?> GetByIdAsync(Guid id);
-        Task<Usuario?> GetByCorreoAsync(string correo);
+        Task<Usuario?> GetByEmailAsync(string correo);
         Task AddAsync(Usuario usuario);
         Task UpdateAsync(Usuario usuario);
         Task DeleteAsync(Guid id);

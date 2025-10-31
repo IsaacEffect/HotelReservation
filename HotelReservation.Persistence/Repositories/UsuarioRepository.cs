@@ -25,7 +25,7 @@ namespace HotelReservation.Persistence.Repositories
                 .FirstOrDefaultAsync(u => u.IdUsuario == id);
         }
 
-        public async Task<Usuario?> GetByCorreoAsync(string correo)
+        public async Task<Usuario?> GetByEmailAsync(string correo)
         {
             return await _context.Usuarios.FirstOrDefaultAsync(u => u.Correo == correo);
         }

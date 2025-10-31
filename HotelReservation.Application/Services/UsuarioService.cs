@@ -20,7 +20,7 @@ namespace HotelReservation.Application.Services
             => await _unitOfWork.Usuarios.GetByIdAsync(id);
 
         public async Task<Usuario?> GetByCorreoAsync(string correo)
-            => await _unitOfWork.Usuarios.GetByCorreoAsync(correo);
+            => await _unitOfWork.Usuarios.GetByEmailAsync(correo);
 
         public async Task AddAsync(Usuario usuario)
         {

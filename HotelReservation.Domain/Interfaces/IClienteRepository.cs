@@ -9,5 +9,6 @@ namespace HotelReservation.Domain.Interfaces
         Task AddAsync(Cliente cliente);
         Task UpdateAsync(Cliente cliente);
         Task DeleteAsync(Guid id);
+        Task<Cliente?> GetByEmailAsync(string email);
     }
 }
