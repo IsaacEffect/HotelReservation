@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace HotelReservation.Domain.Entities
+﻿namespace HotelReservation.Domain.Entities
 {
     public class Usuario
     {
-        public Guid Id { get; set; }
-        public string Nombre { get; set; }
-        public string Apellido { get; set; }
-        public string Correo { get; set; }
-        public string Contraseña { get; set; }
-        public Guid RolId { get; set; }
-        public DateTime FechaCreacion { get; set; }
+        public Guid IdUsuario { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string Apellido { get; set; } = string.Empty;
+        public string Correo { get; set; } = string.Empty;
+        public string Contraseña { get; set; } = string.Empty;
+        public bool Estado { get; set; } = true;
 
-        public Rol Rol { get; set; }
-        public ICollection<Reserva> Reservas { get; set; }
+        public Guid RolId { get; set; }
+        public virtual Rol? Rol { get; set; }
+
+        //public virtual ICollection<Reserva>? Reservas { get; set; }
     }
 }

@@ -82,7 +82,7 @@ namespace HotelReservation.Api
 
             var app = builder.Build();
 
-            // Configurar el pipeline HTTP
+            // 3️⃣ Configurar el pipeline HTTP (Unificado)
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();

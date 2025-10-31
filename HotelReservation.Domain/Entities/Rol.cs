@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace HotelReservation.Domain.Entities
+﻿namespace HotelReservation.Domain.Entities
 {
     public class Rol
     {
-        public Guid Id { get; set; }
-        public string NombreRol { get; set; }
+        public Guid RolId { get; set; }
+        public string NombreRol { get; set; } = string.Empty;
 
-        public ICollection<Usuario> Usuarios { get; set; }
+        public virtual ICollection<Usuario>? Usuarios { get; set; }
     }
 }
