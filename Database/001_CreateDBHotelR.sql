@@ -1,4 +1,4 @@
--- CREACI�N DE BASE DE DATOS
+-- CREACI�N DE BASE DE DATOS
 
 CREATE DATABASE HotelReservationDB;
 GO
@@ -18,7 +18,7 @@ CREATE TABLE Usuarios (
     Nombre NVARCHAR(100) NOT NULL,
     Apellido NVARCHAR(100) NOT NULL,
     Correo NVARCHAR(120) NOT NULL UNIQUE,
-    Contrase�a NVARCHAR(255) NOT NULL,
+    Contrase�a NVARCHAR(255) NOT NULL,
     RolId UNIQUEIDENTIFIER NOT NULL,
     FechaCreacion DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
     CONSTRAINT FK_Usuarios_Roles FOREIGN KEY (RolId) REFERENCES Roles(Id) ON DELETE CASCADE
@@ -38,7 +38,7 @@ CREATE TABLE Clientes (
 );
 GO
 
--- CATEGOR�AS Y HABITACIONES
+-- CATEGOR�AS Y HABITACIONES
 
 CREATE TABLE CategoriasHabitacion (
     Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
@@ -88,7 +88,7 @@ CREATE TABLE DetalleReserva (
 );
 GO
 
--- FACTURACI�N
+-- FACTURACI�N
 
 CREATE TABLE Facturas (
     Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
@@ -135,10 +135,111 @@ CREATE TABLE HistorialReservas (
 );
 GO
 
--- �NDICES
+-- �NDICES
 
 CREATE INDEX IX_Reservas_ClienteId ON Reservas(ClienteId);
 CREATE INDEX IX_Reservas_HabitacionId ON Reservas(HabitacionId);
 CREATE INDEX IX_Habitaciones_Estado ON Habitaciones(Estado);
 CREATE INDEX IX_Facturas_FechaEmision ON Facturas(FechaEmision);
+GO
+
+
+
+INSERT INTO Roles (NombreRol)
+VALUES ('Administrador'), ('Empleado'), ('Cliente');
+GO
+
+-- 2. Usuarios
+INSERT INTO Usuarios (Nombre, Apellido, Correo, Contraseña, RolId)
+SELECT TOP 1 'Isaac', 'Gil', 'Isaacgil87@hotmail.com', 'Admin1234*', Id
+FROM Roles WHERE NombreRol = 'Administrador';
+GO
+
+INSERT INTO Usuarios (Nombre, Apellido, Correo, Contraseña, RolId)
+SELECT TOP 1 'Luis', 'Pérez', 'Luisperez87o@gmail.com', 'Empleado5412*', Id
+FROM Roles WHERE NombreRol = 'Empleado';
+GO
+
+-- 3. Clientes
+INSERT INTO Clientes (Nombre, Apellido, Correo, Telefono, DocumentoIdentidad)
+VALUES 
+('Carlos', 'Martínez', 'carlosferm23@gmail.com', '809-555-1001', '402-1134467-4'),
+('Ana', 'Reyes', 'anareyesd56@hotmail.com', '809-555-1002', '011-2365677-9');
+GO
+
+-- 4. Categorías de habitaciones
+INSERT INTO CategoriasHabitacion (NombreCategoria, Descripcion, Capacidad, PrecioPorNoche)
+VALUES 
+('Estándar', 'Habitación cómoda con servicios básicos', 2, 2500.00),
+('Premium', 'Habitación con vista al mar y desayuno incluido', 3, 4500.00);
+GO
+
+-- 5. Habitaciones
+INSERT INTO Habitaciones (Numero, Estado, CategoriaId)
+SELECT '101', 'Disponible', Id FROM CategoriasHabitacion WHERE NombreCategoria = 'Estándar';
+GO
+
+INSERT INTO Habitaciones (Numero, Estado, CategoriaId)
+SELECT '102', 'Disponible', Id FROM CategoriasHabitacion WHERE NombreCategoria = 'Premium';
+GO
+
+
+SELECT TOP 1 Id FROM Clientes WHERE Nombre = 'Carlos';
+SELECT TOP 1 Id FROM Habitaciones WHERE Numero = '101';
+SELECT TOP 1 Id FROM Usuarios WHERE Correo = 'Luisperez87o@gmail.com';
+-----------------------------------------------------------
+-- 2 CREAR UNA RESERVA DE PRUEBA
+-----------------------------------------------------------
+
+DECLARE @ClienteId UNIQUEIDENTIFIER = (SELECT TOP 1 Id FROM Clientes WHERE Nombre = 'Carlos');
+DECLARE @HabitacionId UNIQUEIDENTIFIER = (SELECT TOP 1 Id FROM Habitaciones WHERE Numero = '101');
+DECLARE @UsuarioId UNIQUEIDENTIFIER = (SELECT TOP 1 Id FROM Usuarios WHERE Correo = 'Luisperez87o@gmail.com');
+
+INSERT INTO Reservas (FechaInicio, FechaFin, EstadoReserva, ClienteId, HabitacionId, UsuarioId, Total)
+VALUES ('2025-10-20', '2025-10-25', 'Confirmada', @ClienteId, @HabitacionId, @UsuarioId, 12500.00);
+GO
+
+
+--
+-- 3️ CREAR VISTA DE RESERVAS DETALLADAS
+-
+
+CREATE OR ALTER VIEW vw_ReservasDetalle AS
+SELECT 
+    R.Id AS ReservaId,
+    R.FechaReserva,
+    R.FechaInicio,
+    R.FechaFin,
+    R.EstadoReserva,
+    C.Nombre + ' ' + C.Apellido AS Cliente,
+    C.Correo AS CorreoCliente,
+    H.Numero AS NumeroHabitacion,
+    H.Estado AS EstadoHabitacion,
+    CH.NombreCategoria AS Categoria,
+    CH.PrecioPorNoche,
+    U.Nombre + ' ' + U.Apellido AS UsuarioRegistro,
+    R.Total
+FROM Reservas R
+INNER JOIN Clientes C ON R.ClienteId = C.Id
+INNER JOIN Habitaciones H ON R.HabitacionId = H.Id
+INNER JOIN CategoriasHabitacion CH ON H.CategoriaId = CH.Id
+INNER JOIN Usuarios U ON R.UsuarioId = U.Id;
+GO
+
+
+
+-- 4️ CONSULTAS DE PRUEBA
+
+
+-- Ver todas las reservas con detalle
+SELECT * FROM vw_ReservasDetalle;
+
+-- Ver solo las reservas activas o confirmadas
+SELECT * FROM vw_ReservasDetalle WHERE EstadoReserva IN ('Activa', 'Confirmada');
+
+--  Ver reservas por cliente específico
+DECLARE @ClienteCorreo NVARCHAR(120) = 'carlosferm23@gmail.com';
+SELECT * 
+FROM vw_ReservasDetalle 
+WHERE CorreoCliente = @ClienteCorreo;
 GO
