@@ -1,11 +1,13 @@
 using HotelReservation.Api.Configurations;
+using HotelReservation.Application.Contracts;
+using HotelReservation.Application.Services;
+using HotelReservation.Domain.Interfaces;
 using HotelReservation.IOC;
+using HotelReservation.Persistence.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using HotelReservation.Persistence.Repositories;
-using HotelReservation.Application.Services;
 
 namespace HotelReservation.Api
 {
@@ -14,6 +16,11 @@ namespace HotelReservation.Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // CheckInOut, Historial
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+            builder.Services.AddHotelReservationPersistence(connectionString!);
 
             // Configuracion de JWT (usuarios)
             var jwtSettingsSection = builder.Configuration.GetSection("JwtSettings");
@@ -77,12 +84,12 @@ namespace HotelReservation.Api
             builder.Services.RegisterServices(builder.Configuration);
 
             // Registrar las dependencias de reserva
-            builder.Services.AddScoped<ReservaRepository>();
-            builder.Services.AddScoped<ReservaService>();
+            builder.Services.AddScoped<IReservaRepository, ReservaRepository>();
+            builder.Services.AddScoped<IReservaService, ReservaService>();
 
             var app = builder.Build();
 
-            // 3️⃣ Configurar el pipeline HTTP (Unificado)
+            // Configurar el pipeline HTTP
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();

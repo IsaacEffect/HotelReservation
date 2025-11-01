@@ -1,10 +1,11 @@
 using HotelReservation.Domain.Entities;
+using HotelReservation.Domain.Interfaces;
 using Microsoft.Extensions.Configuration;
 using System.Data.SqlClient;
 
 namespace HotelReservation.Persistence.Repositories
 {
-    public class ReservaRepository
+    public class ReservaRepository : IReservaRepository
     {
         private readonly string _connectionString;
 
@@ -13,6 +14,11 @@ namespace HotelReservation.Persistence.Repositories
             _connectionString = configuration.GetConnectionString("HotelDBConnection")!;
         }
 
+        public Task<bool> HabitacionDisponibleAsync(Guid habitacionId, DateTime fechaInicio, DateTime fechaFin)
+        {
+            return Task.FromResult(HabitacionDisponible(habitacionId, fechaInicio, fechaFin));
+        }
+        
         public bool HabitacionDisponible(Guid habitacionId, DateTime fechaInicio, DateTime fechaFin)
         {
             using var conn = new SqlConnection(_connectionString);
@@ -22,14 +28,19 @@ namespace HotelReservation.Persistence.Repositories
                 SELECT COUNT(1) FROM Reservas r
                 WHERE r.HabitacionId = @habitacionId
                 AND r.EstadoReserva <> 'Cancelada'
-                AND NOT (r.FechaFin < @fechaInicio OR r.FechaInicio > @fechaFin)", conn);
-
+                AND NOT (r.FechaFin <= @fechaInicio OR r.FechaInicio >= @fechaFin)", conn); // Nota: Cambié < y > por <= y >= para evitar solapamiento en el límite
+            
             cmd.Parameters.AddWithValue("@habitacionId", habitacionId);
             cmd.Parameters.AddWithValue("@fechaInicio", fechaInicio);
             cmd.Parameters.AddWithValue("@fechaFin", fechaFin);
 
             int count = (int)cmd.ExecuteScalar();
             return count == 0;
+        }
+
+        public Task<Guid> CrearReservaAsync(Reserva reserva)
+        {
+            return Task.FromResult(CrearReserva(reserva));
         }
 
         public Guid CrearReserva(Reserva reserva)
@@ -39,9 +50,9 @@ namespace HotelReservation.Persistence.Repositories
 
             var cmd = new SqlCommand(@"
                 INSERT INTO Reservas 
-                (FechaInicio, FechaFin, EstadoReserva, ClienteId, HabitacionId, UsuarioId, Total)
+                (FechaInicio, FechaFin, EstadoReserva, ClienteId, HabitacionId, UsuarioId, Total, FechaReserva)
                 OUTPUT INSERTED.Id
-                VALUES (@FechaInicio, @FechaFin, @EstadoReserva, @ClienteId, @HabitacionId, @UsuarioId, @Total)", conn);
+                VALUES (@FechaInicio, @FechaFin, @EstadoReserva, @ClienteId, @HabitacionId, @UsuarioId, @Total, @FechaReserva)", conn);
 
             cmd.Parameters.AddWithValue("@FechaInicio", reserva.FechaInicio);
             cmd.Parameters.AddWithValue("@FechaFin", reserva.FechaFin);
@@ -50,8 +61,14 @@ namespace HotelReservation.Persistence.Repositories
             cmd.Parameters.AddWithValue("@HabitacionId", reserva.HabitacionId);
             cmd.Parameters.AddWithValue("@UsuarioId", reserva.UsuarioId);
             cmd.Parameters.AddWithValue("@Total", reserva.Total);
+            cmd.Parameters.AddWithValue("@FechaReserva", reserva.FechaReserva); // Asegurando que se guarda la fecha de reserva
 
             return (Guid)cmd.ExecuteScalar();
+        }
+
+        public Task<IEnumerable<Reserva>> ObtenerReservasAsync()
+        {
+            return Task.FromResult(ObtenerReservas());
         }
 
         public IEnumerable<Reserva> ObtenerReservas()
@@ -68,6 +85,7 @@ namespace HotelReservation.Persistence.Repositories
                 reservas.Add(new Reserva
                 {
                     Id = reader.GetGuid(reader.GetOrdinal("Id")),
+                    FechaReserva = reader.GetDateTime(reader.GetOrdinal("FechaReserva")), // Añadir si existe en DB
                     FechaInicio = reader.GetDateTime(reader.GetOrdinal("FechaInicio")),
                     FechaFin = reader.GetDateTime(reader.GetOrdinal("FechaFin")),
                     EstadoReserva = reader.GetString(reader.GetOrdinal("EstadoReserva")),
@@ -81,7 +99,11 @@ namespace HotelReservation.Persistence.Repositories
             return reservas;
         }
 
-        //  NUEVO MÉTODO AGREGADO
+        public Task<IEnumerable<object>> ObtenerReservasConDetallesAsync()
+        {
+            return Task.FromResult(ObtenerReservasConDetalles());
+        }
+
         public IEnumerable<object> ObtenerReservasConDetalles()
         {
             var reservas = new List<object>();
@@ -125,5 +147,13 @@ namespace HotelReservation.Persistence.Repositories
 
             return reservas;
         }
+
+        // ----------------------------------------------------------------------
+        
+        public Task<Reserva?> GetByIdAsync(Guid id) => throw new NotImplementedException("Método no implementado en ReservaRepository. Use métodos específicos.");
+        public Task<IEnumerable<Reserva>> GetAllAsync() => throw new NotImplementedException("Método no implementado en ReservaRepository. Use ObtenerReservasAsync.");
+        public Task<Reserva> AddAsync(Reserva entity) => throw new NotImplementedException("Método no implementado en ReservaRepository. Use CrearReservaAsync.");
+        public Task<Reserva> UpdateAsync(Reserva entity) => throw new NotImplementedException("Método no implementado.");
+        public Task DeleteAsync(Guid id) => Task.CompletedTask;
     }
 }

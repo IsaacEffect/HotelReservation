@@ -11,7 +11,5 @@
 
         public Guid RolId { get; set; }
         public virtual Rol? Rol { get; set; }
-
-        //public virtual ICollection<Reserva>? Reservas { get; set; }
     }
 }
