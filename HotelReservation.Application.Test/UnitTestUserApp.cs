@@ -34,7 +34,7 @@ namespace HotelReservation.Application.Test
             mockUoW.Setup(u => u.Usuarios).Returns(mockRepo.Object);
 
             var service = new UsuarioService(mockUoW.Object);
-            var usuario = new Usuario { Nombre = "Vladimir", Apellido = "Guerrero", Correo = "vladguerrero@gmail.com", Contraseña = "clave123" };
+            var usuario = new Usuario { Nombre = "Vladimir", Apellido = "Guerrero", Correo = "vladguerrero@gmail.com", Contrasena = "clave123" };
 
             await service.AddAsync(usuario);
 
