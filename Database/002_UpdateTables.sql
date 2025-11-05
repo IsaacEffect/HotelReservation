@@ -10,3 +10,7 @@ GO
 ALTER TABLE Usuarios
 ADD Estado BIT NOT NULL DEFAULT 1;
 GO
+
+-- Renombrar la columna 'Contraseña' a 'Contrasena' para evitar problemas con caracteres especiales
+EXEC sp_rename 'Usuarios.Contraseña', 'Contrasena', 'COLUMN';
+GO
