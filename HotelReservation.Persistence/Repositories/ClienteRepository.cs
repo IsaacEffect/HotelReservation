@@ -1,50 +1,74 @@
-﻿using Microsoft.EntityFrameworkCore;
-using HotelReservation.Domain.Entities;
+﻿using HotelReservation.Domain.Entities;
 using HotelReservation.Domain.Interfaces;
 using HotelReservation.Persistence.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace HotelReservation.Persistence.Repositories
 {
     public class ClienteRepository : IClienteRepository
     {
-        private readonly HotelReservationDbContext _context;
-        public ClienteRepository(HotelReservationDbContext context)
+        private readonly HotelReservationDBContext _context;
+
+        public ClienteRepository(HotelReservationDBContext context)
         {
             _context = context;
         }
 
-        public async Task<Cliente?> GetByIdAsync(Guid id)
+        public async Task AddAsync(Cliente cliente)
         {
-            return await _context.Clientes!.FirstOrDefaultAsync(c => c.Id == id);
-        }
+            if (cliente == null) throw new ArgumentNullException(nameof(cliente));
 
-        public async Task<IEnumerable<Cliente>> GetAllAsync()
-        {
-            return await _context.Clientes!.ToListAsync();
-        }
+            if (string.IsNullOrWhiteSpace(cliente.Nombre))
+                throw new ArgumentException("El nombre es requerido", nameof(cliente.Nombre));
 
-        public async Task<Cliente> AddAsync(Cliente entity)
-        {
-            _context.Clientes!.Add(entity);
-            await _context.SaveChangesAsync();
-            return entity;
-        }
-
-        public async Task<Cliente> UpdateAsync(Cliente entity)
-        {
-            _context.Clientes!.Update(entity);
-            await _context.SaveChangesAsync();
-            return entity;
+            await _context.Clientes.AddAsync(cliente);
         }
 
         public async Task DeleteAsync(Guid id)
         {
-            var entity = await _context.Clientes!.FindAsync(id);
-            if (entity != null)
+            var cliente = await _context.Clientes.FindAsync(id);
+            if (cliente != null)
             {
-                _context.Clientes!.Remove(entity);
-                await _context.SaveChangesAsync();
+                cliente.Estado = false;
+                _context.Clientes.Update(cliente);
             }
         }
+
+        public async Task<IEnumerable<Cliente>> GetAllAsync()
+        {
+            return await _context.Clientes.ToListAsync();
+        }
+
+        public async Task<Cliente> GetByIdAsync(Guid id)
+        {
+            var cliente = await _context.Clientes.FindAsync(id);
+            if (cliente == null)
+                throw new KeyNotFoundException($"Cliente con id {id} no encontrado.");
+
+            return cliente;
+        }
+
+        public async Task UpdateAsync(Cliente cliente)
+        {
+            if (cliente == null) throw new ArgumentNullException(nameof(cliente));
+            _context.Clientes.Update(cliente);
+            await Task.CompletedTask;
+        }
+
+        public async Task<Cliente?> GetByEmailAsync(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return null;
+
+            var normalizedEmail = email.Trim().ToLowerInvariant();
+
+            return await _context.Clientes
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c =>
+                    c.Estado &&
+                    c.Correo != null &&
+                    c.Correo.Trim().ToLowerInvariant() == normalizedEmail);
+        }
+
     }
 }

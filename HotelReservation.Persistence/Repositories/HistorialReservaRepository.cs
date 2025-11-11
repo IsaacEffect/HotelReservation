@@ -7,8 +7,8 @@ namespace HotelReservation.Persistence.Repositories
 {
     public class HistorialReservaRepository : IHistorialReservaRepository
     {
-        private readonly HotelReservationDbContext _context;
-        public HistorialReservaRepository(HotelReservationDbContext context)
+        private readonly HotelReservationDBContext _context;
+        public HistorialReservaRepository(HotelReservationDBContext context)
         {
             _context = context;
         }

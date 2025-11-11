@@ -1,4 +1,4 @@
-﻿using HotelReservation.Application.Interfaces;
+﻿using HotelReservation.Application.Contracts;
 using HotelReservation.Application.Services;
 using HotelReservation.Domain.Interfaces;
 using HotelReservation.Persistence.Context;
@@ -12,13 +12,13 @@ namespace HotelReservation.IOC
     {
         public static IServiceCollection AddHotelReservationPersistence(this IServiceCollection services, string connectionString)
         {
-            services.AddDbContext<HotelReservationDbContext>(options =>
+            services.AddDbContext<HotelReservationDBContext>(options =>
                 options.UseSqlServer(connectionString));
 
             // Repositories
             services.AddScoped<ICheckInOutRepository, CheckInOutRepository>();
             services.AddScoped<IHistorialReservaRepository, HistorialReservaRepository>();
-            services.AddScoped<IReservaRepository, ReservaRepository>();
+            //services.AddScoped<IReservaRepository, ReservaRepository>();
             services.AddScoped<IHabitacionRepository, HabitacionRepository>();
             services.AddScoped<IClienteRepository, ClienteRepository>();
             services.AddScoped<IOcupacionService, OcupacionService>();

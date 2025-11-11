@@ -1,5 +1,6 @@
-﻿using HotelReservation.Application.DTOs;
-using HotelReservation.Application.Interfaces;
+﻿using HotelReservation.Application.Contracts;
+using HotelReservation.Application.DTOs;
+using HotelReservation.Domain.Entities;
 using HotelReservation.Domain.Interfaces;
 
 namespace HotelReservation.Application.Services
@@ -18,9 +19,9 @@ namespace HotelReservation.Application.Services
             var habitaciones = await _habitacionRepo.GetAllAsync();
 
             var total = habitaciones.Count();
-            var ocupadas = habitaciones.Count(h => h.Estado == "Ocupada");
-            var disponibles = habitaciones.Count(h => h.Estado == "Disponible");
-            var mantenimiento = habitaciones.Count(h => h.Estado == "Mantenimiento");
+            var ocupadas = habitaciones.Count(h => h.Status == HabitacionStatus.Occupied);
+            var disponibles = habitaciones.Count(h => h.Status == HabitacionStatus.Available);
+            var mantenimiento = habitaciones.Count(h => h.Status == HabitacionStatus.Maintenance);
 
             return new OcupacionDiariaDto
             {

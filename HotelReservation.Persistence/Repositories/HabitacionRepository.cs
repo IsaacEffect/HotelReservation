@@ -7,9 +7,9 @@ namespace HotelReservation.Persistence.Repositories
 {
     public class HabitacionRepository : IHabitacionRepository
     {
-        private readonly HotelReservationDbContext _context;
+        private readonly HotelReservationDBContext _context;
 
-        public HabitacionRepository(HotelReservationDbContext context)
+        public HabitacionRepository(HotelReservationDBContext context)
         {
             _context = context;
         }
@@ -17,6 +17,13 @@ namespace HotelReservation.Persistence.Repositories
         public async Task<Habitacion?> GetByIdAsync(Guid id)
         {
             return await _context.Habitaciones!.FirstOrDefaultAsync(h => h.Id == id);
+        }
+
+        public async Task<Habitacion?> GetByNumberAsync(int number)
+        {
+            return await _context.Habitaciones!
+                .AsNoTracking()
+                .FirstOrDefaultAsync(h => h.Number == number);
         }
 
         public async Task<IEnumerable<Habitacion>> GetAllAsync()

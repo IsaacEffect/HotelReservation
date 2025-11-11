@@ -1,4 +1,4 @@
-﻿using HotelReservation.Application.Interfaces;
+﻿using HotelReservation.Application.Contracts;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelReservation.Api.Controllers

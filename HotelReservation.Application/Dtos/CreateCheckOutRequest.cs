@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace HotelReservation.Application.DTOs
+﻿namespace HotelReservation.Application.DTOs
 {
     public class CreateCheckOutRequest
     {

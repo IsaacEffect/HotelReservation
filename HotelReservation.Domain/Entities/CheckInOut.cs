@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace HotelReservation.Domain.Entities
+﻿namespace HotelReservation.Domain.Entities
 {
     public class CheckInOut
     {
-        public Guid Id { get; set; } 
+        public Guid Id { get; set; }
         public Guid ReservaId { get; set; }
         public DateTime? FechaCheckIn { get; set; }
         public DateTime? FechaCheckOut { get; set; }
