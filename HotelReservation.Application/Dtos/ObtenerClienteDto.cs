@@ -1,6 +1,6 @@
-﻿namespace HotelReservation.Domain.Entities
+﻿namespace HotelReservation.Application.Dtos
 {
-    public class Cliente
+    public record ObtenerClienteDto
     {
         public Guid IdCliente { get; set; }
         public string Nombre { get; set; } = string.Empty;
@@ -8,6 +8,6 @@
         public string Correo { get; set; } = string.Empty;
         public string? Telefono { get; set; }
         public string? DocumentoIdentidad { get; set; }
-        public bool Estado { get; set; } = true;
+        public bool Estado { get; set; }
     }
 }

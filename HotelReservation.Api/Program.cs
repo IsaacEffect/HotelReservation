@@ -1,10 +1,13 @@
+using AutoMapper;
 using HotelReservation.Api.Configurations;
+using HotelReservation.Application.Base.Mappers;
 using HotelReservation.Application.Contracts;
 using HotelReservation.Application.Services;
 using HotelReservation.Domain.Interfaces;
 using HotelReservation.IOC;
 using HotelReservation.Persistence.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -82,6 +85,24 @@ namespace HotelReservation.Api
 
             // IoC (Registros globales de usuario)
             builder.Services.RegisterServices(builder.Configuration);
+
+
+            // Configuración manual de AutoMapper
+            builder.Services.AddSingleton<IMapper>(serviceProvider =>
+            {
+                var loggerFactory = serviceProvider.GetService<ILoggerFactory>();
+   
+                var config = new MapperConfiguration(mapperConfig =>
+                {
+                    mapperConfig.AddProfile<MappingProfile>();
+                }, loggerFactory);
+
+                // Para validar mapeos al inicio
+                 //config.AssertConfigurationIsValid();
+
+                return new Mapper(config);
+            });
+
 
             // Registrar las dependencias de reserva
             builder.Services.AddScoped<IReservaRepository, ReservaRepository>();

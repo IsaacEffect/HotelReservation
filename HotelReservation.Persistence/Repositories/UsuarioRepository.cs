@@ -16,18 +16,23 @@ namespace HotelReservation.Persistence.Repositories
 
         public async Task<IEnumerable<Usuario>> GetAllAsync()
         {
-            return await _context.Usuarios.Include(u => u.Rol).ToListAsync();
+            return await _context.Usuarios
+                .Include(u => u.Rol)
+                .ToListAsync();
         }
 
         public async Task<Usuario?> GetByIdAsync(Guid id)
         {
-            return await _context.Usuarios.Include(u => u.Rol)
+            return await _context.Usuarios
+                .Include(u => u.Rol)
                 .FirstOrDefaultAsync(u => u.IdUsuario == id);
         }
 
         public async Task<Usuario?> GetByEmailAsync(string correo)
         {
-            return await _context.Usuarios.FirstOrDefaultAsync(u => u.Correo == correo);
+            return await _context.Usuarios
+                .Include(u => u.Rol)
+                .FirstOrDefaultAsync(u => u.Correo == correo);
         }
 
         public async Task AddAsync(Usuario usuario)

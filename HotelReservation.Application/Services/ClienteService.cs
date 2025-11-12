@@ -1,39 +1,49 @@
-﻿using HotelReservation.Application.Contracts;
+﻿using AutoMapper;
+using HotelReservation.Application.Contracts;
+using HotelReservation.Application.Dtos;
 using HotelReservation.Domain.Entities;
 using HotelReservation.Domain.Interfaces;
 
 namespace HotelReservation.Application.Services
 {
-    public class ClienteService : IClienteService
+    public class ClienteService(IUnitOfWork unitOfWork, IMapper mapper) : IClienteService
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly IMapper _mapper = mapper;
 
-        public ClienteService(IUnitOfWork unitOfWork)
+        public async Task<IEnumerable<ObtenerClienteDto>> GetAllAsync()
         {
-            _unitOfWork = unitOfWork;
+            var clientes = await _unitOfWork.Clientes.GetAllAsync();
+            return _mapper.Map<IEnumerable<ObtenerClienteDto>>(clientes);
         }
 
-        public async Task<IEnumerable<Cliente>> GetAllAsync()
+        public async Task<ObtenerClienteDto> GetByIdAsync(Guid id)
         {
-            return await _unitOfWork.Clientes.GetAllAsync();
+            var cliente = await _unitOfWork.Clientes.GetByIdAsync(id);
+            return cliente == null
+                ? throw new KeyNotFoundException($"Cliente con id {id} no encontrado")
+                : _mapper.Map<ObtenerClienteDto>(cliente);
         }
 
-        public async Task<Cliente> GetByIdAsync(Guid id)
+        public async Task AddAsync(InsertarClienteDto clienteDto)
         {
-            return await _unitOfWork.Clientes.GetByIdAsync(id);
-        }
-
-        public async Task AddAsync(Cliente cliente)
-        {
+            var cliente = _mapper.Map<Cliente>(clienteDto);
             await _unitOfWork.Clientes.AddAsync(cliente);
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(Cliente cliente)
+        public async Task UpdateAsync(Guid id, ActualizarClienteDto clienteDto)
         {
-            await _unitOfWork.Clientes.UpdateAsync(cliente);
+            var clienteExistente = await _unitOfWork.Clientes.GetByIdAsync(id);
+            if (clienteExistente == null)
+                throw new KeyNotFoundException($"Cliente con id {id} no encontrado.");
+
+            _mapper.Map(clienteDto, clienteExistente);
+
+            await _unitOfWork.Clientes.UpdateAsync(clienteExistente);
             await _unitOfWork.SaveChangesAsync();
         }
+
 
         public async Task DeleteAsync(Guid id)
         {

@@ -1,4 +1,6 @@
-﻿using HotelReservation.Application.Contracts;
+﻿using AutoMapper;
+using HotelReservation.Application.Contracts;
+using HotelReservation.Application.Dtos;
 using HotelReservation.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,38 +11,44 @@ namespace HotelReservation.Api.Controllers
     public class UsuariosController : ControllerBase
     {
         private readonly IUsuarioService _usuarioService;
+        private readonly IMapper _mapper;
 
-        public UsuariosController(IUsuarioService usuarioService)
+        public UsuariosController(IUsuarioService usuarioService, IMapper mapper)
         {
             _usuarioService = usuarioService;
+            _mapper = mapper;
         }
 
         [HttpGet("GetAllUsers")]
         public async Task<IActionResult> GetAll()
         {
             var usuarios = await _usuarioService.GetAllAsync();
-            return Ok(usuarios);
+            var usuariosDto = _mapper.Map<IEnumerable<ObtenerUsuarioDto>>(usuarios);
+            return Ok(usuariosDto);
         }
 
         [HttpGet("GetUserById/{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var usuario = await _usuarioService.GetByIdAsync(id);
-            return usuario is null ? NotFound() : Ok(usuario);
+            if (usuario == null) return NotFound();
+            return Ok(_mapper.Map<ObtenerUsuarioDto>(usuario));
         }
 
         [HttpPost("InsertUser")]
-        public async Task<IActionResult> Create([FromBody] Usuario usuario)
+        public async Task<IActionResult> Create([FromBody] InsertarUsuarioDto dto)
         {
-            await _usuarioService.AddAsync(usuario);
+            var usuario = _mapper.Map<Usuario>(dto);
+            await _usuarioService.AddAsync(_mapper.Map<InsertarUsuarioDto>(usuario));
             return Ok(new { message = "Usuario registrado correctamente" });
         }
 
         [HttpPut("UpdateUser/{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] Usuario usuario)
+        public async Task<IActionResult> Update(Guid id, [FromBody] ActualizarUsuarioDto dto)
         {
+            var usuario = _mapper.Map<Usuario>(dto);
             usuario.IdUsuario = id;
-            await _usuarioService.UpdateAsync(usuario);
+            await _usuarioService.UpdateAsync(_mapper.Map<ActualizarUsuarioDto>(usuario));
             return Ok(new { message = "Usuario modificado correctamente" });
         }
 

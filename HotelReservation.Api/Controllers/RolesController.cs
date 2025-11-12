@@ -1,31 +1,39 @@
-﻿using HotelReservation.Application.Contracts;
+﻿using AutoMapper;
+using HotelReservation.Application.Contracts;
+using HotelReservation.Application.Dtos;
 using HotelReservation.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelReservation.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    //[Authorize(Roles = "Administrador")]
     public class RolesController : ControllerBase
     {
         private readonly IRolService _rolService;
+        private readonly IMapper _mapper;
 
-        public RolesController(IRolService rolService)
+        public RolesController(IRolService rolService, IMapper mapper)
         {
             _rolService = rolService;
+            _mapper = mapper;
         }
 
         [HttpGet("GetAllRoles")]
         public async Task<IActionResult> GetAll()
         {
             var roles = await _rolService.GetAllAsync();
-            return Ok(roles);
+            var rolesDto = _mapper.Map<IEnumerable<ObtenerRolDto>>(roles);
+            return Ok(rolesDto);
         }
 
         [HttpPost("InsertRole")]
-        public async Task<IActionResult> Create([FromBody] Rol rol)
+        public async Task<IActionResult> Create([FromBody] InsertarRolDto dto)
         {
-            await _rolService.AddAsync(rol);
+            var rol = _mapper.Map<Rol>(dto);
+            await _rolService.AddAsync(_mapper.Map<InsertarRolDto>(rol));
             return Ok(new { message = "Rol registrado correctamente" });
         }
     }

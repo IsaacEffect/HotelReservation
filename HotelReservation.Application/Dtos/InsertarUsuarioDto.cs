@@ -2,7 +2,7 @@
 
 namespace HotelReservation.Application.Dtos
 {
-    public record InsertarClienteDto
+    public record InsertarUsuarioDto
     {
         [Required(ErrorMessage = "El nombre es obligatorio.")]
         [StringLength(50, ErrorMessage = "El nombre no debe superar los 50 caracteres.")]
@@ -16,12 +16,11 @@ namespace HotelReservation.Application.Dtos
         [EmailAddress(ErrorMessage = "Formato de correo inválido.")]
         public string Correo { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "El teléfono es obligatorio.")]
-        [StringLength(20, ErrorMessage = "El teléfono no debe superar los 20 caracteres.")]
-        public string? Telefono { get; set; }
+        [Required(ErrorMessage = "La contraseña es obligatoria.")]
+        [StringLength(100, ErrorMessage = "La contraseña no debe superar los 100 caracteres.")]
+        public string Contrasena { get; set; } = string.Empty;
 
-        [RegularExpression(@"^\d{3}-\d{7}-\d{1}$", ErrorMessage = "La cédula debe tener el formato 000-0000000-0.")]
-        [StringLength(20, ErrorMessage = "El documento de identidad no debe superar los 20 caracteres.")]
-        public string? DocumentoIdentidad { get; set; }
+        [Required(ErrorMessage = "El rol es obligatorio.")]
+        public Guid RolId { get; set; }
     }
 }
