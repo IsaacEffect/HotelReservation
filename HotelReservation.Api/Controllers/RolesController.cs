@@ -10,6 +10,7 @@ namespace HotelReservation.Api.Controllers
     [ApiController]
     [Route("api/[controller]")]
     //[Authorize(Roles = "Administrador")]
+    [Authorize(Roles = "Empleado")]
     public class RolesController : ControllerBase
     {
         private readonly IRolService _rolService;
