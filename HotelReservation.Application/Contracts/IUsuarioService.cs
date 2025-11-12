@@ -8,10 +8,10 @@ namespace HotelReservation.Application.Contracts
         Task<ObtenerUsuarioDto?> GetByIdAsync(Guid id);
         Task<ObtenerUsuarioDto?> GetByEmailAsync(string correo);
         Task AddAsync(InsertarUsuarioDto usuario);
-        Task UpdateAsync(ActualizarUsuarioDto usuario);
+        Task UpdateAsync(Guid id, ActualizarUsuarioDto usuario);
+        Task<(bool Success, string Message)> CambiarContrasenaAsync(CambiarContrasenaDto usuario);
         Task DeleteAsync(Guid id);
 
-        // validar credenciales (login)
         Task<(bool Success, string Message, ObtenerUsuarioDto? Data)> ValidarCredencialesAsync(string correo, string contrasena);
     }
 }

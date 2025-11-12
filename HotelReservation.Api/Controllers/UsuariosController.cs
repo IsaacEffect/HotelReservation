@@ -1,7 +1,5 @@
-﻿using AutoMapper;
-using HotelReservation.Application.Contracts;
+﻿using HotelReservation.Application.Contracts;
 using HotelReservation.Application.Dtos;
-using HotelReservation.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelReservation.Api.Controllers
@@ -11,20 +9,17 @@ namespace HotelReservation.Api.Controllers
     public class UsuariosController : ControllerBase
     {
         private readonly IUsuarioService _usuarioService;
-        private readonly IMapper _mapper;
 
-        public UsuariosController(IUsuarioService usuarioService, IMapper mapper)
+        public UsuariosController(IUsuarioService usuarioService)
         {
             _usuarioService = usuarioService;
-            _mapper = mapper;
         }
 
         [HttpGet("GetAllUsers")]
         public async Task<IActionResult> GetAll()
         {
             var usuarios = await _usuarioService.GetAllAsync();
-            var usuariosDto = _mapper.Map<IEnumerable<ObtenerUsuarioDto>>(usuarios);
-            return Ok(usuariosDto);
+            return Ok(usuarios);
         }
 
         [HttpGet("GetUserById/{id}")]
@@ -32,24 +27,38 @@ namespace HotelReservation.Api.Controllers
         {
             var usuario = await _usuarioService.GetByIdAsync(id);
             if (usuario == null) return NotFound();
-            return Ok(_mapper.Map<ObtenerUsuarioDto>(usuario));
+            return Ok(usuario);
         }
 
         [HttpPost("InsertUser")]
         public async Task<IActionResult> Create([FromBody] InsertarUsuarioDto dto)
         {
-            var usuario = _mapper.Map<Usuario>(dto);
-            await _usuarioService.AddAsync(_mapper.Map<InsertarUsuarioDto>(usuario));
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            await _usuarioService.AddAsync(dto);
             return Ok(new { message = "Usuario registrado correctamente" });
         }
 
         [HttpPut("UpdateUser/{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] ActualizarUsuarioDto dto)
         {
-            var usuario = _mapper.Map<Usuario>(dto);
-            usuario.IdUsuario = id;
-            await _usuarioService.UpdateAsync(_mapper.Map<ActualizarUsuarioDto>(usuario));
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            await _usuarioService.UpdateAsync(id, dto);
             return Ok(new { message = "Usuario modificado correctamente" });
+        }
+
+        [HttpPut("ChangePassword")]
+        public async Task<IActionResult> CambiarContrasena([FromBody] CambiarContrasenaDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _usuarioService.CambiarContrasenaAsync(dto);
+            if (!result.Success) return BadRequest(new { message = result.Message });
+            return Ok(new { message = result.Message });
         }
 
         [HttpDelete("DeleteUser/{id}")]

@@ -17,13 +17,17 @@ namespace HotelReservation.Application.Base.Mappers
 
             // CLIENTE
             CreateMap<Cliente, ObtenerClienteDto>().ReverseMap();
+
             CreateMap<InsertarClienteDto, Cliente>()
                 .ForMember(dest => dest.IdCliente, opt => opt.MapFrom(src => Guid.NewGuid()))
                 .ForMember(dest => dest.Estado, opt => opt.MapFrom(src => true))
                 .ReverseMap();
+
             CreateMap<ActualizarClienteDto, Cliente>().ReverseMap();
 
             // USUARIO
+
+            // GET
             CreateMap<Usuario, ObtenerUsuarioDto>()
                 .ForMember(dest => dest.Rol, opt => opt.MapFrom(src =>
                     src.Rol != null
@@ -35,13 +39,19 @@ namespace HotelReservation.Application.Base.Mappers
                         : null
                 ))
                 .ReverseMap();
+
+            // INSERT
             CreateMap<InsertarUsuarioDto, Usuario>()
                 .ForMember(dest => dest.IdUsuario, opt => opt.MapFrom(src => Guid.NewGuid()))
                 .ForMember(dest => dest.Estado, opt => opt.MapFrom(src => true))
-                .ForMember(dest => dest.Contrasena, opt => opt.MapFrom(src => src.Contrasena))
-                .ForMember(dest => dest.Rol, opt => opt.Ignore())
+                .ForMember(dest => dest.Rol, opt => opt.Ignore()) // evitar loop con rol
                 .ReverseMap();
-            CreateMap<ActualizarUsuarioDto, Usuario>().ReverseMap();
+
+            // UPDATE
+            CreateMap<ActualizarUsuarioDto, Usuario>()
+                .ForMember(dest => dest.Contrasena, opt => opt.Ignore()) // no se toca contraseña aquí
+                .ForMember(dest => dest.Rol, opt => opt.Ignore())         // se asigna por ID, no objeto completo
+                .ReverseMap();
         }
     }
 }
