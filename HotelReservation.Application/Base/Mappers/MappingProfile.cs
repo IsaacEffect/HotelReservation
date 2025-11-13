@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using HotelReservation.Application.Dtos;
 using HotelReservation.Domain.Entities;
 
@@ -44,14 +44,25 @@ namespace HotelReservation.Application.Base.Mappers
             CreateMap<InsertarUsuarioDto, Usuario>()
                 .ForMember(dest => dest.IdUsuario, opt => opt.MapFrom(src => Guid.NewGuid()))
                 .ForMember(dest => dest.Estado, opt => opt.MapFrom(src => true))
-                .ForMember(dest => dest.Rol, opt => opt.Ignore()) // evitar loop con rol
+                .ForMember(dest => dest.Rol, opt => opt.Ignore())
                 .ReverseMap();
 
             // UPDATE
             CreateMap<ActualizarUsuarioDto, Usuario>()
-                .ForMember(dest => dest.Contrasena, opt => opt.Ignore()) // no se toca contraseña aquí
-                .ForMember(dest => dest.Rol, opt => opt.Ignore())         // se asigna por ID, no objeto completo
+                .ForMember(dest => dest.Contrasena, opt => opt.Ignore())
+                .ForMember(dest => dest.Rol, opt => opt.Ignore())
                 .ReverseMap();
+
+            // CATEGORIA HABITACION
+            CreateMap<CategoriaHabitacion, ObtenerCategoriaDto>().ReverseMap();
+
+            CreateMap<InsertarCategoriaDto, CategoriaHabitacion>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()));
+
+            CreateMap<ActualizarCategoriaDto, CategoriaHabitacion>();
+
+            // -----------------------------------------------
+
         }
     }
 }
