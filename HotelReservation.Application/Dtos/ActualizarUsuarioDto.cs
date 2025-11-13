@@ -14,8 +14,6 @@ namespace HotelReservation.Application.Dtos
         [EmailAddress(ErrorMessage = "Formato de correo inválido.")]
         public string Correo { get; set; } = string.Empty;
 
-        public bool Estado { get; set; } = true;
-
         public Guid RolId { get; set; }
     }
 }

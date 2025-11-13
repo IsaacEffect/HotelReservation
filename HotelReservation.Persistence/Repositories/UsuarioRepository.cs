@@ -18,6 +18,7 @@ namespace HotelReservation.Persistence.Repositories
         {
             return await _context.Usuarios
                 .Include(u => u.Rol)
+                .Where(u => u.Estado)
                 .ToListAsync();
         }
 
@@ -25,14 +26,14 @@ namespace HotelReservation.Persistence.Repositories
         {
             return await _context.Usuarios
                 .Include(u => u.Rol)
-                .FirstOrDefaultAsync(u => u.IdUsuario == id);
+                .FirstOrDefaultAsync(u => u.IdUsuario == id && u.Estado);
         }
 
         public async Task<Usuario?> GetByEmailAsync(string correo)
         {
             return await _context.Usuarios
                 .Include(u => u.Rol)
-                .FirstOrDefaultAsync(u => u.Correo == correo);
+                .FirstOrDefaultAsync(u => u.Correo == correo && u.Estado);
         }
 
         public async Task AddAsync(Usuario usuario)

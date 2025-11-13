@@ -1,4 +1,5 @@
-﻿using HotelReservation.Application.Contracts;
+﻿using HotelReservation.Api.Extensions;
+using HotelReservation.Application.Contracts;
 using HotelReservation.Application.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,25 +10,28 @@ namespace HotelReservation.Api.Controllers
     public class UsuariosController : ControllerBase
     {
         private readonly IUsuarioService _usuarioService;
+        private readonly ILogger<UsuariosController> _logger;
 
-        public UsuariosController(IUsuarioService usuarioService)
+        public UsuariosController(IUsuarioService usuarioService, ILogger<UsuariosController> logger)
         {
             _usuarioService = usuarioService;
+            _logger = logger;
         }
 
         [HttpGet("GetAllUsers")]
         public async Task<IActionResult> GetAll()
         {
-            var usuarios = await _usuarioService.GetAllAsync();
-            return Ok(usuarios);
+            _logger.LogInformation("API - GetAllUsers llamado.");
+            var result = await _usuarioService.GetAllAsync();
+            return result.ToActionResult();
         }
 
         [HttpGet("GetUserById/{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var usuario = await _usuarioService.GetByIdAsync(id);
-            if (usuario == null) return NotFound();
-            return Ok(usuario);
+            _logger.LogInformation("API - GetUserById llamado para ID {Id}", id);
+            var result = await _usuarioService.GetByIdAsync(id);
+            return result.ToActionResult();
         }
 
         [HttpPost("InsertUser")]
@@ -36,8 +40,9 @@ namespace HotelReservation.Api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            await _usuarioService.AddAsync(dto);
-            return Ok(new { message = "Usuario registrado correctamente" });
+            _logger.LogInformation("API - InsertUser llamado para {Correo}", dto.Correo);
+            var result = await _usuarioService.AddAsync(dto);
+            return result.ToActionResult();
         }
 
         [HttpPut("UpdateUser/{id}")]
@@ -46,8 +51,9 @@ namespace HotelReservation.Api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            await _usuarioService.UpdateAsync(id, dto);
-            return Ok(new { message = "Usuario modificado correctamente" });
+            _logger.LogInformation("API - UpdateUser llamado para ID {Id}", id);
+            var result = await _usuarioService.UpdateAsync(id, dto);
+            return result.ToActionResult();
         }
 
         [HttpPut("ChangePassword")]
@@ -56,16 +62,17 @@ namespace HotelReservation.Api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            _logger.LogInformation("API - ChangePassword llamado para ID {IdUsuario}", dto.IdUsuario);
             var result = await _usuarioService.CambiarContrasenaAsync(dto);
-            if (!result.Success) return BadRequest(new { message = result.Message });
-            return Ok(new { message = result.Message });
+            return result.ToActionResult();
         }
 
         [HttpDelete("DeleteUser/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _usuarioService.DeleteAsync(id);
-            return Ok(new { message = "Usuario eliminado correctamente" });
+            _logger.LogInformation("API - DeleteUser llamado para ID {Id}", id);
+            var result = await _usuarioService.DeleteAsync(id);
+            return result.ToActionResult();
         }
     }
 }

@@ -25,7 +25,10 @@ namespace HotelReservation.Persistence.Context
 
             //-----------------------
 
-            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Usuario>().HasQueryFilter(u => u.Estado);
+            modelBuilder.Entity<Cliente>().HasQueryFilter(c => c.Estado);
+
+            //-----------------------
 
             modelBuilder.Entity<CheckInOut>(entity =>
             {
@@ -45,6 +48,8 @@ namespace HotelReservation.Persistence.Context
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Motivo).HasMaxLength(100);
             });
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

@@ -1,7 +1,6 @@
-﻿using AutoMapper;
+﻿using HotelReservation.Api.Extensions;
 using HotelReservation.Application.Contracts;
 using HotelReservation.Application.Dtos;
-using HotelReservation.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelReservation.Api.Controllers
@@ -11,57 +10,45 @@ namespace HotelReservation.Api.Controllers
     public class ClientesController : ControllerBase
     {
         private readonly IClienteService _clienteService;
-        private readonly IMapper _mapper;
 
-        public ClientesController(IClienteService clienteService, IMapper mapper)
+        public ClientesController(IClienteService clienteService)
         {
             _clienteService = clienteService;
-            _mapper = mapper;
         }
 
         [HttpGet("GetAllClients")]
         public async Task<IActionResult> GetAll()
         {
-            var clientes = await _clienteService.GetAllAsync();
-            var clientesDto = _mapper.Map<IEnumerable<ObtenerClienteDto>>(clientes);
-            return Ok(clientesDto);
+            var result = await _clienteService.GetAllAsync();
+            return result.ToActionResult();
         }
 
-        [HttpGet("GetClientById")]
+        [HttpGet("GetClientById/{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var cliente = await _clienteService.GetByIdAsync(id);
-            if (cliente == null) return NotFound();
-            return Ok(_mapper.Map<ObtenerClienteDto>(cliente));
+            var result = await _clienteService.GetByIdAsync(id);
+            return result.ToActionResult();
         }
 
         [HttpPost("InsertClient")]
         public async Task<IActionResult> Create([FromBody] InsertarClienteDto dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var cliente = _mapper.Map<Cliente>(dto);
-            await _clienteService.AddAsync(_mapper.Map<InsertarClienteDto>(cliente));
-            return Ok(new { message = "Cliente registrado correctamente" });
+            var result = await _clienteService.AddAsync(dto);
+            return result.ToActionResult();
         }
 
-        [HttpPut("ModifyClient")]
+        [HttpPut("ModifyClient/{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] ActualizarClienteDto dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            await _clienteService.UpdateAsync(id, dto);
-            return Ok(new { message = "Cliente modificado correctamente" });
+            var result = await _clienteService.UpdateAsync(id, dto);
+            return result.ToActionResult();
         }
 
-
-        [HttpDelete("DeleteClient")]
+        [HttpDelete("DeleteClient/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _clienteService.DeleteAsync(id);
-            return Ok(new { message = "Cliente eliminado correctamente" });
+            var result = await _clienteService.DeleteAsync(id);
+            return result.ToActionResult();
         }
     }
 }
