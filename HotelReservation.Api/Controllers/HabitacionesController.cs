@@ -1,13 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using HotelReservation.Application.Services; // Usando el servicio existente
-using HotelReservation.Application.DTOs;     // Usando el DTO existente
-using HotelReservation.Domain.Entities;     // Necesario para HabitacionStatus
+using HotelReservation.Application.Services; 
+using HotelReservation.Application.DTOs;     
+using HotelReservation.Domain.Entities;     
 using System.ComponentModel.DataAnnotations;
-
-// --- DTOs Mínimos ---
-// Estos DTOs no existen en tus archivos, pero son necesarios para 
-// recibir datos del body en los endpoints de POST y PUT.
-// Deberás crearlos en la carpeta Application/Dtos.
 
 public record InsertarHabitacionDto(
     [Required] int Number, 
