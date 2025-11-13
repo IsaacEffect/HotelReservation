@@ -1,27 +1,27 @@
 using Microsoft.AspNetCore.Mvc;
-using HotelReservation.Application.Services;
+using HotelReservation.Application.Contracts;
 using HotelReservation.Application.Dtos;
 
-namespace HotelReservation.Backend.Controllers
+namespace HotelReservation.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     public class ReservasController : ControllerBase
     {
-        private readonly ReservaService _service;
+        private readonly IReservaService _service;
 
-        public ReservasController(ReservaService service)
+        public ReservasController(IReservaService service)
         {
             _service = service;
         }
 
-        //  POST: Crear nueva reserva
+        // POST: Crear nueva reserva
         [HttpPost]
-        public IActionResult CrearReserva([FromBody] CrearReservaDTO dto)
+        public async Task<IActionResult> CrearReserva([FromBody] CrearReservaDTO dto)
         {
             try
             {
-                var id = _service.CrearReserva(dto);
+                var id = await _service.CrearReservaAsync(dto);
                 return Created($"/api/reservas/{id}", new { id });
             }
             catch (Exception ex)
@@ -30,21 +30,21 @@ namespace HotelReservation.Backend.Controllers
             }
         }
 
-        //  GET: Listar reservas básicas
+        // GET: Listar reservas básicas
         [HttpGet]
-        public IActionResult ListarReservas()
+        public async Task<IActionResult> ListarReservas()
         {
-            var reservas = _service.ObtenerReservas();
+            var reservas = await _service.ObtenerReservasAsync();
             return Ok(reservas);
         }
 
-        //  NUEVO ENDPOINT: Listar reservas detalladas (Cliente, Habitación, Usuario)
+        // NUEVO ENDPOINT: Listar reservas detalladas
         [HttpGet("detalles")]
-        public IActionResult ListarReservasConDetalles()
+        public async Task<IActionResult> ListarReservasConDetalles()
         {
             try
             {
-                var reservas = _service.ObtenerReservasConDetalles();
+                var reservas = await _service.ObtenerReservasConDetallesAsync();
                 return Ok(reservas);
             }
             catch (Exception ex)

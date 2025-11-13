@@ -25,7 +25,7 @@ namespace HotelReservation.Persistence.Test
                 Nombre = "Robinson",
                 Apellido = "Cano",
                 Correo = "robinsoncano@gmail.com",
-                Contraseña = "password123",
+                Contrasena = "password123",
                 RolId = Guid.NewGuid()
             };
 

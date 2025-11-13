@@ -1,11 +1,16 @@
+using AutoMapper;
 using HotelReservation.Api.Configurations;
+using HotelReservation.Application.Base.Mappers;
+using HotelReservation.Application.Contracts;
+using HotelReservation.Application.Services;
+using HotelReservation.Domain.Interfaces;
 using HotelReservation.IOC;
+using HotelReservation.Persistence.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using HotelReservation.Persistence.Repositories;
-using HotelReservation.Application.Services;
 
 namespace HotelReservation.Api
 {
@@ -15,33 +20,54 @@ namespace HotelReservation.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Configuracion de JWT (usuarios)
+            // CONFIGURACIÓN GLOBAL DE LOGS
+
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
+            builder.Logging.AddDebug();
+            builder.Logging.SetMinimumLevel(LogLevel.Information);
+
+            // CONFIGURACIÓN BASE
+
+            var connectionString = builder.Configuration.GetConnectionString("HotelDBConnection");
+            builder.Services.AddHotelReservationPersistence(connectionString!);
+
+
+            // CONFIGURACIÓN JWT (usuarios)
+
             var jwtSettingsSection = builder.Configuration.GetSection("JwtSettings");
             builder.Services.Configure<JwtSettings>(jwtSettingsSection);
-            var jwtSettings = jwtSettingsSection.Get<JwtSettings>();
-            builder.Services.AddSingleton(jwtSettings);
+
+            builder.Services.AddSingleton(sp =>
+                sp.GetRequiredService<IOptions<JwtSettings>>().Value);
+
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
+                    var jwtSettings = jwtSettingsSection.Get<JwtSettings>()!;
+
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = jwtSettings.Issuer,
-                        ValidAudience = jwtSettings.Audience,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
+                        ValidIssuer = jwtSettings.Issuer ?? string.Empty,
+                        ValidAudience = jwtSettings.Audience ?? string.Empty,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(jwtSettings.SecretKey ?? string.Empty))
                     };
                 });
 
             builder.Services.AddAuthorization();
 
-            // Controllers
+            // CONTROLLERS
+
             builder.Services.AddControllers();
 
-            // Swagger con JWT (usuarios)
+            // SWAGGER + JWT
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
@@ -66,23 +92,41 @@ namespace HotelReservation.Api
 
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
-                    {
-                        jwtSecurityScheme,
-                        Array.Empty<string>()
-                    }
+                    { jwtSecurityScheme, Array.Empty<string>() }
                 });
             });
 
-            // IoC (Registros globales de usuario)
+
+            // INYECCIÓN DE DEPENDENCIAS (IoC)
+
             builder.Services.RegisterServices(builder.Configuration);
 
-            // Registrar las dependencias de reserva
-            builder.Services.AddScoped<ReservaRepository>();
-            builder.Services.AddScoped<ReservaService>();
+            // CONFIGURACIÓN DE AUTOMAPPER
+
+            builder.Services.AddSingleton<IMapper>(serviceProvider =>
+            {
+                var loggerFactory = serviceProvider.GetService<ILoggerFactory>();
+
+                var config = new MapperConfiguration(mapperConfig =>
+                {
+                    mapperConfig.AddProfile<MappingProfile>();
+                }, loggerFactory);
+
+                // Para habilitar validación de mapeos:
+                // config.AssertConfigurationIsValid();
+
+                return new Mapper(config);
+            });
+
+            // REGISTRO DE SERVICIOS RESERVAS
+
+            builder.Services.AddScoped<IReservaRepository, ReservaRepository>();
+            builder.Services.AddScoped<IReservaService, ReservaService>();
+
+            // CONSTRUCCIÓN DE LA APP
 
             var app = builder.Build();
 
-            // 3️⃣ Configurar el pipeline HTTP (Unificado)
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -91,11 +135,16 @@ namespace HotelReservation.Api
 
             app.UseHttpsRedirection();
 
-            // Middlewares de autenticación y autorización (usuarios)
+            // Middlewares de autenticación/autorización
             app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();
+
+            // LOG INICIAL DE ARRANQUE
+
+            var logger = app.Services.GetRequiredService<ILogger<Program>>();
+            logger.LogInformation("HotelReservation API iniciada correctamente en entorno: {Env}", app.Environment.EnvironmentName);
 
             app.Run();
         }
