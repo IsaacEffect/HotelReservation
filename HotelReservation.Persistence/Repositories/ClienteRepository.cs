@@ -36,14 +36,18 @@ namespace HotelReservation.Persistence.Repositories
 
         public async Task<IEnumerable<Cliente>> GetAllAsync()
         {
-            return await _context.Clientes.ToListAsync();
+            return await _context.Clientes
+                .Where(c => c.Estado)
+                .ToListAsync();
         }
 
         public async Task<Cliente> GetByIdAsync(Guid id)
         {
-            var cliente = await _context.Clientes.FindAsync(id);
+            var cliente = await _context.Clientes
+                .FirstOrDefaultAsync(c => c.IdCliente == id && c.Estado);
+
             if (cliente == null)
-                throw new KeyNotFoundException($"Cliente con id {id} no encontrado.");
+                throw new KeyNotFoundException($"Cliente con id {id} no encontrado o inactivo.");
 
             return cliente;
         }

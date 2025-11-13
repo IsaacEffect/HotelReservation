@@ -21,6 +21,5 @@ namespace HotelReservation.Application.Dtos
         [RegularExpression(@"^\d{3}-\d{7}-\d{1}$", ErrorMessage = "La cédula debe tener el formato 000-0000000-0.")]
         [StringLength(20, ErrorMessage = "El documento de identidad no debe superar los 20 caracteres.")]
         public string? DocumentoIdentidad { get; set; }
-        public bool Estado { get; set; } = true;
     }
 }
