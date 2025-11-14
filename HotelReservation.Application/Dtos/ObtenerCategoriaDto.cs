@@ -1,6 +1,6 @@
-﻿namespace HotelReservation.Domain.Entities
+﻿namespace HotelReservation.Application.Dtos
 {
-    public class CategoriaHabitacion
+    public record ObtenerCategoriaDto
     {
         public Guid Id { get; set; }
         public string NombreCategoria { get; set; } = string.Empty;
