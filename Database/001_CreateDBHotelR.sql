@@ -193,15 +193,32 @@ SELECT TOP 1 Id FROM Usuarios WHERE Correo = 'Luisperez87o@gmail.com';
 -- 2 CREAR UNA RESERVA DE PRUEBA
 -----------------------------------------------------------
 
+-- TRIGGER PARA CALCULAR TOTAL AUTOMÁTICAMENTE--
+GO
+CREATE TRIGGER TRG_CalcularTotalReserva
+ON Reservas
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE r
+    SET r.Total = 
+        DATEDIFF(DAY, i.FechaInicio, i.FechaFin) * c.PrecioPorNoche
+    FROM Reservas r
+    INNER JOIN inserted i ON r.Id = i.Id
+    INNER JOIN Habitaciones h ON i.HabitacionId = h.Id
+    INNER JOIN CategoriasHabitacion c ON h.CategoriaId = c.Id;
+END;
+GO
+
 DECLARE @ClienteId UNIQUEIDENTIFIER = (SELECT TOP 1 Id FROM Clientes WHERE Nombre = 'Carlos');
 DECLARE @HabitacionId UNIQUEIDENTIFIER = (SELECT TOP 1 Id FROM Habitaciones WHERE Numero = '101');
 DECLARE @UsuarioId UNIQUEIDENTIFIER = (SELECT TOP 1 Id FROM Usuarios WHERE Correo = 'Luisperez87o@gmail.com');
 
-INSERT INTO Reservas (FechaInicio, FechaFin, EstadoReserva, ClienteId, HabitacionId, UsuarioId, Total)
-VALUES ('2025-10-20', '2025-10-25', 'Confirmada', @ClienteId, @HabitacionId, @UsuarioId, 12500.00);
+INSERT INTO Reservas (FechaInicio, FechaFin, EstadoReserva, ClienteId, HabitacionId, UsuarioId )
+VALUES ('2025-10-20', '2025-10-25', 'Confirmada', @ClienteId, @HabitacionId, @UsuarioId )
 GO
-
-
 --
 -- 3️ CREAR VISTA DE RESERVAS DETALLADAS
 -
