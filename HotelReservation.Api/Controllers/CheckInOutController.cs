@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using HotelReservation.Application.Services;
-using HotelReservation.Application.DTOs;
+using HotelReservation.Application.Dtos;
 
 namespace HotelReservation.Api.Controllers
 {

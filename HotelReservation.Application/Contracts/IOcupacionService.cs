@@ -1,4 +1,4 @@
-﻿using HotelReservation.Application.DTOs;
+﻿using HotelReservation.Application.Dtos;
 
 namespace HotelReservation.Application.Contracts
 {

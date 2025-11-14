@@ -1,4 +1,4 @@
-﻿using HotelReservation.Application.DTOs;
+﻿using HotelReservation.Application.Dtos;
 using HotelReservation.Domain.Entities;
 using HotelReservation.Domain.Interfaces;
 
@@ -74,20 +74,20 @@ namespace HotelReservation.Application.Services
                     var habitacion = await _habitacionRepo.GetByIdAsync(reserva.HabitacionId);
                     if (habitacion != null)
                     {
-                        if (habitacion.Status == HabitacionStatus.Maintenance)
+                        if (habitacion.Estado == "Mantenimiento")
                             throw new Exception("No se puede realizar el check-in: la habitacion se encuentra en mantenimiento.");
 
-                        if (habitacion.Status == HabitacionStatus.Occupied)
+                        if (habitacion.Estado == "Ocupada")
                             throw new InvalidOperationException("La habitación ya se encuentra ocupada.");
 
                         try
                         {
-                            habitacion.ChangeStatus(HabitacionStatus.Occupied);
+                            habitacion.Estado = "Ocupada";
                             await _habitacionRepo.UpdateAsync(habitacion);
                         }
                         catch (Exception ex)
                         {
-                            throw new Exception($"Error al actualizar el estado de la habitacion ({habitacion.Number}).", ex);
+                            throw new Exception($"Error al actualizar el estado de la habitacion ({habitacion.Numero}).", ex);
                         }
                     }
                     else
@@ -189,14 +189,14 @@ namespace HotelReservation.Application.Services
             // Actualizar el estado de la habitacion
             try
             {
-                if (habitacion.Status != HabitacionStatus.Maintenance)
-                    habitacion.ChangeStatus(HabitacionStatus.Available);
+                if (habitacion.Estado != "Mantenimiento")
+                    habitacion.Estado = "Disponible";
 
                 await _habitacionRepo.UpdateAsync(habitacion);
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error al actualizar el estado de la habitacion ({habitacion.Number}).", ex);
+                throw new Exception($"Error al actualizar el estado de la habitacion ({habitacion.Numero}).", ex);
             }
 
             // Actualizar el estado de la reserva

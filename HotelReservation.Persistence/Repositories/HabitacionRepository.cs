@@ -19,11 +19,11 @@ namespace HotelReservation.Persistence.Repositories
             return await _context.Habitaciones!.FirstOrDefaultAsync(h => h.Id == id);
         }
 
-        public async Task<Habitacion?> GetByNumberAsync(int number)
+        public async Task<Habitacion?> GetByNumberAsync(string number)
         {
             return await _context.Habitaciones!
                 .AsNoTracking()
-                .FirstOrDefaultAsync(h => h.Number == number);
+                .FirstOrDefaultAsync(h => h.Numero == number);
         }
 
         public async Task<IEnumerable<Habitacion>> GetAllAsync()

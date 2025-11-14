@@ -1,8 +1,9 @@
-﻿namespace HotelReservation.Domain.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace HotelReservation.Application.Dtos
 {
-    public class CategoriaHabitacion
+    public record ActualizarCategoriaDto
     {
-        public Guid Id { get; set; }
         public string NombreCategoria { get; set; } = string.Empty;
         public string Descripcion { get; set; } = string.Empty;
         public int Capacidad { get; set; }
