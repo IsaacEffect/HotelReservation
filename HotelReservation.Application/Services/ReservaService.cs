@@ -23,9 +23,6 @@ namespace HotelReservation.Application.Services
             if (!await _repo.HabitacionDisponibleAsync(dto.HabitacionId, dto.FechaInicio, dto.FechaFin))
                 throw new Exception("La habitación no está disponible en ese rango de fechas.");
 
-            var noches = (dto.FechaFin - dto.FechaInicio).Days;
-            var total = dto.PrecioPorNoche * noches;
-
             var reserva = new Reserva
             {
                 Id = Guid.NewGuid(),
@@ -35,7 +32,7 @@ namespace HotelReservation.Application.Services
                 ClienteId = dto.ClienteId,
                 HabitacionId = dto.HabitacionId,
                 UsuarioId = dto.UsuarioId,
-                Total = total
+                Total = 0m // Inicialmente 0, se actualizará después con el cálculo correspondiente
             };
 
             // Crear la reserva
