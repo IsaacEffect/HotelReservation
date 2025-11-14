@@ -14,7 +14,6 @@ namespace HotelReservation.IOC
             services.RegisterUsuarios(configuration);
             services.RegisterRoles(configuration);
             services.RegisterDbContext(configuration);
-            services.RegisterCategorias(configuration);
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddLogging();
