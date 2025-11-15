@@ -8,3 +8,4 @@ namespace HotelReservation.Application.Dtos
         public DateTime FechaFin { get; set; }
     }
 }
+
