@@ -1,7 +1,7 @@
 namespace HotelReservation.Application.Dtos
 
 {
-    public class CrearReservaDTO
+    public record CrearReservaDTO
     {
         public Guid ClienteId { get; set; }
         public Guid HabitacionId { get; set; }
