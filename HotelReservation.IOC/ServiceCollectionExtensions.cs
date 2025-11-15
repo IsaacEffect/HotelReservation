@@ -18,10 +18,13 @@ namespace HotelReservation.IOC
             // Repositories
             services.AddScoped<ICheckInOutRepository, CheckInOutRepository>();
             services.AddScoped<IHistorialReservaRepository, HistorialReservaRepository>();
-            //services.AddScoped<IReservaRepository, ReservaRepository>();
             services.AddScoped<IHabitacionRepository, HabitacionRepository>();
             services.AddScoped<IClienteRepository, ClienteRepository>();
             services.AddScoped<IOcupacionService, OcupacionService>();
+
+            // Facturación
+            services.AddScoped<IFacturaService, FacturaService>();
+            services.AddScoped<IReporteService, ReporteService>();
 
             // Services
             services.AddScoped<ICheckInOutService, CheckInOutService>();
