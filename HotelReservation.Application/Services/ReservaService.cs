@@ -13,6 +13,16 @@ namespace HotelReservation.Application.Services
             _repo = repo;
         }
 
+        Task<IEnumerable<ReservaDTO>> IReservaService.GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<ReservaDTO?> IReservaService.GetByIdAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task ActualizarReservaAsync(ActualizarReservaDTO dto)
         {
             throw new NotImplementedException();
@@ -33,12 +43,8 @@ namespace HotelReservation.Application.Services
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<ReservaDetalleDTO>> GetAllAsync()
-        {
-            throw new NotImplementedException();
-        }
 
-        public Task<ReservaDetalleDTO?> GetByIdAsync(Guid id)
+        public Task<ReservaDetalleDTO?> GetReservaDetalleByIdAsync(Guid id)
         {
             throw new NotImplementedException();
         }
