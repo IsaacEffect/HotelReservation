@@ -35,11 +35,6 @@ namespace HotelReservation.Persistence.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<object>> ObtenerReservasConDetallesAsync()
-        {
-            throw new NotImplementedException();
-        }
-
         public Task UpdateAsync(Reserva entity)
         {
             throw new NotImplementedException();

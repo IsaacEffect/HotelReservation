@@ -12,7 +12,6 @@ namespace HotelReservation.Domain.Interfaces
         Task DeleteAsync(Guid id);
 
         Task<bool> HabitacionDisponibleAsync(Guid habitacionId, DateTime fechaInicio, DateTime fechaFin);
-        Task<IEnumerable<object>> ObtenerReservasConDetallesAsync();
         Task<IEnumerable<Reserva>> GetByEstadoAsync(string estado);
     }
 }
