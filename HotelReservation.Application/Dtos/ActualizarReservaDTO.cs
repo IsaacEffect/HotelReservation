@@ -1,10 +1,11 @@
 namespace HotelReservation.Application.Dtos
 
 {
-    public class ActualizarReservaDTO
+    public record ActualizarReservaDTO
     {
+        public Guid ReservaId { get; set; }
         public DateTime FechaInicio { get; set; }
         public DateTime FechaFin { get; set; }
-        public string EstadoReserva { get; set; } = "Pendiente";
     }
 }
+
