@@ -2,25 +2,10 @@
 {
     public class CategoriaHabitacion
     {
-        public Guid Id { get; private set; }
-        public string Name { get; private set; } = string.Empty;
-        public string Description { get; private set; } = string.Empty;
-
-
-        public CategoriaHabitacion(string name, string description = "")
-        {
-            Id = Guid.NewGuid();
-            Name = name ?? throw new ArgumentNullException(nameof(name));
-            Description = description;
-        }
-
-        // For EF
-        protected CategoriaHabitacion() { }
-
-        public void UpdateName(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Nombre inválido");
-            Name = name;
-        }
+        public Guid Id { get; set; }
+        public string NombreCategoria { get; set; } = string.Empty;
+        public string Descripcion { get; set; } = string.Empty;
+        public int Capacidad { get; set; }
+        public decimal PrecioPorNoche { get; set; }
     }
 }

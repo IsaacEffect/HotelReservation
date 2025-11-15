@@ -1,6 +1,6 @@
-﻿using HotelReservation.Application.Contracts;
+﻿using HotelReservation.Api.Extensions;
+using HotelReservation.Application.Contracts;
 using HotelReservation.Application.Dtos;
-using HotelReservation.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelReservation.Api.Controllers
@@ -19,49 +19,36 @@ namespace HotelReservation.Api.Controllers
         [HttpGet("GetAllClients")]
         public async Task<IActionResult> GetAll()
         {
-            var clientes = await _clienteService.GetAllAsync();
-            return Ok(clientes);
+            var result = await _clienteService.GetAllAsync();
+            return result.ToActionResult();
         }
 
-        [HttpGet("GetClientById")]
+        [HttpGet("GetClientById/{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var cliente = await _clienteService.GetByIdAsync(id);
-            return cliente is null ? NotFound() : Ok(cliente);
+            var result = await _clienteService.GetByIdAsync(id);
+            return result.ToActionResult();
         }
 
         [HttpPost("InsertClient")]
         public async Task<IActionResult> Create([FromBody] InsertarClienteDto dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var cliente = new Cliente
-            {
-                Nombre = dto.Nombre,
-                Apellido = dto.Apellido,
-                Correo = dto.Correo,
-                Telefono = dto.Telefono,
-                DocumentoIdentidad = dto.DocumentoIdentidad
-            };
-
-            await _clienteService.AddAsync(cliente);
-            return Ok(new { message = "Cliente registrado correctamente" });
+            var result = await _clienteService.AddAsync(dto);
+            return result.ToActionResult();
         }
 
-        [HttpPut("ModifyClient")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] Cliente cliente)
+        [HttpPut("ModifyClient/{id}")]
+        public async Task<IActionResult> Update(Guid id, [FromBody] ActualizarClienteDto dto)
         {
-            cliente.IdCliente = id;
-            await _clienteService.UpdateAsync(cliente);
-            return Ok(new { message = "Cliente modificado correctamente" });
+            var result = await _clienteService.UpdateAsync(id, dto);
+            return result.ToActionResult();
         }
 
-        [HttpDelete("DeleteClient")]
+        [HttpDelete("DeleteClient/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _clienteService.DeleteAsync(id);
-            return Ok(new { message = "Cliente eliminado correctamente" });
+            var result = await _clienteService.DeleteAsync(id);
+            return result.ToActionResult();
         }
     }
 }

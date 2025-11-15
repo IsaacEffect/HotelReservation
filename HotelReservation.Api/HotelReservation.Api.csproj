@@ -15,8 +15,4 @@
     <ProjectReference Include="..\HotelReservation.IOC\HotelReservation.IOC.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Extensions\" />
-  </ItemGroup>
-
 </Project>

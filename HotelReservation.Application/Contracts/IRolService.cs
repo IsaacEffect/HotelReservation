@@ -1,11 +1,12 @@
-﻿using HotelReservation.Domain.Entities;
+﻿using HotelReservation.Application.Base.Result;
+using HotelReservation.Application.Dtos;
 
 namespace HotelReservation.Application.Contracts
 {
     public interface IRolService
     {
-        Task<IEnumerable<Rol>> GetAllAsync();
-        Task<Rol?> GetByIdAsync(Guid id);
-        Task AddAsync(Rol rol);
+        Task<OperationResult<IEnumerable<ObtenerRolDto>>> GetAllAsync();
+        Task<OperationResult<ObtenerRolDto>> GetByIdAsync(Guid id);
+        Task<OperationResult> AddAsync(InsertarRolDto rol);
     }
 }
