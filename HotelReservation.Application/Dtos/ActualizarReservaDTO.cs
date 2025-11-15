@@ -8,3 +8,4 @@ namespace HotelReservation.Application.Dtos
         public string EstadoReserva { get; set; } = "Pendiente";
     }
 }
+
