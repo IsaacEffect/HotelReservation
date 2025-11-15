@@ -8,7 +8,7 @@
         public decimal MontoTotal { get; set; }
         public string MetodoPago { get; set; }
 
-        public Reserva Reserva { get; set; }
+        public Reserva Reserva { get; set; } 
         public ICollection<DetalleFactura> Detalles { get; set; } = new List<DetalleFactura>();
     }
 }

@@ -1,11 +1,7 @@
 using AutoMapper;
 using HotelReservation.Api.Configurations;
 using HotelReservation.Application.Base.Mappers;
-using HotelReservation.Application.Contracts;
-using HotelReservation.Application.Services;
-using HotelReservation.Domain.Interfaces;
 using HotelReservation.IOC;
-using HotelReservation.Persistence.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -26,12 +22,6 @@ namespace HotelReservation.Api
             builder.Logging.AddConsole();
             builder.Logging.AddDebug();
             builder.Logging.SetMinimumLevel(LogLevel.Information);
-
-            // CONFIGURACIÓN BASE
-
-            var connectionString = builder.Configuration.GetConnectionString("HotelDBConnection");
-            builder.Services.AddHotelReservationPersistence(connectionString!);
-
 
             // CONFIGURACIÓN JWT (usuarios)
 
@@ -117,11 +107,6 @@ namespace HotelReservation.Api
 
                 return new Mapper(config);
             });
-
-            // REGISTRO DE SERVICIOS RESERVAS
-
-            builder.Services.AddScoped<IReservaRepository, ReservaRepository>();
-            builder.Services.AddScoped<IReservaService, ReservaService>();
 
             // CONSTRUCCIÓN DE LA APP
 
