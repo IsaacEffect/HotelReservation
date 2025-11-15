@@ -34,7 +34,7 @@ namespace HotelReservation.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> ListarReservas()
         {
-            var reservas = await _service.ObtenerReservasAsync();
+            var reservas = await _service.GetAllAsync();
             return Ok(reservas);
         }
 

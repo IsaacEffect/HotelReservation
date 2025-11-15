@@ -1,4 +1,4 @@
-using HotelReservation.Api.Extensions;
+﻿using HotelReservation.Api.Extensions;
 using HotelReservation.Application.Contracts;
 using HotelReservation.Application.Dtos;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +7,7 @@ namespace HotelReservation.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    // [Authorize(Roles = "Administrador")] // Descomentar para proteger
+
     public class CategoriasController : ControllerBase
     {
         private readonly ICategoriaHabitacionService _categoriaService;
@@ -41,7 +41,7 @@ namespace HotelReservation.Api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            _logger.LogInformation("API - Create Categoria llamado para {Name}", dto.Name);
+            _logger.LogInformation("API - Create Categoria llamado para {Name}", dto.NombreCategoria);
             var result = await _categoriaService.AddAsync(dto);
             return result.ToActionResult();
         }

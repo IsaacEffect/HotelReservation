@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="15.1.0" />
+    <PackageReference Include="QuestPDF" Version="2025.7.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -15,16 +16,4 @@
     <ProjectReference Include="..\HotelReservation.Persistence\HotelReservation.Persistence.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-  <ProjectReference Include="..\HotelReservation.Domain\HotelReservation.Domain.csproj" />
-  <ProjectReference Include="..\HotelReservation.Persistence\HotelReservation.Persistence.csproj" />
-</ItemGroup>
-
-<ItemGroup>
-  <ProjectReference Include="..\HotelReservation.Persistence\HotelReservation.Persistence.csproj" />
-</ItemGroup>
 </Project>

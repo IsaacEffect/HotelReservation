@@ -19,7 +19,7 @@ namespace HotelReservation.Persistence.Base
             IRolRepository rolRepository,
             ICategoriaHabitacionRepository categoriaRepository
             )
-            
+
         {
             _context = context;
             Clientes = clienteRepository;

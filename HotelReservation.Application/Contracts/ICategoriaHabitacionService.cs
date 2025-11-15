@@ -1,4 +1,4 @@
-using HotelReservation.Application.Base.Result;
+﻿using HotelReservation.Application.Base.Result;
 using HotelReservation.Application.Dtos;
 
 namespace HotelReservation.Application.Contracts

@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using HotelReservation.Application.Dtos;
 using HotelReservation.Domain.Entities;
 
@@ -52,6 +52,7 @@ namespace HotelReservation.Application.Base.Mappers
                 .ForMember(dest => dest.Contrasena, opt => opt.Ignore())
                 .ForMember(dest => dest.Rol, opt => opt.Ignore())
                 .ReverseMap();
+
 
             // CATEGORIA HABITACION
             CreateMap<CategoriaHabitacion, ObtenerCategoriaDto>().ReverseMap();

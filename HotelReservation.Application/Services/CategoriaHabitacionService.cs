@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using HotelReservation.Application.Base.Result;
 using HotelReservation.Application.Contracts;
 using HotelReservation.Application.Dtos;
@@ -62,11 +62,11 @@ namespace HotelReservation.Application.Services
             try
             {
                 var categoria = _mapper.Map<CategoriaHabitacion>(dto);
-                
+
                 await _unitOfWork.Categorias.AddAsync(categoria);
                 await _unitOfWork.SaveChangesAsync();
 
-                _logger.LogInformation("Categoría {Name} creada con ID {Id}", categoria.Name, categoria.Id);
+                _logger.LogInformation("Categoría {Name} creada con ID {Id}", categoria.NombreCategoria, categoria.Id);
                 return OperationResult<Guid>.Ok(categoria.Id, "Categoría creada exitosamente.");
             }
             catch (Exception ex)
@@ -83,12 +83,12 @@ namespace HotelReservation.Application.Services
                 var categoria = await _unitOfWork.Categorias.GetByIdAsync(id);
                 if (categoria == null)
                 {
-                     _logger.LogWarning("Update: Categoría con ID {Id} no encontrada.", id);
+                    _logger.LogWarning("Update: Categoría con ID {Id} no encontrada.", id);
                     return OperationResult.Fail("Categoría no encontrada.");
                 }
 
                 _mapper.Map(dto, categoria); // Actualiza la entidad existente con datos del DTO
-                
+
                 await _unitOfWork.Categorias.UpdateAsync(categoria);
                 await _unitOfWork.SaveChangesAsync();
 

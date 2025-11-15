@@ -7,12 +7,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace HotelReservation.IOC.Modules
 {
-    public static class CategoriaIOC
+    public static class ReservasIOC
     {
-        public static void RegisterCategorias(this IServiceCollection services, IConfiguration configuration)
+        public static void RegisterReservas(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<ICategoriaHabitacionService, CategoriaHabitacionService>();
-            services.AddScoped<ICategoriaHabitacionRepository, CategoriaHabitacionRepository>();
+            services.AddScoped<IReservaRepository, ReservaRepository>();
+            services.AddScoped<IReservaService, ReservaService>();
         }
     }
 }
