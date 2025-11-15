@@ -1,19 +1,18 @@
 ﻿using HotelReservation.Application.Dtos;
-using HotelReservation.Domain.Entities;
 
 namespace HotelReservation.Application.Contracts
 {
     public interface IReservaService
     {
-        Task<Reserva?> GetByIdAsync(Guid id);
-        Task<IEnumerable<Reserva>> GetAllAsync();
-        Task<Reserva> AddAsync(Reserva entity);
-        Task<Reserva> UpdateAsync(Reserva entity);
-        Task DeleteAsync(Guid id);
-
-        // ------------------------------------------------------
+        Task<ReservaDetalleDTO?> GetByIdAsync(Guid id);
+        Task<IEnumerable<ReservaDetalleDTO>> GetAllAsync();
         Task<Guid> CrearReservaAsync(CrearReservaDTO dto);
-        Task<IEnumerable<Reserva>> ObtenerReservasAsync();
-        Task<IEnumerable<object>> ObtenerReservasConDetallesAsync();
+        Task<bool> VerificarDisponibilidadAsync(Guid habitacionId, DateTime fechaInicio, DateTime fechaFin);
+        Task ActualizarReservaAsync(ActualizarReservaDTO dto);
+
+        // Cancelar Reserva (Llamará a CambiarEstado con "Cancelada")
+        Task CancelarReservaAsync(Guid reservaId);
+        Task CambiarEstadoReservaAsync(ActualizarEstadoReservaDTO dto);
+        Task<IEnumerable<ReservaDetalleDTO>> ObtenerReservasConDetallesAsync();
     }
 }

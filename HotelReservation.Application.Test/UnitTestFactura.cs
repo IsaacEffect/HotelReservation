@@ -62,7 +62,6 @@ namespace HotelReservation.Application.Test
                 ClienteId = Guid.Empty,
                 HabitacionId = Guid.Empty,
                 UsuarioId = Guid.Empty,
-                Total = total
             };
 
             var factura = new Factura
