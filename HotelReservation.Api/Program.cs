@@ -108,6 +108,24 @@ namespace HotelReservation.Api
                 return new Mapper(config);
             });
 
+            // CORS para localhost (todos los puertos)
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowLocalhost", policy =>
+                {
+                    policy
+                        .SetIsOriginAllowed(origin =>
+                        {
+                            var uri = new Uri(origin);
+                            return uri.Host == "localhost";
+                        })
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+            });
+
+
             // CONSTRUCCIÓN DE LA APP
 
             var app = builder.Build();
@@ -119,6 +137,9 @@ namespace HotelReservation.Api
             }
 
             app.UseHttpsRedirection();
+
+            // Habilitar CORS
+            app.UseCors("AllowLocalhost");// Habilitar CORS
 
             // Middlewares de autenticación/autorización
             app.UseAuthentication();
