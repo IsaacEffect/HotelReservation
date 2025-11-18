@@ -8,10 +8,12 @@ namespace HotelReservation.Api.Controllers
     public class ReportesController : ControllerBase
     {
         private readonly IReporteService _reporteService;
+        private readonly IOcupacionService _ocupacionService;
 
-        public ReportesController(IReporteService reporteService)
+        public ReportesController(IReporteService reporteService, IOcupacionService ocupacionService)
         {
             _reporteService = reporteService;
+            _ocupacionService = ocupacionService;
         }
 
         [HttpGet("ingresos")]
@@ -26,6 +28,13 @@ namespace HotelReservation.Api.Controllers
         {
             var cantidad = await _reporteService.ObtenerOcupacionPorRangoAsync(desde, hasta);
             return Ok(new { ocupacion = cantidad });
+        }
+
+        [HttpGet("ocupacion-diaria")]
+        public async Task<IActionResult> ObtenerOcupacionDiaria()
+        {
+            var reporte = await _ocupacionService.ObtenerOcupacionDiariaAsync();
+            return Ok(reporte);
         }
     }
 }
