@@ -11,13 +11,15 @@ namespace HotelReservation.Persistence.Base
         public IUsuarioRepository Usuarios { get; }
         public IRolRepository Roles { get; }
         public ICategoriaHabitacionRepository Categorias { get; }
+        public IReservaRepository Reservas { get; }
 
         public UnitOfWork(
             HotelReservationDBContext context,
             IClienteRepository clienteRepository,
             IUsuarioRepository usuarioRepository,
             IRolRepository rolRepository,
-            ICategoriaHabitacionRepository categoriaRepository
+            ICategoriaHabitacionRepository categoriaRepository,
+            IReservaRepository reservaRepository
             )
 
         {
@@ -26,6 +28,7 @@ namespace HotelReservation.Persistence.Base
             Usuarios = usuarioRepository;
             Roles = rolRepository;
             Categorias = categoriaRepository;
+            Reservas = reservaRepository;
         }
 
         public async Task<int> SaveChangesAsync()

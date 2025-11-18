@@ -6,6 +6,7 @@
         IUsuarioRepository Usuarios { get; }
         IRolRepository Roles { get; }
         ICategoriaHabitacionRepository Categorias { get; }
+        IReservaRepository Reservas { get; }
         Task<int> SaveChangesAsync();
     }
 }

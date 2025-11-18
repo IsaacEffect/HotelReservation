@@ -1,17 +1,25 @@
 ﻿using HotelReservation.Domain.Entities;
 
-
 namespace HotelReservation.Domain.Interfaces
 {
     public interface IReservaRepository
     {
-        Task<Reserva?> GetByIdAsync(Guid id);
-        Task<IEnumerable<Reserva>> GetAllAsync();
-        Task AddAsync(Reserva entity);
-        Task UpdateAsync(Reserva entity);
-        Task DeleteAsync(Guid id);
+        // CRUD principales
+        Task<Guid> CrearReservaAsync(Reserva reserva);
+        Task<IEnumerable<Reserva>> ObtenerReservasAsync();
+        Task<Reserva?> ObtenerReservaPorIdAsync(Guid id);
+        Task ModificarReservaAsync(Reserva reserva);
+        Task CancelarReservaAsync(Guid id);
 
+        // Disponibilidad de habitación
         Task<bool> HabitacionDisponibleAsync(Guid habitacionId, DateTime fechaInicio, DateTime fechaFin);
-        Task<IEnumerable<Reserva>> GetByEstadoAsync(string estado);
+        Task<bool> HabitacionDisponibleAsync(Guid habitacionId, DateTime fechaInicio, DateTime fechaFin, Guid? reservaIdExcluir);
+
+        // Consultas avanzadas (JOIN)
+        Task<IEnumerable<object>> ObtenerReservasConDetallesAsync();
+
+        // Consultas por estado (si las necesitas)
+        Task<IEnumerable<Reserva>> ObtenerReservasPorEstadoAsync(string estado);
+        Task GetByIdAsync(Guid reservaId);
     }
 }
