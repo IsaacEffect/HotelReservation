@@ -7,11 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.10" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.10" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\HotelReservation.Application\HotelReservation.Application.csproj" />
     <ProjectReference Include="..\HotelReservation.Domain\HotelReservation.Domain.csproj" />
     <ProjectReference Include="..\HotelReservation.Infrastructure\HotelReservation.Infrastructure.csproj" />
