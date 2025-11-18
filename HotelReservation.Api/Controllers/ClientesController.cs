@@ -1,10 +1,12 @@
 ﻿using HotelReservation.Api.Extensions;
 using HotelReservation.Application.Contracts;
 using HotelReservation.Application.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelReservation.Api.Controllers
 {
+    [Authorize(Roles = "Administrador,Empleado")]
     [ApiController]
     [Route("api/[controller]")]
     public class ClientesController : ControllerBase
@@ -44,6 +46,7 @@ namespace HotelReservation.Api.Controllers
             return result.ToActionResult();
         }
 
+        [Authorize(Roles = "Administrador")]
         [HttpDelete("DeleteClient/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

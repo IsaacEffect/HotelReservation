@@ -1,13 +1,14 @@
 ﻿using HotelReservation.Api.Extensions;
 using HotelReservation.Application.Contracts;
 using HotelReservation.Application.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelReservation.Api.Controllers
 {
+    [Authorize(Roles = "Administrador")]
     [ApiController]
     [Route("api/[controller]")]
-    //[Authorize(Roles = "Administrador")]
     public class RolesController : ControllerBase
     {
         private readonly IRolService _rolService;

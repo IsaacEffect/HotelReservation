@@ -1,8 +1,10 @@
-import './App.css';
+import { AppRouter } from "./app/routes/AppRouter";
+import { useAuth } from "./app/hooks/useAuth";
 
 function App() {
-    const name = "Persona";
-    return <p>Hello, {name}!</p>
+  const { isAuthenticated, loading } = useAuth();
+
+  return <AppRouter isAuth={isAuthenticated} loading={loading} />;
 }
 
-export default App
+export default App;
