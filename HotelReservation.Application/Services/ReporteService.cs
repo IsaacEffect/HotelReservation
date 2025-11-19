@@ -1,17 +1,14 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using HotelReservation.Application.Interfaces.Services;
-using HotelReservation.Persistence.Contexts;
+﻿using HotelReservation.Application.Contracts;
+using HotelReservation.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotelReservation.Application.Services
 {
     public class ReporteService : IReporteService
     {
-        private readonly HotelReservationContext _context;
+        private readonly HotelReservationDBContext _context;
 
-        public ReporteService(HotelReservationContext context)
+        public ReporteService(HotelReservationDBContext context)
         {
             _context = context;
         }

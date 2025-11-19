@@ -1,129 +1,70 @@
+using Microsoft.EntityFrameworkCore;
 using HotelReservation.Domain.Entities;
-using Microsoft.Extensions.Configuration;
-using System.Data.SqlClient;
+using HotelReservation.Domain.Interfaces;
+using HotelReservation.Persistence.Context;
 
 namespace HotelReservation.Persistence.Repositories
 {
-    public class ReservaRepository
+    public class ReservaRepository : IReservaRepository
     {
-        private readonly string _connectionString;
+        private readonly HotelReservationDBContext _context;
 
-        public ReservaRepository(IConfiguration configuration)
+        public ReservaRepository(HotelReservationDBContext context)
         {
-            _connectionString = configuration.GetConnectionString("DefaultConnection")!;
+            _context = context;
         }
 
-        public bool HabitacionDisponible(Guid habitacionId, DateTime fechaInicio, DateTime fechaFin)
+        public async Task<Reserva?> GetByIdAsync(Guid id)
         {
-            using var conn = new SqlConnection(_connectionString);
-            conn.Open();
-
-            var cmd = new SqlCommand(@"
-                SELECT COUNT(1) FROM Reservas r
-                WHERE r.HabitacionId = @habitacionId
-                AND r.EstadoReserva <> 'Cancelada'
-                AND NOT (r.FechaFin < @fechaInicio OR r.FechaInicio > @fechaFin)", conn);
-
-            cmd.Parameters.AddWithValue("@habitacionId", habitacionId);
-            cmd.Parameters.AddWithValue("@fechaInicio", fechaInicio);
-            cmd.Parameters.AddWithValue("@fechaFin", fechaFin);
-
-            int count = (int)cmd.ExecuteScalar();
-            return count == 0;
+            return await _context.Reservas!
+                .FirstOrDefaultAsync(r => r.Id == id);
         }
 
-        public Guid CrearReserva(Reserva reserva)
+        public async Task<IEnumerable<Reserva>> GetAllAsync()
         {
-            using var conn = new SqlConnection(_connectionString);
-            conn.Open();
-
-            var cmd = new SqlCommand(@"
-                INSERT INTO Reservas 
-                (FechaInicio, FechaFin, EstadoReserva, ClienteId, HabitacionId, UsuarioId, Total)
-                OUTPUT INSERTED.Id
-                VALUES (@FechaInicio, @FechaFin, @EstadoReserva, @ClienteId, @HabitacionId, @UsuarioId, @Total)", conn);
-
-            cmd.Parameters.AddWithValue("@FechaInicio", reserva.FechaInicio);
-            cmd.Parameters.AddWithValue("@FechaFin", reserva.FechaFin);
-            cmd.Parameters.AddWithValue("@EstadoReserva", reserva.EstadoReserva);
-            cmd.Parameters.AddWithValue("@ClienteId", reserva.ClienteId);
-            cmd.Parameters.AddWithValue("@HabitacionId", reserva.HabitacionId);
-            cmd.Parameters.AddWithValue("@UsuarioId", reserva.UsuarioId);
-            cmd.Parameters.AddWithValue("@Total", reserva.Total);
-
-            return (Guid)cmd.ExecuteScalar();
+            return await _context.Reservas!.ToListAsync();
         }
 
-        public IEnumerable<Reserva> ObtenerReservas()
+        public async Task AddAsync(Reserva entity)
         {
-            var reservas = new List<Reserva>();
-            using var conn = new SqlConnection(_connectionString);
-            conn.Open();
+            await _context.Reservas!.AddAsync(entity);
+            await _context.SaveChangesAsync();
+        }
 
-            var cmd = new SqlCommand("SELECT * FROM Reservas", conn);
-            var reader = cmd.ExecuteReader();
+        public async Task UpdateAsync(Reserva entity)
+        {
+            _context.Reservas!.Update(entity);
+            await _context.SaveChangesAsync();
+        }
 
-            while (reader.Read())
+        public async Task DeleteAsync(Guid id)
+        {
+            var entity = await _context.Reservas!.FindAsync(id);
+            if (entity != null)
             {
-                reservas.Add(new Reserva
-                {
-                    Id = reader.GetGuid(reader.GetOrdinal("Id")),
-                    FechaInicio = reader.GetDateTime(reader.GetOrdinal("FechaInicio")),
-                    FechaFin = reader.GetDateTime(reader.GetOrdinal("FechaFin")),
-                    EstadoReserva = reader.GetString(reader.GetOrdinal("EstadoReserva")),
-                    ClienteId = reader.GetGuid(reader.GetOrdinal("ClienteId")),
-                    HabitacionId = reader.GetGuid(reader.GetOrdinal("HabitacionId")),
-                    UsuarioId = reader.GetGuid(reader.GetOrdinal("UsuarioId")),
-                    Total = reader.GetDecimal(reader.GetOrdinal("Total"))
-                });
+                _context.Reservas.Remove(entity);
+                await _context.SaveChangesAsync();
             }
-
-            return reservas;
         }
 
-        //  NUEVO MÉTODO AGREGADO
-        public IEnumerable<object> ObtenerReservasConDetalles()
+        public async Task<IEnumerable<Reserva>> GetByEstadoAsync(string estado)
         {
-            var reservas = new List<object>();
+            return await _context.Reservas!
+                .Where(r => r.EstadoReserva == estado)
+                .ToListAsync();
+        }
 
-            using var conn = new SqlConnection(_connectionString);
-            conn.Open();
-
-            var query = @"
-                SELECT 
-                    r.Id,
-                    c.Nombre AS NombreCliente,
-                    h.Numero AS NumeroHabitacion,
-                    u.Nombre AS NombreUsuario,
-                    r.FechaInicio,
-                    r.FechaFin,
-                    r.EstadoReserva,
-                    r.Total
-                FROM Reservas r
-                INNER JOIN Clientes c ON r.ClienteId = c.Id
-                INNER JOIN Habitaciones h ON r.HabitacionId = h.Id
-                INNER JOIN Usuarios u ON r.UsuarioId = u.Id
-                ORDER BY r.FechaInicio DESC";
-
-            var cmd = new SqlCommand(query, conn);
-            var reader = cmd.ExecuteReader();
-
-            while (reader.Read())
-            {
-                reservas.Add(new
-                {
-                    Id = reader["Id"],
-                    NombreCliente = reader["NombreCliente"].ToString(),
-                    NumeroHabitacion = reader["NumeroHabitacion"].ToString(),
-                    NombreUsuario = reader["NombreUsuario"].ToString(),
-                    FechaInicio = Convert.ToDateTime(reader["FechaInicio"]),
-                    FechaFin = Convert.ToDateTime(reader["FechaFin"]),
-                    EstadoReserva = reader["EstadoReserva"].ToString(),
-                    Total = Convert.ToDecimal(reader["Total"])
-                });
-            }
-
-            return reservas;
+        public async Task<bool> HabitacionDisponibleAsync(Guid habitacionId, DateTime inicio, DateTime fin)
+        {
+            return !await _context.Reservas!
+                .AnyAsync(r =>
+                    r.HabitacionId == habitacionId &&
+                    (
+                        (inicio >= r.FechaInicio && inicio <= r.FechaFin) ||
+                        (fin >= r.FechaInicio && fin <= r.FechaFin) ||
+                        (inicio <= r.FechaInicio && fin >= r.FechaFin)
+                    )
+                );
         }
     }
 }

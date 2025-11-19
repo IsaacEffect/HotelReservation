@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ﻿namespace HotelReservation.Application.DTOs
+=======
+﻿namespace HotelReservation.Application.Dtos
+>>>>>>> origin/develop
 {
     public class CreateCheckOutRequest
     {

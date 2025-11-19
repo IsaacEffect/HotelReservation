@@ -1,31 +1,69 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using HotelReservation.Application.Interfaces.Services;
+using HotelReservation.Application.Services;
+using HotelReservation.Application.Dtos;
 
-namespace HotelReservation.API.Controllers
+namespace HotelReservation.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     public class CheckInOutController : ControllerBase
     {
-        private readonly ICheckInOutService _checkInOutService;
+        private readonly ICheckInOutService _checkService;
+        private readonly IHistorialService _histService;
 
-        public CheckInOutController(ICheckInOutService checkInOutService)
+        public CheckInOutController(ICheckInOutService checkService, IHistorialService histService)
         {
-            _checkInOutService = checkInOutService;
+            _checkService = checkService;
+            _histService = histService;
         }
 
-        [HttpPost("checkin/{reservaId}")]
-        public async Task<IActionResult> RegistrarCheckIn(Guid reservaId)
+        [HttpPost("checkin")]
+        public async Task<IActionResult> CheckIn([FromBody] CreateCheckInRequest request)
         {
-            await _checkInOutService.RegistrarCheckInAsync(reservaId);
-            return Ok(new { mensaje = "Check-In registrado correctamente." });
+            if (request == null || request.ReservaId == Guid.Empty)
+                return BadRequest("ReservaId inválido.");
+
+            var result = await _checkService.RegisterCheckInAsync(request);
+            return CreatedAtAction(nameof(GetByReserva), new { reservationId = result.ReservaId }, result);
         }
 
-        [HttpPost("checkout/{reservaId}")]
-        public async Task<IActionResult> RegistrarCheckOut(Guid reservaId)
+        [HttpPost("checkout")]
+        public async Task<IActionResult> CheckOut([FromBody] CreateCheckOutRequest request)
         {
-            await _checkInOutService.RegistrarCheckOutAsync(reservaId);
-            return Ok(new { mensaje = "Check-Out registrado y factura generada correctamente." });
+            if (request == null || request.ReservaId == Guid.Empty)
+                return BadRequest("ReservaId inválido.");
+
+            var result = await _checkService.RegisterCheckOutAsync(request);
+            return Ok(result);
+        }
+
+        [HttpGet("{reservationId:guid}")]
+        public async Task<IActionResult> GetByReserva(Guid reservationId)
+        {
+            var res = await _checkService.GetByReservaIdAsync(reservationId);
+            if (res == null) return NotFound();
+            return Ok(res);
+        }
+
+        [HttpGet("history")]
+        public async Task<IActionResult> GetHistory()
+        {
+            var res = await _histService.GetAllAsync();
+            return Ok(res);
+        }
+
+        [HttpGet("history/client/{clientId:guid}")]
+        public async Task<IActionResult> GetHistoryByClient(Guid clientId)
+        {
+            var res = await _histService.GetByClienteIdAsync(clientId);
+            return Ok(res);
+        }
+
+        [HttpGet("history/room/{roomId:guid}")]
+        public async Task<IActionResult> GetHistoryByRoom(Guid roomId)
+        {
+            var res = await _histService.GetByHabitacionIdAsync(roomId);
+            return Ok(res);
         }
     }
 }

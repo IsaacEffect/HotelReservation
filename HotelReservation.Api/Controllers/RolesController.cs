@@ -1,9 +1,12 @@
-﻿using HotelReservation.Application.Contracts;
-using HotelReservation.Domain.Entities;
+﻿using HotelReservation.Api.Extensions;
+using HotelReservation.Application.Contracts;
+using HotelReservation.Application.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelReservation.Api.Controllers
 {
+    [Authorize(Roles = "Administrador")]
     [ApiController]
     [Route("api/[controller]")]
     public class RolesController : ControllerBase
@@ -18,15 +21,22 @@ namespace HotelReservation.Api.Controllers
         [HttpGet("GetAllRoles")]
         public async Task<IActionResult> GetAll()
         {
-            var roles = await _rolService.GetAllAsync();
-            return Ok(roles);
+            var result = await _rolService.GetAllAsync();
+            return result.ToActionResult();
+        }
+
+        [HttpGet("GetRoleById/{id}")]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            var result = await _rolService.GetByIdAsync(id);
+            return result.ToActionResult();
         }
 
         [HttpPost("InsertRole")]
-        public async Task<IActionResult> Create([FromBody] Rol rol)
+        public async Task<IActionResult> Create([FromBody] InsertarRolDto dto)
         {
-            await _rolService.AddAsync(rol);
-            return Ok(new { message = "Rol registrado correctamente" });
+            var result = await _rolService.AddAsync(dto);
+            return result.ToActionResult();
         }
     }
 }

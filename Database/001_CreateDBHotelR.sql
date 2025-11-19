@@ -18,9 +18,10 @@ CREATE TABLE Usuarios (
     Nombre NVARCHAR(100) NOT NULL,
     Apellido NVARCHAR(100) NOT NULL,
     Correo NVARCHAR(120) NOT NULL UNIQUE,
-    Contrase�a NVARCHAR(255) NOT NULL,
+    Contrasena NVARCHAR(255) NOT NULL,
     RolId UNIQUEIDENTIFIER NOT NULL,
     FechaCreacion DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    Estado BIT NOT NULL DEFAULT 1,
     CONSTRAINT FK_Usuarios_Roles FOREIGN KEY (RolId) REFERENCES Roles(Id) ON DELETE CASCADE
 );
 GO
@@ -34,11 +35,12 @@ CREATE TABLE Clientes (
     Correo NVARCHAR(120) NOT NULL,
     Telefono NVARCHAR(50),
     DocumentoIdentidad NVARCHAR(50),
-    FechaCreacion DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
+    FechaCreacion DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    Estado BIT NOT NULL DEFAULT 1
 );
 GO
 
--- CATEGOR�AS Y HABITACIONES
+-- CATEGORIAS Y HABITACIONES
 
 CREATE TABLE CategoriasHabitacion (
     Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
@@ -195,14 +197,12 @@ DECLARE @ClienteId UNIQUEIDENTIFIER = (SELECT TOP 1 Id FROM Clientes WHERE Nombr
 DECLARE @HabitacionId UNIQUEIDENTIFIER = (SELECT TOP 1 Id FROM Habitaciones WHERE Numero = '101');
 DECLARE @UsuarioId UNIQUEIDENTIFIER = (SELECT TOP 1 Id FROM Usuarios WHERE Correo = 'Luisperez87o@gmail.com');
 
-INSERT INTO Reservas (FechaInicio, FechaFin, EstadoReserva, ClienteId, HabitacionId, UsuarioId, Total)
-VALUES ('2025-10-20', '2025-10-25', 'Confirmada', @ClienteId, @HabitacionId, @UsuarioId, 12500.00);
+INSERT INTO Reservas (FechaInicio, FechaFin, EstadoReserva, ClienteId, HabitacionId, UsuarioId )
+VALUES ('2025-10-20', '2025-10-25', 'Confirmada', @ClienteId, @HabitacionId, @UsuarioId )
 GO
-
-
 --
 -- 3️ CREAR VISTA DE RESERVAS DETALLADAS
--
+--
 
 CREATE OR ALTER VIEW vw_ReservasDetalle AS
 SELECT 

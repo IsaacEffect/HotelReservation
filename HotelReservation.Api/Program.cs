@@ -1,11 +1,17 @@
+using AutoMapper;
 using HotelReservation.Api.Configurations;
+using HotelReservation.Application.Base.Mappers;
+using HotelReservation.Application.Contracts;
+using HotelReservation.Domain.Interfaces;
+using HotelReservation.Infrastructure.Services;
 using HotelReservation.IOC;
+using HotelReservation.Persistence.Base;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using HotelReservation.Persistence.Repositories;
-using HotelReservation.Application.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace HotelReservation.Api
 {
@@ -15,33 +21,53 @@ namespace HotelReservation.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Configuracion de JWT (usuarios)
+            // CONFIGURACIÓN GLOBAL DE LOGS
+
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
+            builder.Logging.AddDebug();
+            builder.Logging.SetMinimumLevel(LogLevel.Information);
+
+
+            //Facturacion
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IFacturaService, FacturaService>();
+            builder.Services.AddSingleton<IPdfService, PdfService>();
+            // CONFIGURACIÓN JWT (usuarios)
+
             var jwtSettingsSection = builder.Configuration.GetSection("JwtSettings");
             builder.Services.Configure<JwtSettings>(jwtSettingsSection);
-            var jwtSettings = jwtSettingsSection.Get<JwtSettings>();
-            builder.Services.AddSingleton(jwtSettings);
+
+            builder.Services.AddSingleton(sp =>
+                sp.GetRequiredService<IOptions<JwtSettings>>().Value);
+
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
+                    var jwtSettings = jwtSettingsSection.Get<JwtSettings>()!;
+
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = jwtSettings.Issuer,
-                        ValidAudience = jwtSettings.Audience,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
+                        ValidIssuer = jwtSettings.Issuer ?? string.Empty,
+                        ValidAudience = jwtSettings.Audience ?? string.Empty,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(jwtSettings.SecretKey ?? string.Empty))
                     };
                 });
 
             builder.Services.AddAuthorization();
 
-            // Controllers
+            // CONTROLLERS
+
             builder.Services.AddControllers();
 
-            // Swagger con JWT (usuarios)
+            // SWAGGER + JWT
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
@@ -66,23 +92,54 @@ namespace HotelReservation.Api
 
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
-                    {
-                        jwtSecurityScheme,
-                        Array.Empty<string>()
-                    }
+                    { jwtSecurityScheme, Array.Empty<string>() }
                 });
             });
 
-            // IoC (Registros globales de usuario)
+
+            // INYECCIÓN DE DEPENDENCIAS (IoC)
+
             builder.Services.RegisterServices(builder.Configuration);
 
-            // Registrar las dependencias de reserva
-            builder.Services.AddScoped<ReservaRepository>();
-            builder.Services.AddScoped<ReservaService>();
+            // CONFIGURACIÓN DE AUTOMAPPER
+
+            builder.Services.AddSingleton<IMapper>(serviceProvider =>
+            {
+                var loggerFactory = serviceProvider.GetService<ILoggerFactory>();
+
+                var config = new MapperConfiguration(mapperConfig =>
+                {
+                    mapperConfig.AddProfile<MappingProfile>();
+                }, loggerFactory);
+
+                // Para habilitar validación de mapeos:
+                // config.AssertConfigurationIsValid();
+
+                return new Mapper(config);
+            });
+
+            // CORS para localhost (todos los puertos)
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowLocalhost", policy =>
+                {
+                    policy
+                        .SetIsOriginAllowed(origin =>
+                        {
+                            var uri = new Uri(origin);
+                            return uri.Host == "localhost";
+                        })
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+            });
+
+
+            // CONSTRUCCIÓN DE LA APP
 
             var app = builder.Build();
 
-            // Configurar el pipeline HTTP
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -91,11 +148,19 @@ namespace HotelReservation.Api
 
             app.UseHttpsRedirection();
 
-            // Middlewares de autenticación y autorización (usuarios)
+            // Habilitar CORS
+            app.UseCors("AllowLocalhost");// Habilitar CORS
+
+            // Middlewares de autenticación/autorización
             app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();
+
+            // LOG INICIAL DE ARRANQUE
+
+            var logger = app.Services.GetRequiredService<ILogger<Program>>();
+            logger.LogInformation("HotelReservation API iniciada correctamente en entorno: {Env}", app.Environment.EnvironmentName);
 
             app.Run();
         }

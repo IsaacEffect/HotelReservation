@@ -1,10 +1,20 @@
 ﻿using HotelReservation.Api.Extensions;
 using HotelReservation.Application.Contracts;
 using HotelReservation.Application.Dtos;
+<<<<<<< HEAD
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelReservation.Api.Controllers
 {
+=======
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+
+namespace HotelReservation.Api.Controllers
+{
+    [Authorize(Roles = "Administrador")]
+>>>>>>> origin/develop
     [ApiController]
     [Route("api/[controller]")]
     public class UsuariosController : ControllerBase
@@ -56,12 +66,26 @@ namespace HotelReservation.Api.Controllers
             return result.ToActionResult();
         }
 
+<<<<<<< HEAD
+=======
+        [Authorize(Roles = "Administrador,Empleado")]
+>>>>>>> origin/develop
         [HttpPut("ChangePassword")]
         public async Task<IActionResult> CambiarContrasena([FromBody] CambiarContrasenaDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+<<<<<<< HEAD
+=======
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
+            var userIdToken = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            // Si es empleado, NO puede cambiar la de otro
+            if (role == "Empleado" && userIdToken != dto.IdUsuario.ToString())
+                return Forbid();
+
+>>>>>>> origin/develop
             _logger.LogInformation("API - ChangePassword llamado para ID {IdUsuario}", dto.IdUsuario);
             var result = await _usuarioService.CambiarContrasenaAsync(dto);
             return result.ToActionResult();

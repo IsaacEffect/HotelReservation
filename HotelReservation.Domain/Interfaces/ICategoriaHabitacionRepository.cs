@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 using HotelReservation.Domain.Entities;
+=======
+﻿using HotelReservation.Domain.Entities;
+>>>>>>> origin/develop
 
 namespace HotelReservation.Domain.Interfaces
 {

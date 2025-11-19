@@ -1,5 +1,5 @@
 ﻿using HotelReservation.Domain.Entities;
-using HotelReservation.Persistence.Contexts;
+using HotelReservation.Persistence.Context;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 namespace HotelReservation.Api.Controllers
@@ -8,9 +8,9 @@ namespace HotelReservation.Api.Controllers
     [Route("api/[controller]")]
     public class TestController : ControllerBase
     {
-        private readonly HotelReservationContext _context;
+        private readonly HotelReservationDBContext _context;
 
-        public TestController(HotelReservationContext context)
+        public TestController(HotelReservationDBContext context)
         {
             _context = context;
         }

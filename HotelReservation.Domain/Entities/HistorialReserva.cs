@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace HotelReservation.Domain.Entities
+﻿namespace HotelReservation.Domain.Entities
 {
     public class HistorialReserva
     {
@@ -9,9 +7,6 @@ namespace HotelReservation.Domain.Entities
         public Guid ClienteId { get; set; }
         public DateTime FechaEntrada { get; set; }
         public DateTime FechaSalida { get; set; }
-        public string Motivo { get; set; }
-
-        public Habitacion Habitacion { get; set; }
-        public Cliente Cliente { get; set; }
+        public string? Motivo { get; set; }
     }
 }

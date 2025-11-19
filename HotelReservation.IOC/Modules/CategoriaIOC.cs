@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 using HotelReservation.Application.Contracts;
+=======
+﻿using HotelReservation.Application.Contracts;
+>>>>>>> origin/develop
 using HotelReservation.Application.Services;
 using HotelReservation.Domain.Interfaces;
 using HotelReservation.Persistence.Repositories;

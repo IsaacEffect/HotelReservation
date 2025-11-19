@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 using HotelReservation.Domain.Entities;
+=======
+﻿using HotelReservation.Domain.Entities;
+>>>>>>> origin/develop
 using HotelReservation.Domain.Interfaces;
 using HotelReservation.Persistence.Context;
 using Microsoft.EntityFrameworkCore;

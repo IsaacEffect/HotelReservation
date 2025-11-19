@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 using AutoMapper;
+=======
+﻿using AutoMapper;
+>>>>>>> origin/develop
 using HotelReservation.Application.Dtos;
 using HotelReservation.Domain.Entities;
 
@@ -8,10 +12,13 @@ namespace HotelReservation.Application.Base.Mappers
     {
         public MappingProfile()
         {
+<<<<<<< HEAD
             //Facturacion
             CreateMap<Factura, FacturaDto>().ReverseMap();
             CreateMap<DetalleFactura, DetalleFacturaDto>().ReverseMap();
 
+=======
+>>>>>>> origin/develop
             // ROL
             CreateMap<Rol, ObtenerRolDto>().ReverseMap();
 
@@ -57,6 +64,10 @@ namespace HotelReservation.Application.Base.Mappers
                 .ForMember(dest => dest.Rol, opt => opt.Ignore())
                 .ReverseMap();
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/develop
             // CATEGORIA HABITACION
             CreateMap<CategoriaHabitacion, ObtenerCategoriaDto>().ReverseMap();
 

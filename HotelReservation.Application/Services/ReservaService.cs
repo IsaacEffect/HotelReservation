@@ -1,57 +1,62 @@
-using System;
-using System.Collections.Generic;
+using HotelReservation.Application.Contracts;
 using HotelReservation.Application.Dtos;
-using HotelReservation.Domain.Entities;
-using HotelReservation.Persistence.Repositories;
+using HotelReservation.Domain.Interfaces;
 
 namespace HotelReservation.Application.Services
 {
-    public class ReservaService
+    public class ReservaService : IReservaService
     {
-        private readonly ReservaRepository _repo;
+        private readonly IReservaRepository _repo;
 
-        public ReservaService(ReservaRepository repo)
+        public ReservaService(IReservaRepository repo)
         {
             _repo = repo;
         }
 
-        //  Crear una nueva reserva
-        public Guid CrearReserva(CrearReservaDTO dto)
+        Task<IEnumerable<ReservaDTO>> IReservaService.GetAllAsync()
         {
-            if (dto.FechaInicio >= dto.FechaFin)
-                throw new Exception("Las fechas de inicio y fin son inválidas.");
-
-            if (!_repo.HabitacionDisponible(dto.HabitacionId, dto.FechaInicio, dto.FechaFin))
-                throw new Exception("La habitación no está disponible en ese rango de fechas.");
-
-            var noches = (dto.FechaFin - dto.FechaInicio).Days;
-            var total = dto.PrecioPorNoche * noches;
-
-            var reserva = new Reserva
-            {
-                Id = Guid.NewGuid(),
-                FechaInicio = dto.FechaInicio,
-                FechaFin = dto.FechaFin,
-                EstadoReserva = "Pendiente",
-                ClienteId = dto.ClienteId,
-                HabitacionId = dto.HabitacionId,
-                UsuarioId = dto.UsuarioId,
-                Total = total
-            };
-
-            return _repo.CrearReserva(reserva);
+            throw new NotImplementedException();
         }
 
-        //  Obtener todas las reservas simples
-        public IEnumerable<Reserva> ObtenerReservas()
+        Task<ReservaDTO?> IReservaService.GetByIdAsync(Guid id)
         {
-            return _repo.ObtenerReservas();
+            throw new NotImplementedException();
         }
 
-        // NUEVO MÉTODO - Obtener reservas con información detallada
-        public IEnumerable<object> ObtenerReservasConDetalles()
+        public Task ActualizarReservaAsync(ActualizarReservaDTO dto)
         {
-            return _repo.ObtenerReservasConDetalles();
+            throw new NotImplementedException();
+        }
+
+        public Task CambiarEstadoReservaAsync(ActualizarEstadoReservaDTO dto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task CancelarReservaAsync(Guid reservaId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Guid> CrearReservaAsync(CrearReservaDTO dto)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public Task<ReservaDetalleDTO?> GetReservaDetalleByIdAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<ReservaDetalleDTO>> ObtenerReservasConDetallesAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> VerificarDisponibilidadAsync(Guid habitacionId, DateTime fechaInicio, DateTime fechaFin)
+        {
+            throw new NotImplementedException();
         }
     }
 }

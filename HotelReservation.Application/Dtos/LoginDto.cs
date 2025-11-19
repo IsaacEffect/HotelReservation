@@ -8,7 +8,7 @@ namespace HotelReservation.Application.Dtos
         [EmailAddress(ErrorMessage = "Formato de correo inválido.")]
         public string Correo { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "La contraseña es obligatoria.")]
-        public string Contraseña { get; set; } = string.Empty;
+        [Required(ErrorMessage = "La Contraseña es obligatoria.")]
+        public string Contrasena { get; set; } = string.Empty;
     }
 }

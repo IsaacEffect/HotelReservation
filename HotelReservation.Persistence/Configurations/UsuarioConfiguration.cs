@@ -30,7 +30,7 @@ namespace HotelReservation.Persistence.Configurations
 
             builder.HasIndex(u => u.Correo).IsUnique();
 
-            builder.Property(u => u.Contraseña)
+            builder.Property(u => u.Contrasena)
                 .IsRequired()
                 .HasMaxLength(255);
 

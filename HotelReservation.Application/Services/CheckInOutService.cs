@@ -1,118 +1,223 @@
-﻿using System;
-using System.Threading.Tasks;
-using HotelReservation.Application.Interfaces.Services;
+﻿using HotelReservation.Application.Dtos;
 using HotelReservation.Domain.Entities;
-using HotelReservation.Persistence.Contexts;
-using Microsoft.EntityFrameworkCore;
+using HotelReservation.Domain.Interfaces;
 
 namespace HotelReservation.Application.Services
 {
+    public interface ICheckInOutService
+    {
+        Task<CheckInOutDto?> GetByReservaIdAsync(Guid reservaId);
+        Task<CheckInOutDto> RegisterCheckInAsync(CreateCheckInRequest request);
+        Task<CheckInOutDto> RegisterCheckOutAsync(CreateCheckOutRequest request);
+    }
+
     public class CheckInOutService : ICheckInOutService
     {
-        private readonly HotelReservationContext _context;
+        private readonly ICheckInOutRepository _checkRepo;
+        private readonly IHistorialReservaRepository _histRepo;
+        private readonly IReservaRepository _reservaRepo;
+        private readonly IHabitacionRepository _habitacionRepo; // para actualizar el estado
+        private readonly IClienteRepository _clienteRepo;
 
-        public CheckInOutService(HotelReservationContext context)
+        public CheckInOutService(
+            ICheckInOutRepository checkRepo,
+            IHistorialReservaRepository histRepo,
+            IReservaRepository reservaRepo,
+            IHabitacionRepository habitacionRepo,
+            IClienteRepository clienteRepo)
         {
-            _context = context;
+            _checkRepo = checkRepo;
+            _histRepo = histRepo;
+            _reservaRepo = reservaRepo;
+            _habitacionRepo = habitacionRepo;
+            _clienteRepo = clienteRepo;
         }
 
-        public async Task RegistrarCheckInAsync(Guid reservaId)
+        public async Task<CheckInOutDto?> GetByReservaIdAsync(Guid reservaId)
         {
-            var reserva = await _context.Reservas
-                .Include(r => r.Habitacion)
-                .FirstOrDefaultAsync(r => r.Id == reservaId);
-
-            if (reserva == null)
-                throw new Exception("Reserva no encontrada.");
-
-            var checkIn = new CheckInOut
+            var ent = await _checkRepo.GetByReservaIdAsync(reservaId);
+            if (ent == null) return null;
+            return new CheckInOutDto
             {
-                Id = Guid.NewGuid(),
-                ReservaId = reservaId,
-                FechaCheckIn = DateTime.Now,
-                Observaciones = "Check-in registrado automáticamente"
+                Id = ent.Id,
+                ReservaId = ent.ReservaId,
+                FechaCheckIn = ent.FechaCheckIn,
+                FechaCheckOut = ent.FechaCheckOut,
+                Observaciones = ent.Observaciones
             };
-
-            reserva.Habitacion.Estado = "Ocupada";
-            _context.CheckInOut.Add(checkIn);
-            await _context.SaveChangesAsync();
         }
 
-        public async Task RegistrarCheckOutAsync(Guid reservaId)
+        public async Task<CheckInOutDto> RegisterCheckInAsync(CreateCheckInRequest request)
         {
-            var reserva = await _context.Reservas
-                .Include(r => r.Habitacion)
-                .Include(r => r.Detalles) // DetalleReserva
-                .FirstOrDefaultAsync(r => r.Id == reservaId);
+            if (request == null)
+                throw new ArgumentNullException(nameof(request), "La solicitud de Check-In no puede ser nula.");
 
-            if (reserva == null)
-                throw new Exception("Reserva no encontrada.");
+            if (request.ReservaId == Guid.Empty)
+                throw new ArgumentException("El Id de la reserva no es valido.", nameof(request.ReservaId));
 
-            var checkOut = await _context.CheckInOut
-                .FirstOrDefaultAsync(c => c.ReservaId == reservaId);
-
-            if (checkOut == null)
-                throw new Exception("No se encontró registro de Check-In.");
-
-            checkOut.FechaCheckOut = DateTime.Now;
-            reserva.Habitacion.Estado = "Disponible";
-            reserva.EstadoReserva = "Completada";
-
-            // Calcular total
-            var noches = (reserva.FechaFin - reserva.FechaInicio).Days;
-            var precioPorNoche = await _context.Habitaciones
-                .Where(h => h.Id == reserva.HabitacionId)
-                .Select(h => h.Categoria.PrecioPorNoche)
-                .FirstOrDefaultAsync();
-
-            var totalServicios = reserva.Detalles.Sum(d => d.Cantidad * d.PrecioUnitario); // Subtotal calculado
-            var totalEstancia = noches * precioPorNoche;
-            var totalFinal = totalEstancia + totalServicios;
-
-            reserva.Total = totalFinal;
-
-            // Generar factura
-            var factura = new Factura
+            var check = new CheckInOut
             {
-                Id = Guid.NewGuid(),
-                ReservaId = reservaId,
-                FechaEmision = DateTime.Now,
-                MetodoPago = "Efectivo",
-                MontoTotal = totalFinal
+                ReservaId = request.ReservaId,
+                FechaCheckIn = request.FechaCheckIn,
+                Observaciones = request.Observaciones
             };
 
-            _context.Facturas.Add(factura);
-            await _context.SaveChangesAsync(); // Guarda la factura primero
-            Console.WriteLine($"Factura guardada con ID: {factura.Id}");
+            var created = await _checkRepo.AddAsync(check);
 
-            // Insertar detalles de factura
-            Console.WriteLine($"Detalles encontrados: {reserva.Detalles.Count}");
-
-            foreach (var detalle in reserva.Detalles)
+            // Actualiza el estado de la habitacion a 'Ocupada'
+            if (_reservaRepo != null && _habitacionRepo != null)
             {
-                var detalleFactura = new DetalleFactura
+                var reserva = await _reservaRepo.GetByIdAsync(request.ReservaId);
+                if (reserva != null)
                 {
-                    Id = Guid.NewGuid(),
-                    FacturaId = factura.Id,
-                    Descripcion = detalle.Descripcion,
-                    Cantidad = detalle.Cantidad,
-                    PrecioUnitario = detalle.PrecioUnitario
-                    // Subtotal se calcula automáticamente en SQL Server
-                };
+                    // Actualizar estado de habitacion
+                    var habitacion = await _habitacionRepo.GetByIdAsync(reserva.HabitacionId);
+                    if (habitacion != null)
+                    {
+                        if (habitacion.Estado == "Mantenimiento")
+                            throw new InvalidOperationException("No se puede realizar el check-in: la habitacion se encuentra en mantenimiento.");
 
-                _context.DetalleFacturas.Add(detalleFactura);
+                        if (habitacion.Estado == "Ocupada")
+                            throw new InvalidOperationException("La habitación ya se encuentra ocupada.");
+
+                        try
+                        {
+                            habitacion.Estado = "Ocupada";
+                            await _habitacionRepo.UpdateAsync(habitacion);
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new InvalidOperationException($"Error al actualizar el estado de la habitacion ({habitacion.Numero}).", ex);
+                        }
+                    }
+                    else
+                    {
+                        throw new KeyNotFoundException("No se encontro la habitacion asociada a la reserva.");
+                    }
+                }
+                else
+                {
+                    throw new KeyNotFoundException("No se encontro la reserva asociada al Check-In.");
+                }
+            }
+            else
+            {
+                throw new InvalidOperationException("Repositorios de Reserva o Habitacion no disponibles.");
             }
 
+            return new CheckInOutDto
+            {
+                Id = created.Id,
+                ReservaId = created.ReservaId,
+                FechaCheckIn = created.FechaCheckIn,
+                Observaciones = created.Observaciones
+            };
+        }
+
+        public async Task<CheckInOutDto> RegisterCheckOutAsync(CreateCheckOutRequest request)
+        {
+
+            if (request == null)
+                throw new ArgumentNullException(nameof(request), "La solicitud de CheckOut no puede ser nula.");
+
+            if (request.ReservaId == Guid.Empty)
+                throw new ArgumentException("El Id de la reserva no es valido.", nameof(request.ReservaId));
+
+            // Buscar el registro existente de CheckInOut
+            var existing = await _checkRepo.GetByReservaIdAsync(request.ReservaId);
+
+            // Verificar si ya tiene un Check-Out registrado
+            if (existing != null && existing.FechaCheckOut != null)
+                throw new InvalidOperationException("Ya existe un Check-Out registrado para esta reserva.");
+
+            if (existing == null)
+            {
+                // Si no existe, crea uno nuevo solo con CheckOut
+                existing = new CheckInOut
+                {
+                    ReservaId = request.ReservaId,
+                    FechaCheckOut = request.FechaCheckOut,
+                    Observaciones = request.Observaciones
+                };
+                existing = await _checkRepo.AddAsync(existing);
+            }
+            else
+            {
+                // Actualiza el existente
+                existing.FechaCheckOut = request.FechaCheckOut;
+                existing.Observaciones = request.Observaciones;
+                existing = await _checkRepo.UpdateAsync(existing);
+            }
+
+            // Obtener la reserva asociada
+            var reserva = await _reservaRepo.GetByIdAsync(request.ReservaId);
+            if (reserva == null)
+                throw new KeyNotFoundException("No se encontro la reserva asociada al Check-Out.");
+
+            // Obtener la habitacion vinculada
+            var habitacion = await _habitacionRepo.GetByIdAsync(reserva.HabitacionId);
+            if (habitacion == null)
+                throw new KeyNotFoundException("No se encontro la habitacion asociada a la reserva.");
+
+            // Crear registro en HistorialReservas
             try
             {
-                await _context.SaveChangesAsync(); // Guarda los detalles después
-                Console.WriteLine("Detalles de factura guardados correctamente.");
+                var historialExistente = await _histRepo.GetByClienteYFechasAsync(
+                    reserva.ClienteId,
+                    reserva.FechaInicio,
+                    reserva.FechaFin
+                );
+
+                if (historialExistente == null)
+                {
+                    var historial = new HotelReservation.Domain.Entities.HistorialReserva
+                    {
+                        HabitacionId = reserva.HabitacionId,
+                        ClienteId = reserva.ClienteId,
+                        FechaEntrada = reserva.FechaInicio,
+                        FechaSalida = reserva.FechaFin,
+                        Motivo = "Estancia completada"
+                    };
+                    await _histRepo.AddAsync(historial);
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error al guardar DetalleFactura: " + ex.InnerException?.Message ?? ex.Message);
-                throw;
+                throw new Exception("Error al registrar el historial de la reserva.", ex);
             }
+
+            // Actualizar el estado de la habitacion
+            try
+            {
+                if (habitacion.Estado != "Mantenimiento")
+                    habitacion.Estado = "Disponible";
+
+                await _habitacionRepo.UpdateAsync(habitacion);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al actualizar el estado de la habitacion ({habitacion.Numero}).", ex);
+            }
+
+            // Actualizar el estado de la reserva
+            try
+            {
+                reserva.EstadoReserva = "Completada";
+                await _reservaRepo.UpdateAsync(reserva);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al actualizar el estado de la reserva a 'Completada'.", ex);
+            }
+
+            return new CheckInOutDto
+            {
+                Id = existing.Id,
+                ReservaId = existing.ReservaId,
+                FechaCheckIn = existing.FechaCheckIn,
+                FechaCheckOut = existing.FechaCheckOut,
+                Observaciones = existing.Observaciones
+            };
         }
     }
 }
