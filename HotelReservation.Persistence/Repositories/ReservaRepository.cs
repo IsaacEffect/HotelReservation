@@ -1,43 +1,70 @@
+using Microsoft.EntityFrameworkCore;
 using HotelReservation.Domain.Entities;
 using HotelReservation.Domain.Interfaces;
+using HotelReservation.Persistence.Context;
 
 namespace HotelReservation.Persistence.Repositories
 {
     public class ReservaRepository : IReservaRepository
     {
-        public Task AddAsync(Reserva entity)
+        private readonly HotelReservationDBContext _context;
+
+        public ReservaRepository(HotelReservationDBContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public Task DeleteAsync(Guid id)
+        public async Task<Reserva?> GetByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            return await _context.Reservas!
+                .FirstOrDefaultAsync(r => r.Id == id);
         }
 
-        public Task<IEnumerable<Reserva>> GetAllAsync()
+        public async Task<IEnumerable<Reserva>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Reservas!.ToListAsync();
         }
 
-        public Task<IEnumerable<Reserva>> GetByEstadoAsync(string estado)
+        public async Task AddAsync(Reserva entity)
         {
-            throw new NotImplementedException();
+            await _context.Reservas!.AddAsync(entity);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<Reserva?> GetByIdAsync(Guid id)
+        public async Task UpdateAsync(Reserva entity)
         {
-            throw new NotImplementedException();
+            _context.Reservas!.Update(entity);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<bool> HabitacionDisponibleAsync(Guid habitacionId, DateTime fechaInicio, DateTime fechaFin)
+        public async Task DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var entity = await _context.Reservas!.FindAsync(id);
+            if (entity != null)
+            {
+                _context.Reservas.Remove(entity);
+                await _context.SaveChangesAsync();
+            }
         }
 
-        public Task UpdateAsync(Reserva entity)
+        public async Task<IEnumerable<Reserva>> GetByEstadoAsync(string estado)
         {
-            throw new NotImplementedException();
+            return await _context.Reservas!
+                .Where(r => r.EstadoReserva == estado)
+                .ToListAsync();
+        }
+
+        public async Task<bool> HabitacionDisponibleAsync(Guid habitacionId, DateTime inicio, DateTime fin)
+        {
+            return !await _context.Reservas!
+                .AnyAsync(r =>
+                    r.HabitacionId == habitacionId &&
+                    (
+                        (inicio >= r.FechaInicio && inicio <= r.FechaFin) ||
+                        (fin >= r.FechaInicio && fin <= r.FechaFin) ||
+                        (inicio <= r.FechaInicio && fin >= r.FechaFin)
+                    )
+                );
         }
     }
 }

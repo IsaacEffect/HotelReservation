@@ -91,7 +91,7 @@ namespace HotelReservation.Api.Controllers
             {
                 new Claim(ClaimTypes.NameIdentifier, usuarioDto.IdUsuario.ToString()),
                 new Claim(ClaimTypes.Email, usuarioDto.Correo),
-                new Claim(ClaimTypes.Role, usuarioDto.Rol?.NombreRol ?? "Cliente")
+                new Claim(ClaimTypes.Role, usuarioDto.Rol?.NombreRol ?? "Empleado")
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey));

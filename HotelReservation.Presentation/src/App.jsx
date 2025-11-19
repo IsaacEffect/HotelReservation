@@ -1,8 +1,7 @@
-import './App.css';
+import { AppRouter } from "./app/routes/AppRouter";
 
 function App() {
-    const name = "Persona";
-    return <p>Hello, {name}!</p>
+  return <AppRouter />;
 }
 
-export default App
+export default App;

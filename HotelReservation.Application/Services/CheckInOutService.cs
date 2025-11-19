@@ -75,7 +75,7 @@ namespace HotelReservation.Application.Services
                     if (habitacion != null)
                     {
                         if (habitacion.Estado == "Mantenimiento")
-                            throw new Exception("No se puede realizar el check-in: la habitacion se encuentra en mantenimiento.");
+                            throw new InvalidOperationException("No se puede realizar el check-in: la habitacion se encuentra en mantenimiento.");
 
                         if (habitacion.Estado == "Ocupada")
                             throw new InvalidOperationException("La habitación ya se encuentra ocupada.");
@@ -87,7 +87,7 @@ namespace HotelReservation.Application.Services
                         }
                         catch (Exception ex)
                         {
-                            throw new Exception($"Error al actualizar el estado de la habitacion ({habitacion.Numero}).", ex);
+                            throw new InvalidOperationException($"Error al actualizar el estado de la habitacion ({habitacion.Numero}).", ex);
                         }
                     }
                     else
