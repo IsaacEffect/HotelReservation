@@ -16,3 +16,4 @@
         public decimal? Total { get; set; }
     }
 }
+

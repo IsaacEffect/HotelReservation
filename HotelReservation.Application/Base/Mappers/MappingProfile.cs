@@ -64,31 +64,8 @@ namespace HotelReservation.Application.Base.Mappers
 
             // -----------------------------------------------
 
-            // Entidad a DTO Básico (para GetById, GetAll)
-            CreateMap<Reserva, ReservaDTO>().ReverseMap();
-
-            // DTO de Creación -> Entidad
-            CreateMap<CrearReservaDTO, Reserva>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
-                .ForMember(dest => dest.FechaReserva, opt => opt.MapFrom(src => DateTime.UtcNow))
-                // El estado ("Confirmada") lo asigna el Servicio, no el mapeador
-                .ForMember(dest => dest.EstadoReserva, opt => opt.Ignore()) 
-                // El Total lo calcula el Trigger de SQL
-                .ForMember(dest => dest.Total, opt => opt.Ignore()); 
-
-            // DTO de Actualización -> Entidad (Solo actualiza fechas)
-            CreateMap<ActualizarReservaDTO, Reserva>()
-                .ForMember(dest => dest.FechaInicio, opt => opt.MapFrom(src => src.FechaInicio))
-                .ForMember(dest => dest.FechaFin, opt => opt.MapFrom(src => src.FechaFin))
-                // Ignora todos los demás campos para no sobrescribirlos
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
-                .ForMember(dest => dest.FechaReserva, opt => opt.Ignore())
-                // El estado ("Pendiente") lo asigna el Servicio
-                .ForMember(dest => dest.EstadoReserva, opt => opt.Ignore()) 
-                .ForMember(dest => dest.ClienteId, opt => opt.Ignore())
-                .ForMember(dest => dest.HabitacionId, opt => opt.Ignore())
-                .ForMember(dest => dest.UsuarioId, opt => opt.Ignore())
-                .ForMember(dest => dest.Total, opt => opt.Ignore());
+            
+            // -----------------------------------------------
 
         }
     }

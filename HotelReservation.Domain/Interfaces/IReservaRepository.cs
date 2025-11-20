@@ -20,6 +20,6 @@ namespace HotelReservation.Domain.Interfaces
 
         // Consultas por estado (si las necesitas)
         Task<IEnumerable<Reserva>> ObtenerReservasPorEstadoAsync(string estado);
-        Task GetByIdAsync(Guid reservaId);
     }
 }
+

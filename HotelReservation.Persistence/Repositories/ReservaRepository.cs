@@ -1,7 +1,8 @@
 using HotelReservation.Domain.Entities;
 using HotelReservation.Domain.Interfaces;
 using Microsoft.Extensions.Configuration;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
+
 
 namespace HotelReservation.Persistence.Repositories
 {
@@ -56,12 +57,59 @@ namespace HotelReservation.Persistence.Repositories
             await conn.OpenAsync();
 
             var cmd = new SqlCommand(@"
-                INSERT INTO Reservas 
-                (FechaInicio, FechaFin, EstadoReserva, ClienteId, HabitacionId, UsuarioId, FechaReserva)
-                OUTPUT INSERTED.Id
-                VALUES (@FechaInicio, @FechaFin, @EstadoReserva, @ClienteId, @HabitacionId, @UsuarioId, @FechaReserva)",
+        INSERT INTO Reservas 
+        (FechaInicio, FechaFin, EstadoReserva, ClienteId, HabitacionId, UsuarioId, FechaReserva, Total)
+        OUTPUT INSERTED.Id
+        VALUES (
+            @FechaInicio, 
+            @FechaFin, 
+            @EstadoReserva, 
+            @ClienteId, 
+            @HabitacionId, 
+            @UsuarioId, 
+            @FechaReserva,
+            @TotalCalculado 
+        )",
                 conn);
 
+            // 1. Obtener el PrecioPorNoche de la Categoría de la Habitación
+            var precioQuery = @"
+        SELECT cat.PrecioPorNoche
+        FROM Habitaciones h
+        INNER JOIN CategoriasHabitacion cat ON h.CategoriaId = cat.Id
+        WHERE h.Id = @HabitacionId";
+
+            var precioCmd = new SqlCommand(precioQuery, conn);
+            precioCmd.Parameters.AddWithValue("@HabitacionId", reserva.HabitacionId);
+
+            object? precioResult = await precioCmd.ExecuteScalarAsync();
+            if (precioResult == null || precioResult == DBNull.Value)
+            {
+                // Manejar el caso de que la habitación o su categoría no exista.
+                throw new InvalidOperationException($"No se pudo encontrar el precio por noche para la habitación {reserva.HabitacionId}.");
+            }
+
+            // ARREGLO 1: Usar '!' para indicar al compilador que ya se verificó la nulidad.
+            decimal precioPorNoche = (decimal)precioResult!;
+
+            // 2. Calcular la diferencia de días (FechaFin - FechaInicio)
+            // Se asume que FechaInicio y FechaFin están en la entidad Reserva.
+            int dias = (int)(reserva.FechaFin - reserva.FechaInicio).TotalDays;
+            if (dias <= 0)
+            {
+                // Si son menos de un día, podría ser 1 día si la política lo exige, o lanzar un error.
+                // Usaremos Math.Max(1, dias) si la política es cobrar al menos un día.
+                // Para este ejemplo, si es 0 o menos, lanzamos una excepción simple.
+                throw new InvalidOperationException("La fecha de fin debe ser posterior a la fecha de inicio.");
+            }
+
+            // 3. Calcular el Total
+            decimal totalCalculado = dias * precioPorNoche;
+
+            // Asignar el total calculado a la entidad antes de la inserción
+            reserva.Total = totalCalculado;
+
+            // Añadir todos los parámetros al comando INSERT
             cmd.Parameters.AddWithValue("@FechaInicio", reserva.FechaInicio);
             cmd.Parameters.AddWithValue("@FechaFin", reserva.FechaFin);
             cmd.Parameters.AddWithValue("@EstadoReserva", reserva.EstadoReserva);
@@ -69,11 +117,15 @@ namespace HotelReservation.Persistence.Repositories
             cmd.Parameters.AddWithValue("@HabitacionId", reserva.HabitacionId);
             cmd.Parameters.AddWithValue("@UsuarioId", reserva.UsuarioId);
             cmd.Parameters.AddWithValue("@FechaReserva", reserva.FechaReserva);
+            cmd.Parameters.AddWithValue("@TotalCalculado", totalCalculado); // Nuevo parámetro
 
-            return (Guid)await cmd.ExecuteScalarAsync();
+            // Ejecutar el INSERT y obtener el ID
+            // ARREGLO 2: Usar '!' para suprimir el warning, ya que 'OUTPUT INSERTED.Id'
+            // garantiza que se devolverá un GUID si el INSERT tiene éxito.
+            return (Guid)await cmd.ExecuteScalarAsync()!;
         }
 
-        public async Task<IEnumerable<Reserva>> GetReservasAsync()
+        public async Task<IEnumerable<Reserva>> ObtenerReservasAsync()
         {
             var reservas = new List<Reserva>();
             using var conn = new SqlConnection(_connectionString);
@@ -123,7 +175,9 @@ namespace HotelReservation.Persistence.Repositories
                 ClienteId = reader.GetGuid(reader.GetOrdinal("ClienteId")),
                 HabitacionId = reader.GetGuid(reader.GetOrdinal("HabitacionId")),
                 UsuarioId = reader.GetGuid(reader.GetOrdinal("UsuarioId")),
-                Total = reader.IsDBNull(reader.GetOrdinal("Total")) ? null : reader.GetDecimal(reader.GetOrdinal("Total"))
+                Total = reader.IsDBNull(reader.GetOrdinal("Total"))
+            ? 0
+            : reader.GetDecimal(reader.GetOrdinal("Total")),
             };
         }
 
@@ -207,6 +261,11 @@ namespace HotelReservation.Persistence.Repositories
                     Categoria = reader.GetString(reader.GetOrdinal("Categoria")),
                     PrecioPorNoche = reader.GetDecimal(reader.GetOrdinal("PrecioPorNoche")),
                     NombreUsuario = reader.GetString(reader.GetOrdinal("NombreUsuario")),
+
+                    // 👇 SE AGREGA EL TOTAL AQUÍ
+                    Total = reader.IsDBNull(reader.GetOrdinal("Total"))
+                        ? 0
+                        : reader.GetDecimal(reader.GetOrdinal("Total")),
                 });
             }
 
@@ -248,42 +307,32 @@ namespace HotelReservation.Persistence.Repositories
 
             return reservas;
         }
-        
+
         // --- MÉTODOS GENÉRICOS (STUBS) ---
-        
+
         public Task<Reserva?> GetByIdAsync(Guid id)
         {
             throw new NotImplementedException("Use ObtenerReservaPorIdAsync");
         }
-        
+
         public Task<IEnumerable<Reserva>> GetAllAsync()
         {
             throw new NotImplementedException("Use ObtenerReservasAsync");
         }
-        
+
         public Task<Reserva> AddAsync(Reserva entity)
         {
             throw new NotImplementedException("Use CrearReservaAsync");
         }
-        
+
         public Task<Reserva> UpdateAsync(Reserva entity)
         {
             throw new NotImplementedException("Use ModificarReservaAsync");
         }
-        
+
         public Task DeleteAsync(Guid id)
         {
             throw new NotImplementedException("Use CancelarReservaAsync");
-        }
-
-        public Task<IEnumerable<Reserva>> ObtenerReservasAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        Task IReservaRepository.GetByIdAsync(Guid reservaId)
-        {
-            return GetByIdAsync(reservaId);
         }
     }
 }

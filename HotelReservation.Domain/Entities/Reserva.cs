@@ -10,7 +10,7 @@ namespace HotelReservation.Domain.Entities
         public Guid ClienteId { get; set; }
         public Guid HabitacionId { get; set; }
         public Guid UsuarioId { get; set; }
-        public decimal? Total { get; private set; }
+        public decimal? Total { get; set; }
 
         // --- Propiedades de Navegación ---
         public virtual Cliente? Cliente { get; set; }

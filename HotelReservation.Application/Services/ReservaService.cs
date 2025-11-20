@@ -104,7 +104,7 @@ namespace HotelReservation.Application.Services
         {
             var reservas = await _repo.ObtenerReservasConDetallesAsync();
             var reserva = reservas.FirstOrDefault(r => (Guid)GetPropertyValue(r, "Id") == id);
-            
+
             if (reserva == null) return null;
 
             return new ReservaDetalleDTO
@@ -135,9 +135,9 @@ namespace HotelReservation.Application.Services
                 throw new ArgumentException("La fecha de inicio debe ser anterior a la fecha de fin");
 
             var disponible = await _repo.HabitacionDisponibleAsync(
-                reserva.HabitacionId, 
-                dto.FechaInicio, 
-                dto.FechaFin, 
+                reserva.HabitacionId,
+                dto.FechaInicio,
+                dto.FechaFin,
                 dto.ReservaId);
 
             if (!disponible)
