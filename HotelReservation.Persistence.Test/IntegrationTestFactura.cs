@@ -85,7 +85,6 @@ namespace HotelReservation.Persistence.Test
                 FechaEmision = DateTime.Today,
                 MetodoPago = "Efectivo",
                 MontoTotal = montoTotal,
-                Reserva = reserva
             };
 
             await context.Facturas.AddAsync(factura);
@@ -102,7 +101,6 @@ namespace HotelReservation.Persistence.Test
                         Descripcion = s.Descripcion,
                         Cantidad = s.Cantidad,
                         PrecioUnitario = s.PrecioUnitario,
-                        Subtotal = s.Cantidad * s.PrecioUnitario
                     };
                     await context.DetalleFacturas.AddAsync(detalle);
                 }

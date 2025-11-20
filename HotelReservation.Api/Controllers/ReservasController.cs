@@ -15,7 +15,7 @@ namespace HotelReservation.Api.Controllers
             _service = service;
         }
 
-        // POST: Crear nueva reserva
+        // CREATE - POST: Crear nueva reserva
         [HttpPost]
         public async Task<IActionResult> CrearReserva([FromBody] CrearReservaDTO dto)
         {
@@ -24,21 +24,54 @@ namespace HotelReservation.Api.Controllers
                 var id = await _service.CrearReservaAsync(dto);
                 return Created($"/api/reservas/{id}", new { id });
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
                 return BadRequest(new { error = ex.Message });
             }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
         }
 
-        // GET: Listar reservas básicas
+        // READ - GET: Listar todas las reservas básicas
         [HttpGet]
         public async Task<IActionResult> ListarReservas()
         {
-            var reservas = await _service.GetAllAsync();
-            return Ok(reservas);
+            try
+            {
+                var reservas = await _service.GetAllAsync();
+                return Ok(reservas);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
         }
 
-        // NUEVO ENDPOINT: Listar reservas detalladas
+        // READ - GET: Obtener reserva por ID
+        [HttpGet("{id}")]
+        public async Task<IActionResult> ObtenerReservaPorId(Guid id)
+        {
+            try
+            {
+                var reserva = await _service.GetByIdAsync(id);
+                if (reserva == null)
+                    return NotFound(new { error = "Reserva no encontrada" });
+
+                return Ok(reserva);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        // READ - GET: Listar reservas con detalles completos (JOIN)
         [HttpGet("detalles")]
         public async Task<IActionResult> ListarReservasConDetalles()
         {
@@ -46,6 +79,117 @@ namespace HotelReservation.Api.Controllers
             {
                 var reservas = await _service.ObtenerReservasConDetallesAsync();
                 return Ok(reservas);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        // READ - GET: Obtener detalle completo de reserva por ID
+        [HttpGet("detalles/{id}")]
+        public async Task<IActionResult> ObtenerReservaDetallePorId(Guid id)
+        {
+            try
+            {
+                var reserva = await _service.GetReservaDetalleByIdAsync(id);
+                if (reserva == null)
+                    return NotFound(new { error = "Reserva no encontrada" });
+
+                return Ok(reserva);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        // UPDATE - PUT: Actualizar fechas de reserva
+        [HttpPut("{id}")]
+        public async Task<IActionResult> ActualizarReserva(Guid id, [FromBody] ActualizarReservaDTO dto)
+        {
+            try
+            {
+                if (id != dto.ReservaId)
+                    return BadRequest(new { error = "El ID de la URL no coincide con el ID del body" });
+
+                await _service.ActualizarReservaAsync(dto);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { error = ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        // UPDATE - PATCH: Cambiar estado de reserva
+        [HttpPatch("{id}/estado")]
+        public async Task<IActionResult> CambiarEstadoReserva(Guid id, [FromBody] ActualizarEstadoReservaDTO dto)
+        {
+            try
+            {
+                if (id != dto.ReservaId)
+                    return BadRequest(new { error = "El ID de la URL no coincide con el ID del body" });
+
+                await _service.CambiarEstadoReservaAsync(dto);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { error = ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        // DELETE - DELETE: Cancelar reserva
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> CancelarReserva(Guid id)
+        {
+            try
+            {
+                await _service.CancelarReservaAsync(id);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        // Utilidad - GET: Verificar disponibilidad de habitación
+        [HttpGet("disponibilidad")]
+        public async Task<IActionResult> VerificarDisponibilidad(
+            [FromQuery] Guid habitacionId,
+            [FromQuery] DateTime fechaInicio,
+            [FromQuery] DateTime fechaFin)
+        {
+            try
+            {
+                var disponible = await _service.VerificarDisponibilidadAsync(habitacionId, fechaInicio, fechaFin);
+                return Ok(new { disponible });
             }
             catch (Exception ex)
             {

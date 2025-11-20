@@ -63,7 +63,6 @@ namespace HotelReservation.Application.Base.Mappers
             CreateMap<ActualizarCategoriaDto, CategoriaHabitacion>();
 
             // -----------------------------------------------
-
         }
     }
 }
