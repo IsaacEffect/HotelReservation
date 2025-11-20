@@ -4,16 +4,23 @@ import { PublicRoute } from "./PublicRoute";
 
 import LoginPage from "../../modules/usuarios/pages/LoginPage";
 import DashboardPage from "../../modules/usuarios/pages/DashboardPage";
+import ReservasPage from "../../modules/reservas/pages/ReservasPage";
+import CheckPage from "../../modules/checkin/pages/CheckPage";
+import HabitacionesPage from "../../modules/habitaciones/pages/HabitacionesPage";
+import ReportesPage from "../../modules/facturacion/pages/ReportesPage";
 
-export const AppRouter = ({ isAuth, loading }) => {
+import { useAuth } from "../context/useAuth";
+
+export const AppRouter = () => {
+  const { isAuthenticated, loading } = useAuth(); 
+
   return (
     <BrowserRouter>
       <Routes>
-
         <Route
           path="/login"
           element={
-            <PublicRoute isAuth={isAuth} loading={loading}>
+            <PublicRoute isAuth={isAuthenticated} loading={loading}>
               <LoginPage />
             </PublicRoute>
           }
@@ -22,14 +29,48 @@ export const AppRouter = ({ isAuth, loading }) => {
         <Route
           path="/"
           element={
-            <ProtectedRoute isAuth={isAuth} loading={loading}>
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
               <DashboardPage />
             </ProtectedRoute>
           }
         />
 
+        <Route
+          path="/reservas"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <ReservasPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/check"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <CheckPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/habitaciones"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <HabitacionesPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/reportes"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <ReportesPage />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
 };
-

@@ -67,7 +67,7 @@ namespace HotelReservation.Application.Services
             // Actualiza el estado de la habitacion a 'Ocupada'
             if (_reservaRepo != null && _habitacionRepo != null)
             {
-                var reserva = await _reservaRepo.GetByIdAsync(request.ReservaId);
+                var reserva = await _reservaRepo.ObtenerReservaPorIdAsync(request.ReservaId);
                 if (reserva != null)
                 {
                     // Actualizar estado de habitacion
@@ -150,7 +150,7 @@ namespace HotelReservation.Application.Services
             }
 
             // Obtener la reserva asociada
-            var reserva = await _reservaRepo.GetByIdAsync(request.ReservaId);
+            var reserva = await _reservaRepo.ObtenerReservaPorIdAsync(request.ReservaId);
             if (reserva == null)
                 throw new KeyNotFoundException("No se encontro la reserva asociada al Check-Out.");
 
@@ -203,7 +203,7 @@ namespace HotelReservation.Application.Services
             try
             {
                 reserva.EstadoReserva = "Completada";
-                await _reservaRepo.UpdateAsync(reserva);
+                await _reservaRepo.ModificarReservaAsync(reserva);
             }
             catch (Exception ex)
             {
