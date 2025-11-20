@@ -1,5 +1,6 @@
 ﻿using HotelReservation.Application.Contracts;
 using HotelReservation.Application.Services;
+using HotelReservation.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,6 +12,7 @@ namespace HotelReservation.IOC.Modules
         {
             services.AddScoped<IFacturaService, FacturaService>();
             services.AddScoped<IReporteService, ReporteService>();
+            services.AddSingleton<IPdfService, PdfService>();
         }
     }
 }

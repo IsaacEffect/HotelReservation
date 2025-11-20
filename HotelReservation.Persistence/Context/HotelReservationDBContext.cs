@@ -1,7 +1,6 @@
 ﻿using HotelReservation.Domain.Entities;
 using HotelReservation.Persistence.Configurations;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace HotelReservation.Persistence.Context
 {

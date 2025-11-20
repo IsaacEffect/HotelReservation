@@ -32,7 +32,6 @@ namespace HotelReservation.Api.Controllers
                 Descripcion = "Servicio de prueba",
                 Cantidad = 1,
                 PrecioUnitario = 100,
-                Subtotal = 100
             };
 
             try
