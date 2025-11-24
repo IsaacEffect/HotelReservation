@@ -82,49 +82,50 @@ namespace HotelReservation.Application.Services
         public async Task<IEnumerable<ReservaDetalleDTO>> ObtenerReservasConDetallesAsync()
         {
             var reservas = await _repo.ObtenerReservasConDetallesAsync();
+
             return reservas.Select(r => new ReservaDetalleDTO
             {
-                ReservaId = (Guid)GetPropertyValue(r, "Id"),
-                FechaReserva = (DateTime)GetPropertyValue(r, "FechaReserva"),
-                FechaInicio = (DateTime)GetPropertyValue(r, "FechaInicio"),
-                FechaFin = (DateTime)GetPropertyValue(r, "FechaFin"),
-                EstadoReserva = GetPropertyValue(r, "EstadoReserva")?.ToString(),
-                Cliente = GetPropertyValue(r, "NombreCliente")?.ToString(),
-                CorreoCliente = GetPropertyValue(r, "CorreoCliente")?.ToString(),
-                NumeroHabitacion = Convert.ToInt32(GetPropertyValue(r, "NumeroHabitacion")),
-                Categoria = GetPropertyValue(r, "Categoria")?.ToString(),
-                PrecioPorNoche = Convert.ToDecimal(GetPropertyValue(r, "PrecioPorNoche")),
-                UsuarioRegistro = GetPropertyValue(r, "NombreUsuario")?.ToString(),
-                Total = GetPropertyValue(r, "Total") != null ? Convert.ToDecimal(GetPropertyValue(r, "Total")) : null
+                ReservaId = GetValue<Guid>(r, "Id"),
+                FechaReserva = GetValue<DateTime>(r, "FechaReserva"),
+                FechaInicio = GetValue<DateTime>(r, "FechaInicio"),
+                FechaFin = GetValue<DateTime>(r, "FechaFin"),
+                EstadoReserva = GetValue<string>(r, "EstadoReserva"),
+                Cliente = GetValue<string>(r, "NombreCliente"),
+                CorreoCliente = GetValue<string>(r, "CorreoCliente"),
+                NumeroHabitacion = GetValue<string>(r, "NumeroHabitacion"),
+                Categoria = GetValue<string>(r, "Categoria"),
+                PrecioPorNoche = GetValue<decimal>(r, "PrecioPorNoche"),
+                UsuarioRegistro = GetValue<string>(r, "NombreUsuario"),
+                Total = GetOptional<decimal>(r, "Total")
             });
         }
 
-        // READ - Obtener detalle de reserva por ID
+        // READ - Detalle por ID
         public async Task<ReservaDetalleDTO?> GetReservaDetalleByIdAsync(Guid id)
         {
             var reservas = await _repo.ObtenerReservasConDetallesAsync();
-            var reserva = reservas.FirstOrDefault(r => (Guid)GetPropertyValue(r, "Id") == id);
+            var r = reservas.FirstOrDefault(x => GetValue<Guid>(x, "Id") == id);
 
-            if (reserva == null) return null;
+            if (r == null) return null;
 
             return new ReservaDetalleDTO
             {
-                ReservaId = (Guid)GetPropertyValue(reserva, "Id"),
-                FechaReserva = (DateTime)GetPropertyValue(reserva, "FechaReserva"),
-                FechaInicio = (DateTime)GetPropertyValue(reserva, "FechaInicio"),
-                FechaFin = (DateTime)GetPropertyValue(reserva, "FechaFin"),
-                EstadoReserva = GetPropertyValue(reserva, "EstadoReserva")?.ToString(),
-                Cliente = GetPropertyValue(reserva, "NombreCliente")?.ToString(),
-                CorreoCliente = GetPropertyValue(reserva, "CorreoCliente")?.ToString(),
-                NumeroHabitacion = Convert.ToInt32(GetPropertyValue(reserva, "NumeroHabitacion")),
-                Categoria = GetPropertyValue(reserva, "Categoria")?.ToString(),
-                PrecioPorNoche = Convert.ToDecimal(GetPropertyValue(reserva, "PrecioPorNoche")),
-                UsuarioRegistro = GetPropertyValue(reserva, "NombreUsuario")?.ToString(),
-                Total = GetPropertyValue(reserva, "Total") != null ? Convert.ToDecimal(GetPropertyValue(reserva, "Total")) : null
+                ReservaId = GetValue<Guid>(r, "Id"),
+                FechaReserva = GetValue<DateTime>(r, "FechaReserva"),
+                FechaInicio = GetValue<DateTime>(r, "FechaInicio"),
+                FechaFin = GetValue<DateTime>(r, "FechaFin"),
+                EstadoReserva = GetValue<string>(r, "EstadoReserva"),
+                Cliente = GetValue<string>(r, "NombreCliente"),
+                CorreoCliente = GetValue<string>(r, "CorreoCliente"),
+                NumeroHabitacion = GetValue<string>(r, "NumeroHabitacion"),
+                Categoria = GetValue<string>(r, "Categoria"),
+                PrecioPorNoche = GetValue<decimal>(r, "PrecioPorNoche"),
+                UsuarioRegistro = GetValue<string>(r, "NombreUsuario"),
+                Total = GetOptional<decimal>(r, "Total")
             };
         }
 
-        // UPDATE - Actualizar fechas de reserva
+        // UPDATE - Actualizar fechas
         public async Task ActualizarReservaAsync(ActualizarReservaDTO dto)
         {
             var reserva = await _repo.ObtenerReservaPorIdAsync(dto.ReservaId);
@@ -146,17 +147,33 @@ namespace HotelReservation.Application.Services
             reserva.FechaInicio = dto.FechaInicio;
             reserva.FechaFin = dto.FechaFin;
 
+            // Obtener precio por noche
+            var precio = await _repo.ObtenerPrecioHabitacionAsync(reserva.HabitacionId);
+
+            // Calcular días
+            int dias = (int)(dto.FechaFin - dto.FechaInicio).TotalDays;
+            if (dias <= 0)
+                throw new ArgumentException("La fecha de fin debe ser posterior a la fecha de inicio");
+
+            // Guardar total calculado
+            reserva.Total = dias * precio;
+
+
             await _repo.ModificarReservaAsync(reserva);
         }
 
-        // UPDATE - Cambiar estado de reserva
+        // UPDATE - Cambiar estado
         public async Task CambiarEstadoReservaAsync(ActualizarEstadoReservaDTO dto)
         {
             var reserva = await _repo.ObtenerReservaPorIdAsync(dto.ReservaId);
             if (reserva == null)
                 throw new KeyNotFoundException("Reserva no encontrada");
 
+            if (string.IsNullOrWhiteSpace(dto.NuevoEstado))
+                throw new ArgumentException("El nuevo estado no puede ser nulo o vacío");
+
             var estadosValidos = new[] { "Activa", "Pendiente", "Confirmada", "Cancelada", "Completada" };
+
             if (!estadosValidos.Contains(dto.NuevoEstado))
                 throw new ArgumentException("Estado de reserva inválido");
 
@@ -164,7 +181,7 @@ namespace HotelReservation.Application.Services
             await _repo.ModificarReservaAsync(reserva);
         }
 
-        // DELETE - Cancelar reserva (cambio de estado lógico)
+        // DELETE - Cancelar (estado lógico)
         public async Task CancelarReservaAsync(Guid reservaId)
         {
             var reserva = await _repo.ObtenerReservaPorIdAsync(reservaId);
@@ -174,16 +191,28 @@ namespace HotelReservation.Application.Services
             await _repo.CancelarReservaAsync(reservaId);
         }
 
-        // Verificar disponibilidad de habitación
+        // Verificar disponibilidad
         public async Task<bool> VerificarDisponibilidadAsync(Guid habitacionId, DateTime fechaInicio, DateTime fechaFin)
         {
             return await _repo.HabitacionDisponibleAsync(habitacionId, fechaInicio, fechaFin);
         }
 
-        // Helper para obtener valores de propiedades dinámicas
-        private object? GetPropertyValue(object obj, string propertyName)
+        // Helper seguro para propiedades obligatorias
+        private T GetValue<T>(object obj, string property)
         {
-            return obj.GetType().GetProperty(propertyName)?.GetValue(obj, null);
+            var value = obj.GetType().GetProperty(property)?.GetValue(obj);
+
+            if (value == null)
+                throw new NullReferenceException($"La propiedad '{property}' vino nula.");
+
+            return (T)value;
+        }
+
+        // Helper seguro para valores opcionales
+        private T? GetOptional<T>(object obj, string property) where T : struct
+        {
+            var value = obj.GetType().GetProperty(property)?.GetValue(obj);
+            return value == null ? (T?)null : (T)value;
         }
     }
 }

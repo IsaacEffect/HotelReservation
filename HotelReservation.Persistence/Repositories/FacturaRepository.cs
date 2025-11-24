@@ -21,7 +21,7 @@ namespace HotelReservation.Persistence.Repositories
 
         public async Task AddDetalleAsync(DetalleFactura detalle)
         {
-            await _context.DetalleFacturas.AddAsync(detalle);
+            await _context.DetalleFactura.AddAsync(detalle);
         }
 
         public async Task<IEnumerable<Factura>> GetAllAsync()

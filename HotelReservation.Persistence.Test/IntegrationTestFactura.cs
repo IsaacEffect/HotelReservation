@@ -102,7 +102,7 @@ namespace HotelReservation.Persistence.Test
                         Cantidad = s.Cantidad,
                         PrecioUnitario = s.PrecioUnitario,
                     };
-                    await context.DetalleFacturas.AddAsync(detalle);
+                    await context.DetalleFactura.AddAsync(detalle);
                 }
             }
 
@@ -147,7 +147,7 @@ namespace HotelReservation.Persistence.Test
 
             var factura = context.Facturas.FirstOrDefault(f => f.ReservaId == reservaId);
             Assert.NotNull(factura);
-            var detalles = context.DetalleFacturas.Where(d => d.FacturaId == factura.Id).ToList();
+            var detalles = context.DetalleFactura.Where(d => d.FacturaId == factura.Id).ToList();
 
             Assert.Single(detalles);
             Assert.Equal("Spa", detalles[0].Descripcion);
@@ -274,7 +274,7 @@ namespace HotelReservation.Persistence.Test
             await RegistrarCheckOutSimuladoAsync(context, reservaId, servicios);
 
             var factura = context.Facturas.First(f => f.ReservaId == reservaId);
-            var detalles = context.DetalleFacturas.Where(d => d.FacturaId == factura.Id).ToList();
+            var detalles = context.DetalleFactura.Where(d => d.FacturaId == factura.Id).ToList();
 
             Assert.Equal(2, detalles.Count);
             Assert.Contains(detalles, d => d.Descripcion == "Cena");

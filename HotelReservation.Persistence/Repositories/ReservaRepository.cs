@@ -43,7 +43,19 @@ namespace HotelReservation.Persistence.Repositories
             cmd.Parameters.AddWithValue("@fechaFin", fechaFin);
             cmd.Parameters.AddWithValue("@reservaIdExcluir", (object?)reservaIdExcluir ?? DBNull.Value);
 
-            int count = (int)await cmd.ExecuteScalarAsync();
+            var scalarCount = await cmd.ExecuteScalarAsync();
+
+            // Safe conversion from object? to int without unboxing null
+            int count = scalarCount is int ic
+                ? ic
+                : scalarCount is long il
+                    ? Convert.ToInt32(il)
+                    : scalarCount is decimal idc
+                        ? Convert.ToInt32(idc)
+                        : scalarCount is null || scalarCount == DBNull.Value
+                            ? 0
+                            : Convert.ToInt32(scalarCount);
+
             return count == 0;
         }
 
@@ -122,7 +134,27 @@ namespace HotelReservation.Persistence.Repositories
             // Ejecutar el INSERT y obtener el ID
             // ARREGLO 2: Usar '!' para suprimir el warning, ya que 'OUTPUT INSERTED.Id'
             // garantiza que se devolverá un GUID si el INSERT tiene éxito.
-            return (Guid)await cmd.ExecuteScalarAsync()!;
+            // Ejecutar el INSERT y obtener el ID de forma segura
+            var inserted = await cmd.ExecuteScalarAsync();
+
+            if (inserted == null || inserted == DBNull.Value)
+                throw new InvalidOperationException("No se pudo insertar la reserva (Id nulo).");
+
+            if (inserted is Guid newId)
+                return newId;
+
+            if (inserted is string s && Guid.TryParse(s, out var parsedId))
+                return parsedId;
+
+            // Intentar convertir otros tipos a Guid (por ejemplo byte[] o numeric)
+            try
+            {
+                return Guid.Parse(inserted.ToString()!);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("El Id insertado tiene un formato inválido.", ex);
+            }
         }
 
         public async Task<IEnumerable<Reserva>> ObtenerReservasAsync()
@@ -187,21 +219,24 @@ namespace HotelReservation.Persistence.Repositories
             await conn.OpenAsync();
 
             var cmd = new SqlCommand(@"
-                UPDATE Reservas
-                SET FechaInicio = @FechaInicio,
-                    FechaFin = @FechaFin,
-                    EstadoReserva = @EstadoReserva,
-                    HabitacionId = @HabitacionId
-                WHERE Id = @Id", conn);
+                        UPDATE Reservas
+                        SET FechaInicio = @FechaInicio,
+                            FechaFin = @FechaFin,
+                            EstadoReserva = @EstadoReserva,
+                            HabitacionId = @HabitacionId,
+                            Total = @Total
+                        WHERE Id = @Id", conn);
 
             cmd.Parameters.AddWithValue("@Id", entity.Id);
             cmd.Parameters.AddWithValue("@FechaInicio", entity.FechaInicio);
             cmd.Parameters.AddWithValue("@FechaFin", entity.FechaFin);
             cmd.Parameters.AddWithValue("@EstadoReserva", entity.EstadoReserva);
             cmd.Parameters.AddWithValue("@HabitacionId", entity.HabitacionId);
+            cmd.Parameters.AddWithValue("@Total", (object?)entity.Total ?? DBNull.Value);
 
             await cmd.ExecuteNonQueryAsync();
         }
+
 
         public async Task CancelarReservaAsync(Guid id)
         {
@@ -271,6 +306,28 @@ namespace HotelReservation.Persistence.Repositories
 
             return reservas;
         }
+
+        public async Task<decimal> ObtenerPrecioHabitacionAsync(Guid habitacionId)
+        {
+            using var conn = new SqlConnection(_connectionString);
+            await conn.OpenAsync();
+
+            var query = @"
+        SELECT cat.PrecioPorNoche
+        FROM Habitaciones h
+        INNER JOIN CategoriasHabitacion cat ON h.CategoriaId = cat.Id
+        WHERE h.Id = @HabitacionId";
+
+            var cmd = new SqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@HabitacionId", habitacionId);
+
+            object? result = await cmd.ExecuteScalarAsync();
+            if (result == null || result == DBNull.Value)
+                throw new InvalidOperationException("No se pudo obtener el precio por noche.");
+
+            return (decimal)result;
+        }
+
 
         // ================================================
         // CONSULTAS POR ESTADO

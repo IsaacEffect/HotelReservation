@@ -18,6 +18,8 @@ namespace HotelReservation.Domain.Interfaces
 
         // Consultas avanzadas (JOIN)
         Task<IEnumerable<object>> ObtenerReservasConDetallesAsync();
+        Task<decimal> ObtenerPrecioHabitacionAsync(Guid habitacionId);
+
 
         // Consultas por estado (si las necesitas)
         Task<IEnumerable<Reserva>> ObtenerReservasPorEstadoAsync(string estado);

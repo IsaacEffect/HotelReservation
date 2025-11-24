@@ -9,7 +9,7 @@
         public string? EstadoReserva { get; set; }
         public string? Cliente { get; set; }
         public string? CorreoCliente { get; set; }
-        public int NumeroHabitacion { get; set; }
+        public string? NumeroHabitacion { get; set; }
         public string? Categoria { get; set; }
         public decimal PrecioPorNoche { get; set; }
         public string? UsuarioRegistro { get; set; }
