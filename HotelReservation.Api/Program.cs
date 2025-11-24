@@ -14,6 +14,8 @@ namespace HotelReservation.Api
     {
         public static void Main(string[] args)
         {
+            QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+
             var builder = WebApplication.CreateBuilder(args);
 
             // CONFIGURACIÓN GLOBAL DE LOGS
