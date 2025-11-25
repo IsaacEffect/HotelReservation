@@ -21,7 +21,7 @@ namespace HotelReservation.Infrastructure.Services
                     {
                         row.RelativeItem().Column(col =>
                         {
-                            col.Item().Text("HOTEL RESERVATION").FontSize(18).Bold();
+                            col.Item().Text("RoyalKey").FontSize(18).Bold();
                             col.Item().Text("FACTURA").FontSize(14).SemiBold();
                         });
 
