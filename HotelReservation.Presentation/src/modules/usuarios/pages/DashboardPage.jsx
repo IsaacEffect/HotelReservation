@@ -71,6 +71,20 @@ export default function DashboardPage() {
           >
             <p className="text-lg font-semibold text-[#FF9900]">Reportes</p>
           </button>
+
+          <button
+            onClick={() => navigate("/usuarios")}
+            className="bg-[#1A2E44] hover:bg-[#243b56] p-6 rounded-xl shadow-lg text-center"
+          >
+            <p className="text-lg font-semibold text-[#FF9900]">Equipo</p>
+          </button>
+
+          <button
+            onClick={() => navigate("/roles")}
+            className="bg-[#1A2E44] hover:bg-[#243b56] p-6 rounded-xl shadow-lg text-center"
+          >
+            <p className="text-lg font-semibold text-[#FF9900]">Roles</p>
+          </button>
         </div>
       </section>
 

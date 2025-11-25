@@ -4,6 +4,8 @@ import { PublicRoute } from "./PublicRoute";
 
 import LoginPage from "../../modules/usuarios/pages/LoginPage";
 import DashboardPage from "../../modules/usuarios/pages/DashboardPage";
+import ClientesPage from "../../modules/usuarios/pages/ClientsPage";
+import ClienteForm from "../../modules/usuarios/components/ClientForm";
 import ReservasPage from "../../modules/reservas/pages/ReservasPage";
 import CheckPage from "../../modules/checkin/pages/CheckPage";
 import HabitacionesPage from "../../modules/habitaciones/pages/HabitacionesPage";
@@ -12,7 +14,7 @@ import ReportesPage from "../../modules/facturacion/pages/ReportesPage";
 import { useAuth } from "../context/useAuth";
 
 export const AppRouter = () => {
-  const { isAuthenticated, loading } = useAuth(); 
+  const { isAuthenticated, loading } = useAuth();
 
   return (
     <BrowserRouter>
@@ -67,6 +69,32 @@ export const AppRouter = () => {
           element={
             <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
               <ReportesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/clientes"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <ClientesPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/clientes/nuevo"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <ClienteForm />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/clientes/editar/:id"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <ClienteForm />
             </ProtectedRoute>
           }
         />
