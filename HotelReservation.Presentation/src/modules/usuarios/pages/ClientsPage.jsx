@@ -5,11 +5,12 @@ import LayoutDashboard from "../../usuarios/components/LayoutDashboard";
 
 export default function ClientsPage() {
   const [clients, setClients] = useState([]);
+  const [search, setSearch] = useState(""); // ← buscador
   const navigate = useNavigate();
 
   const loadClients = () => {
     getClients().then((res) => {
-      setClients(res.data.data); // ← AQUI ESTA LA CORRECCIÓN
+      setClients(res.data.data);
     });
   };
 
@@ -27,6 +28,18 @@ export default function ClientsPage() {
     loadClients();
   };
 
+  // Filtrar clientes
+  const filteredClients = clients.filter((c) => {
+    const text = search.toLowerCase();
+    return (
+      c.nombre.toLowerCase().includes(text) ||
+      c.apellido.toLowerCase().includes(text) ||
+      c.correo.toLowerCase().includes(text) ||
+      c.telefono.toLowerCase().includes(text) ||
+      c.documentoIdentidad.toLowerCase().includes(text)
+    );
+  });
+
   return (
     <LayoutDashboard>
       <div>
@@ -39,6 +52,18 @@ export default function ClientsPage() {
           >
             Nuevo Cliente
           </button>
+        </div>
+
+        {/* BUSCADOR */}
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="Buscar cliente..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-[#0F1A2B] p-3 rounded text-white border border-transparent 
+                       focus:border-[#FF9900] outline-none"
+          />
         </div>
 
         <div className="overflow-x-auto">
@@ -54,7 +79,7 @@ export default function ClientsPage() {
             </thead>
 
             <tbody>
-              {clients.map((c) => (
+              {filteredClients.map((c) => (
                 <tr key={c.idCliente} className="border-b border-[#243b56]">
                   <td className="p-3">
                     {c.nombre} {c.apellido}
@@ -85,9 +110,9 @@ export default function ClientsPage() {
             </tbody>
           </table>
 
-          {clients.length === 0 && (
+          {filteredClients.length === 0 && (
             <p className="text-center text-gray-300 mt-6">
-              No hay clientes registrados.
+              No se encontraron clientes.
             </p>
           )}
         </div>
