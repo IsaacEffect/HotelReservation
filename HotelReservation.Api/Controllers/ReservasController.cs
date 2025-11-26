@@ -16,7 +16,7 @@ namespace HotelReservation.Api.Controllers
         }
 
         // CREATE - POST: Crear nueva reserva
-        [HttpPost]
+        [HttpPost("CreateReservation")]
         public async Task<IActionResult> CrearReserva([FromBody] CrearReservaDTO dto)
         {
             try
@@ -39,7 +39,7 @@ namespace HotelReservation.Api.Controllers
         }
 
         // READ - GET: Listar todas las reservas básicas
-        [HttpGet]
+        [HttpGet("GetAllReservations")]
         public async Task<IActionResult> ListarReservas()
         {
             try
@@ -54,7 +54,7 @@ namespace HotelReservation.Api.Controllers
         }
 
         // READ - GET: Obtener reserva por ID
-        [HttpGet("{id}")]
+        [HttpGet("GetReservationById/{id:guid}")]
         public async Task<IActionResult> ObtenerReservaPorId(Guid id)
         {
             try
@@ -72,7 +72,7 @@ namespace HotelReservation.Api.Controllers
         }
 
         // READ - GET: Listar reservas con detalles completos (JOIN)
-        [HttpGet("detalles")]
+        [HttpGet("GetAllReservationsWithDetails")]
         public async Task<IActionResult> ListarReservasConDetalles()
         {
             try
@@ -87,7 +87,7 @@ namespace HotelReservation.Api.Controllers
         }
 
         // READ - GET: Obtener detalle completo de reserva por ID
-        [HttpGet("detalles/{id}")]
+        [HttpGet("GetReservationDetailsById/{id:guid}")]
         public async Task<IActionResult> ObtenerReservaDetallePorId(Guid id)
         {
             try
@@ -105,15 +105,12 @@ namespace HotelReservation.Api.Controllers
         }
 
         // UPDATE - PUT: Actualizar fechas de reserva
-        [HttpPut("{id}")]
+        [HttpPut("UpdateReservation/{id:guid}")]
         public async Task<IActionResult> ActualizarReserva(Guid id, [FromBody] ActualizarReservaDTO dto)
         {
             try
             {
-                if (id != dto.ReservaId)
-                    return BadRequest(new { error = "El ID de la URL no coincide con el ID del body" });
-
-                await _service.ActualizarReservaAsync(dto);
+                await _service.ActualizarReservaAsync(id, dto);
                 return NoContent();
             }
             catch (KeyNotFoundException ex)
@@ -135,15 +132,12 @@ namespace HotelReservation.Api.Controllers
         }
 
         // UPDATE - PATCH: Cambiar estado de reserva
-        [HttpPatch("{id}/estado")]
+        [HttpPatch("UpdateReservationStatus/{id:guid}")]
         public async Task<IActionResult> CambiarEstadoReserva(Guid id, [FromBody] ActualizarEstadoReservaDTO dto)
         {
             try
             {
-                if (id != dto.ReservaId)
-                    return BadRequest(new { error = "El ID de la URL no coincide con el ID del body" });
-
-                await _service.CambiarEstadoReservaAsync(dto);
+                await _service.CambiarEstadoReservaAsync(id, dto);
                 return NoContent();
             }
             catch (KeyNotFoundException ex)
@@ -161,7 +155,7 @@ namespace HotelReservation.Api.Controllers
         }
 
         // DELETE - DELETE: Cancelar reserva
-        [HttpDelete("{id}")]
+        [HttpDelete("CancelReservation/{id:guid}")]
         public async Task<IActionResult> CancelarReserva(Guid id)
         {
             try
@@ -180,7 +174,7 @@ namespace HotelReservation.Api.Controllers
         }
 
         // Utilidad - GET: Verificar disponibilidad de habitación
-        [HttpGet("disponibilidad")]
+        [HttpGet("CheckHabitacionDisponibilidad")]
         public async Task<IActionResult> VerificarDisponibilidad(
             [FromQuery] Guid habitacionId,
             [FromQuery] DateTime fechaInicio,

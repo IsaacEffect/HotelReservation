@@ -51,6 +51,24 @@ export const AppRouter = () => {
           }
         />
 
+        {/* <Route
+          path="/reservas/nueva"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <ReservaForm />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/reservas/detalle/:id"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <ReservaDetallePage />
+            </ProtectedRoute>
+          }
+        /> */}
+
         <Route
           path="/check"
           element={
