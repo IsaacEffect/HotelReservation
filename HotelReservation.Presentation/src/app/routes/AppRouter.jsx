@@ -12,6 +12,8 @@ import ClienteForm from "../../modules/usuarios/components/ClientForm";
 import RolesPage from "../../modules/usuarios/pages/RolesPage";
 import RoleForm from "../../modules/usuarios/components/RoleForm";
 import ReservasPage from "../../modules/reservas/pages/ReservasPage";
+import ReservaForm from "../../modules/reservas/components/ReservaForm"
+import ReservaDetallePage from "../../modules/reservas/pages/ReservaDetallePage";
 import CheckPage from "../../modules/checkin/pages/CheckPage";
 import HabitacionesPage from "../../modules/habitaciones/pages/HabitacionesPage";
 import ReportesPage from "../../modules/facturacion/pages/ReportesPage";
@@ -51,7 +53,7 @@ export const AppRouter = () => {
           }
         />
 
-        {/* <Route
+        <Route
           path="/reservas/nueva"
           element={
             <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
@@ -67,7 +69,7 @@ export const AppRouter = () => {
               <ReservaDetallePage />
             </ProtectedRoute>
           }
-        /> */}
+        />
 
         <Route
           path="/check"

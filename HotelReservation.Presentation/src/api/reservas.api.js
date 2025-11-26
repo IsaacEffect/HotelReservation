@@ -22,10 +22,11 @@ export const updateReservationStatus = (id, statusDto) =>
   httpClient.patch(`/Reservas/UpdateReservationStatus/${id}`, statusDto);
 
 export const cancelReservation = (id) =>
-  httpClient.put(`/Reservas/CancelReservation/${id}`);
+  httpClient.delete(`/Reservas/CancelReservation/${id}`);
 
-export const checkRoomAvailability = (habitacionId, fechaInicio, fechaFin) =>
-  httpClient.get(`/Reservas/CheckHabitacionDisponibilidad`, {
-    params: { habitacionId, fechaInicio, fechaFin }
-  });
+export const checkRoomAvailability = ({ habitacionId, fechaInicio, fechaFin }) =>
+  httpClient.get(
+    `/Reservas/CheckHabitacionDisponibilidad?habitacionId=${habitacionId}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`
+  );
+
 
