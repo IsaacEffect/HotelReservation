@@ -68,7 +68,6 @@ namespace HotelReservation.Application.Test
             {
                 Id = Guid.NewGuid(),
                 ReservaId = reservaId,
-                Reserva = reserva,
                 FechaEmision = DateTime.Today,
                 MetodoPago = "Efectivo",
                 MontoTotal = total
