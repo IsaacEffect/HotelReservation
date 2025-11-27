@@ -4,11 +4,10 @@
     {
         public Guid Id { get; set; }
         public Guid ReservaId { get; set; }
-        public DateTime FechaEmision { get; set; }
+        public DateTime FechaEmision { get; set; } = DateTime.UtcNow;
         public decimal MontoTotal { get; set; }
-        public string MetodoPago { get; set; }
+        public string MetodoPago { get; set; } = "Efectivo";
 
-        public Reserva Reserva { get; set; } 
         public ICollection<DetalleFactura> Detalles { get; set; } = new List<DetalleFactura>();
     }
 }

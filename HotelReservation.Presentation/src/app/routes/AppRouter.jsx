@@ -4,7 +4,16 @@ import { PublicRoute } from "./PublicRoute";
 
 import LoginPage from "../../modules/usuarios/pages/LoginPage";
 import DashboardPage from "../../modules/usuarios/pages/DashboardPage";
+import UsersPage from "../../modules/usuarios/pages/UsersPage";
+import UserForm from "../../modules/usuarios/components/UserForm";
+import ChangePassword from "../../modules/usuarios/pages/ChangePassword";
+import ClientesPage from "../../modules/usuarios/pages/ClientsPage";
+import ClienteForm from "../../modules/usuarios/components/ClientForm";
+import RolesPage from "../../modules/usuarios/pages/RolesPage";
+import RoleForm from "../../modules/usuarios/components/RoleForm";
 import ReservasPage from "../../modules/reservas/pages/ReservasPage";
+import ReservaForm from "../../modules/reservas/components/ReservaForm"
+import ReservaDetallePage from "../../modules/reservas/pages/ReservaDetallePage";
 import CheckPage from "../../modules/checkin/pages/CheckPage";
 import HabitacionesPage from "../../modules/habitaciones/pages/HabitacionesPage";
 import ReportesPage from "../../modules/facturacion/pages/ReportesPage";
@@ -12,7 +21,7 @@ import ReportesPage from "../../modules/facturacion/pages/ReportesPage";
 import { useAuth } from "../context/useAuth";
 
 export const AppRouter = () => {
-  const { isAuthenticated, loading } = useAuth(); 
+  const { isAuthenticated, loading } = useAuth();
 
   return (
     <BrowserRouter>
@@ -45,6 +54,24 @@ export const AppRouter = () => {
         />
 
         <Route
+          path="/reservas/nueva"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <ReservaForm />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/reservas/detalle/:id"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <ReservaDetallePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/check"
           element={
             <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
@@ -67,6 +94,86 @@ export const AppRouter = () => {
           element={
             <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
               <ReportesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/clientes"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <ClientesPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/clientes/nuevo"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <ClienteForm />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/clientes/editar/:id"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <ClienteForm />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/usuarios"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <UsersPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/usuarios/nuevo"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <UserForm />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/usuarios/editar/:id"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <UserForm />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/usuarios/cambiar-pass/:id"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <ChangePassword />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/roles"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <RolesPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/roles/nuevo"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <RoleForm />
             </ProtectedRoute>
           }
         />

@@ -1,7 +1,6 @@
 ﻿using HotelReservation.Domain.Entities;
 using HotelReservation.Persistence.Configurations;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace HotelReservation.Persistence.Context
 {
@@ -14,7 +13,7 @@ namespace HotelReservation.Persistence.Context
         public DbSet<Habitacion> Habitaciones { get; set; }
         public DbSet<Reserva> Reservas { get; set; }
         public DbSet<Factura> Facturas { get; set; }
-        public DbSet<DetalleFactura> DetalleFacturas { get; set; }
+        public DbSet<DetalleFactura> DetalleFactura { get; set; }
         public DbSet<CheckInOut> CheckInOut { get; set; }
         public DbSet<HistorialReserva> HistorialReservas { get; set; }
 
@@ -49,6 +48,9 @@ namespace HotelReservation.Persistence.Context
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Motivo).HasMaxLength(100);
             });
+
+            modelBuilder.Entity<DetalleFactura>()
+                        .ToTable("DetalleFactura");
 
             base.OnModelCreating(modelBuilder);
         }

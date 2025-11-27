@@ -62,8 +62,18 @@ namespace HotelReservation.Application.Base.Mappers
 
             CreateMap<ActualizarCategoriaDto, CategoriaHabitacion>();
 
-            // -----------------------------------------------
 
+            // HABITACIONES
+            CreateMap<Habitacion, ObtenerHabitacionDto>().ReverseMap();
+
+            CreateMap<InsertarHabitacionDto, Habitacion>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
+                .ForMember(dest => dest.Estado, opt => opt.MapFrom(src => "Disponible"));
+
+            CreateMap<ActualizarHabitacionDto, Habitacion>();
+
+
+            // -----------------------------------------------
         }
     }
 }
