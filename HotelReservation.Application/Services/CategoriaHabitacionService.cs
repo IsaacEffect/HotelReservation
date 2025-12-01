@@ -63,6 +63,11 @@ namespace HotelReservation.Application.Services
             {
                 var categoria = _mapper.Map<CategoriaHabitacion>(dto);
 
+                // Validar duplicado
+                var existe = await _unitOfWork.Categorias.GetByNameAsync(categoria.NombreCategoria);
+                if (existe != null)
+                    return OperationResult<Guid>.Fail("El nombre de la categoría ya existe.");
+
                 await _unitOfWork.Categorias.AddAsync(categoria);
                 await _unitOfWork.SaveChangesAsync();
 
@@ -88,6 +93,11 @@ namespace HotelReservation.Application.Services
                 }
 
                 _mapper.Map(dto, categoria); // Actualiza la entidad existente con datos del DTO
+
+                // Validar duplicado en update
+                var existe = await _unitOfWork.Categorias.GetByNameAsync(categoria.NombreCategoria);
+                if (existe != null && existe.Id != id)
+                    return OperationResult.Fail("El nombre de la categoría ya existe.");
 
                 await _unitOfWork.Categorias.UpdateAsync(categoria);
                 await _unitOfWork.SaveChangesAsync();

@@ -14,14 +14,20 @@ namespace HotelReservation.Persistence.Repositories
             _context = context;
         }
 
+        public async Task<IEnumerable<CategoriaHabitacion>> GetAllAsync()
+        {
+            return await _context.CategoriasHabitacion.ToListAsync();
+        }
+
         public async Task<CategoriaHabitacion?> GetByIdAsync(Guid id)
         {
             return await _context.CategoriasHabitacion.FindAsync(id);
         }
 
-        public async Task<IEnumerable<CategoriaHabitacion>> GetAllAsync()
+        public async Task<CategoriaHabitacion?> GetByNameAsync(string nombre)
         {
-            return await _context.CategoriasHabitacion.ToListAsync();
+            return await _context.CategoriasHabitacion
+                .FirstOrDefaultAsync(c => c.NombreCategoria == nombre);
         }
 
         public async Task AddAsync(CategoriaHabitacion categoria)
