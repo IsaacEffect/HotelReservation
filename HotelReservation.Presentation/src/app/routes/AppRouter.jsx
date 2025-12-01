@@ -15,6 +15,9 @@ import ReservasPage from "../../modules/reservas/pages/ReservasPage";
 import ReservaForm from "../../modules/reservas/components/ReservaForm"
 import ReservaDetallePage from "../../modules/reservas/pages/ReservaDetallePage";
 import CheckPage from "../../modules/checkin/pages/CheckPage";
+import CheckInPage from "../../modules/checkin/pages/CheckInPage";
+import CheckOutPage from "../../modules/checkin/pages/CheckOutPage";
+import HistoryPage from "../../modules/checkin/pages/HistoryPage";
 import HabitacionesPage from "../../modules/habitaciones/pages/HabitacionesPage";
 import ReportesPage from "../../modules/facturacion/pages/ReportesPage";
 
@@ -76,6 +79,33 @@ export const AppRouter = () => {
           element={
             <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
               <CheckPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/checkin"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <CheckInPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/checkout"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <CheckOutPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/historial"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <HistoryPage />
             </ProtectedRoute>
           }
         />
