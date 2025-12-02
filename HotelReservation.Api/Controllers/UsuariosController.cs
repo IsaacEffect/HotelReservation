@@ -7,7 +7,7 @@ using System.Security.Claims;
 
 namespace HotelReservation.Api.Controllers
 {
-    [Authorize(Roles = "Administrador")]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class UsuariosController : ControllerBase
@@ -29,7 +29,6 @@ namespace HotelReservation.Api.Controllers
             return result.ToActionResult();
         }
 
-        [Authorize]
         [HttpGet("GetUserById/{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -61,7 +60,6 @@ namespace HotelReservation.Api.Controllers
             return result.ToActionResult();
         }
 
-        [Authorize(Roles = "Administrador,Empleado")]
         [HttpPut("ChangePassword")]
         public async Task<IActionResult> CambiarContrasena([FromBody] CambiarContrasenaDto dto)
         {
@@ -71,8 +69,8 @@ namespace HotelReservation.Api.Controllers
             var role = User.FindFirst(ClaimTypes.Role)?.Value;
             var userIdToken = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            // Si es empleado, NO puede cambiar la de otro
-            if (role == "Empleado" && userIdToken != dto.IdUsuario.ToString())
+            // Si no es admin, NO puede cambiar la de otro
+            if (role != "Administrador" && userIdToken != dto.IdUsuario.ToString())
                 return Forbid();
 
             _logger.LogInformation("API - ChangePassword llamado para ID {IdUsuario}", dto.IdUsuario);
