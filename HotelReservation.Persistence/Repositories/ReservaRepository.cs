@@ -16,7 +16,7 @@ namespace HotelReservation.Persistence.Repositories
         }
 
         // ================================================
-        // DISPONIBILIDAD DE HABITACIÓN
+        // DISPONIBILIDAD DE HABITACIï¿½N
         // ================================================
 
         public async Task<bool> HabitacionDisponibleAsync(Guid habitacionId, DateTime fechaInicio, DateTime fechaFin)
@@ -84,7 +84,7 @@ namespace HotelReservation.Persistence.Repositories
         )",
                 conn);
 
-            // 1. Obtener el PrecioPorNoche de la Categoría de la Habitación
+            // 1. Obtener el PrecioPorNoche de la Categorï¿½a de la Habitaciï¿½n
             var precioQuery = @"
         SELECT cat.PrecioPorNoche
         FROM Habitaciones h
@@ -97,31 +97,31 @@ namespace HotelReservation.Persistence.Repositories
             object? precioResult = await precioCmd.ExecuteScalarAsync();
             if (precioResult == null || precioResult == DBNull.Value)
             {
-                // Manejar el caso de que la habitación o su categoría no exista.
-                throw new InvalidOperationException($"No se pudo encontrar el precio por noche para la habitación {reserva.HabitacionId}.");
+                // Manejar el caso de que la habitaciï¿½n o su categorï¿½a no exista.
+                throw new InvalidOperationException($"No se pudo encontrar el precio por noche para la habitaciï¿½n {reserva.HabitacionId}.");
             }
 
-            // ARREGLO 1: Usar '!' para indicar al compilador que ya se verificó la nulidad.
+            // ARREGLO 1: Usar '!' para indicar al compilador que ya se verificï¿½ la nulidad.
             decimal precioPorNoche = (decimal)precioResult!;
 
-            // 2. Calcular la diferencia de días (FechaFin - FechaInicio)
-            // Se asume que FechaInicio y FechaFin están en la entidad Reserva.
+            // 2. Calcular la diferencia de dï¿½as (FechaFin - FechaInicio)
+            // Se asume que FechaInicio y FechaFin estï¿½n en la entidad Reserva.
             int dias = (int)(reserva.FechaFin - reserva.FechaInicio).TotalDays;
             if (dias <= 0)
             {
-                // Si son menos de un día, podría ser 1 día si la política lo exige, o lanzar un error.
-                // Usaremos Math.Max(1, dias) si la política es cobrar al menos un día.
-                // Para este ejemplo, si es 0 o menos, lanzamos una excepción simple.
+                // Si son menos de un dï¿½a, podrï¿½a ser 1 dï¿½a si la polï¿½tica lo exige, o lanzar un error.
+                // Usaremos Math.Max(1, dias) si la polï¿½tica es cobrar al menos un dï¿½a.
+                // Para este ejemplo, si es 0 o menos, lanzamos una excepciï¿½n simple.
                 throw new InvalidOperationException("La fecha de fin debe ser posterior a la fecha de inicio.");
             }
 
             // 3. Calcular el Total
             decimal totalCalculado = dias * precioPorNoche;
 
-            // Asignar el total calculado a la entidad antes de la inserción
+            // Asignar el total calculado a la entidad antes de la inserciï¿½n
             reserva.Total = totalCalculado;
 
-            // Añadir todos los parámetros al comando INSERT
+            // Aï¿½adir todos los parï¿½metros al comando INSERT
             cmd.Parameters.AddWithValue("@FechaInicio", reserva.FechaInicio);
             cmd.Parameters.AddWithValue("@FechaFin", reserva.FechaFin);
             cmd.Parameters.AddWithValue("@EstadoReserva", reserva.EstadoReserva);
@@ -129,11 +129,11 @@ namespace HotelReservation.Persistence.Repositories
             cmd.Parameters.AddWithValue("@HabitacionId", reserva.HabitacionId);
             cmd.Parameters.AddWithValue("@UsuarioId", reserva.UsuarioId);
             cmd.Parameters.AddWithValue("@FechaReserva", reserva.FechaReserva);
-            cmd.Parameters.AddWithValue("@TotalCalculado", totalCalculado); // Nuevo parámetro
+            cmd.Parameters.AddWithValue("@TotalCalculado", totalCalculado); // Nuevo parï¿½metro
 
             // Ejecutar el INSERT y obtener el ID
             // ARREGLO 2: Usar '!' para suprimir el warning, ya que 'OUTPUT INSERTED.Id'
-            // garantiza que se devolverá un GUID si el INSERT tiene éxito.
+            // garantiza que se devolverï¿½ un GUID si el INSERT tiene ï¿½xito.
             // Ejecutar el INSERT y obtener el ID de forma segura
             var inserted = await cmd.ExecuteScalarAsync();
 
@@ -153,7 +153,7 @@ namespace HotelReservation.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException("El Id insertado tiene un formato inválido.", ex);
+                throw new InvalidOperationException("El Id insertado tiene un formato invï¿½lido.", ex);
             }
         }
 
@@ -297,7 +297,7 @@ namespace HotelReservation.Persistence.Repositories
                     PrecioPorNoche = reader.GetDecimal(reader.GetOrdinal("PrecioPorNoche")),
                     NombreUsuario = reader.GetString(reader.GetOrdinal("NombreUsuario")),
 
-                    // SE AGREGA EL TOTAL AQUÍ
+                    // SE AGREGA EL TOTAL AQUï¿½
                     Total = reader.IsDBNull(reader.GetOrdinal("Total"))
                         ? 0
                         : reader.GetDecimal(reader.GetOrdinal("Total")),

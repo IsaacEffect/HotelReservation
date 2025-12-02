@@ -47,7 +47,7 @@ export default function DashboardPage() {
             className="bg-[#1A2E44] hover:bg-[#243b56] p-6 rounded-xl shadow-lg text-center"
           >
             <p className="text-lg font-semibold text-[#FF9900]">
-              Check-in / Check-out
+              Check-In / Check-Out
             </p>
           </button>
 

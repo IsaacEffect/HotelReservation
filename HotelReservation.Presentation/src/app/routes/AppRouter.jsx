@@ -15,7 +15,13 @@ import ReservasPage from "../../modules/reservas/pages/ReservasPage";
 import ReservaForm from "../../modules/reservas/components/ReservaForm"
 import ReservaDetallePage from "../../modules/reservas/pages/ReservaDetallePage";
 import CheckPage from "../../modules/checkin/pages/CheckPage";
+import CheckInPage from "../../modules/checkin/pages/CheckInPage";
+import CheckOutPage from "../../modules/checkin/pages/CheckOutPage";
+import HistoryPage from "../../modules/checkin/pages/HistoryPage";
 import HabitacionesPage from "../../modules/habitaciones/pages/HabitacionesPage";
+import HabitacionForm from "../../modules/habitaciones/components/HabitacionForm";
+import CategoriasPage from "../../modules/categorias/pages/CategoriasPage";
+import CategoriaForm from "../../modules/categorias/components/CategoriaForm";
 import ReportesPage from "../../modules/facturacion/pages/ReportesPage";
 
 import { useAuth } from "../context/useAuth";
@@ -81,10 +87,82 @@ export const AppRouter = () => {
         />
 
         <Route
+          path="/checkin"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <CheckInPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/checkout"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <CheckOutPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/historial"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <HistoryPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/habitaciones"
           element={
             <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
               <HabitacionesPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/habitaciones/nueva"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <HabitacionForm />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/habitaciones/editar/:id"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <HabitacionForm />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/categorias"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <CategoriasPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/categorias/nueva"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <CategoriaForm />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/categorias/editar/:id"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <CategoriaForm />
             </ProtectedRoute>
           }
         />
