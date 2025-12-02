@@ -29,6 +29,7 @@ namespace HotelReservation.Api.Controllers
             return result.ToActionResult();
         }
 
+        [Authorize]
         [HttpGet("GetUserById/{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -37,6 +38,7 @@ namespace HotelReservation.Api.Controllers
             return result.ToActionResult();
         }
 
+        [AllowAnonymous]
         [HttpPost("InsertUser")]
         public async Task<IActionResult> Create([FromBody] InsertarUsuarioDto dto)
         {
