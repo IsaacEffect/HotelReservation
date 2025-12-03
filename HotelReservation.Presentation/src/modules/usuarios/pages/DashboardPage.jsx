@@ -1,10 +1,10 @@
-import { useNavigate } from "react-router-dom";
-import LayoutDashboard from "../components/LayoutDashboard";
-import AgendaCalendar from "../components/AgendaCalendar";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getRooms } from "../../../api/habitaciones.api";
-import { getAllReservations } from "../../../api/reservas.api";
 import { getReporteIngresos } from "../../../api/reportes.api";
+import { getAllReservations } from "../../../api/reservas.api";
+import AgendaCalendar from "../components/AgendaCalendar";
+import LayoutDashboard from "../components/LayoutDashboard";
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ export default function DashboardPage() {
       // HABITACIONES
       const roomsRes = await getRooms();
       console.log("Habitaciones API:", roomsRes);
-      const habitaciones = roomsRes.data.data; // correcto
+      const habitaciones = roomsRes.data.data;
       const totalHabitaciones = habitaciones.length;
       setTotalHabitacionesState(totalHabitaciones);
 
@@ -31,7 +31,6 @@ export default function DashboardPage() {
       const reservasRes = await getAllReservations();
       console.log("Reservas API:", reservasRes);
 
-      // En tu backend, reservas ya es un array directo
       const reservas = reservasRes.data;
 
       const hoy = new Date();
@@ -40,7 +39,6 @@ export default function DashboardPage() {
         const inicio = new Date(r.fechaInicio);
         const fin = new Date(r.fechaFin);
 
-        // estados válidos de OCUPACIÓN reales de tu backend
         const estadoValido =
           r.estadoReserva === "Activa" || r.estadoReserva === "Confirmada";
 
