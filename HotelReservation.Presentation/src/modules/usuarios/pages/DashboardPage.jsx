@@ -1,9 +1,78 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import LayoutDashboard from "../components/LayoutDashboard";
+import { getRooms } from "../../../api/habitaciones.api";
+import { getReporteIngresos } from "../../../api/reportes.api";
+import { getAllReservations } from "../../../api/reservas.api";
 import AgendaCalendar from "../components/AgendaCalendar";
+import LayoutDashboard from "../components/LayoutDashboard";
 
 export default function DashboardPage() {
   const navigate = useNavigate();
+  const [ocupacion, setOcupacion] = useState(0);
+  const [habitacionesDisponibles, setHabitacionesDisponibles] = useState(0);
+  const [ingresosHoy, setIngresosHoy] = useState(0);
+  const [ocupadasHoy, setOcupadasHoy] = useState(0);
+  const [totalHabitacionesState, setTotalHabitacionesState] = useState(0);
+
+  useEffect(() => {
+    cargarKPIs();
+  }, []);
+
+  const cargarKPIs = async () => {
+    try {
+      // HABITACIONES
+      const roomsRes = await getRooms();
+      console.log("Habitaciones API:", roomsRes);
+      const habitaciones = roomsRes.data.data;
+      const totalHabitaciones = habitaciones.length;
+      setTotalHabitacionesState(totalHabitaciones);
+
+      // RESERVAS
+      const reservasRes = await getAllReservations();
+      console.log("Reservas API:", reservasRes);
+
+      const reservas = reservasRes.data;
+
+      const hoy = new Date();
+
+      const reservasActivas = reservas.filter((r) => {
+        const inicio = new Date(r.fechaInicio);
+        const fin = new Date(r.fechaFin);
+
+        const estadoValido =
+          r.estadoReserva === "Activa" || r.estadoReserva === "Confirmada";
+
+        return estadoValido && inicio <= hoy && hoy <= fin;
+      });
+
+      const ocupadas = reservasActivas.length;
+      setOcupadasHoy(ocupadas);
+
+      // PORCENTAJE
+      const porcentaje =
+        totalHabitaciones > 0
+          ? ((ocupadas / totalHabitaciones) * 100).toFixed(0)
+          : 0;
+
+      setOcupacion(porcentaje);
+      setHabitacionesDisponibles(totalHabitaciones - ocupadas);
+
+      // INGRESOS DEL DÍA
+      const fechaBase = hoy.toISOString().split("T")[0];
+
+      const desde = `${fechaBase}T00:00:00`;
+      const hasta = `${fechaBase}T23:59:59`;
+
+      const ingresosRes = await getReporteIngresos(desde, hasta);
+
+      console.log("Ingresos API:", ingresosRes);
+
+      setIngresosHoy(ingresosRes.data.ingresos || 0);
+    } catch (error) {
+      console.error("Error cargando KPIs:", error);
+    }
+  };
+
   return (
     <LayoutDashboard>
       {/* KPIs */}
@@ -11,22 +80,28 @@ export default function DashboardPage() {
         {/* Ocupación Actual */}
         <div className="bg-[#1A2E44] p-6 rounded-xl shadow-lg">
           <h3 className="text-xl font-semibold">Ocupación Actual</h3>
-          <p className="text-4xl font-bold text-[#FF9900] mt-2">78%</p>
-          <p className="text-sm text-gray-300">42 de 54 habitaciones</p>
+          <p className="text-4xl font-bold text-[#FF9900] mt-2">{ocupacion}%</p>
+          <p className="text-sm text-gray-300">
+            {ocupadasHoy} ocupada(s) de {totalHabitacionesState} habitaciones
+          </p>
         </div>
 
-        {/* Ingresos Proyectados */}
+        {/* Ingresos del día */}
         <div className="bg-[#1A2E44] p-6 rounded-xl shadow-lg">
           <h3 className="text-xl font-semibold">Ingresos del Día</h3>
-          <p className="text-4xl font-bold text-[#FF9900] mt-2">$ 18,450</p>
-          <p className="text-sm text-gray-300">Proyección total</p>
+          <p className="text-4xl font-bold text-[#FF9900] mt-2">
+            $ {ingresosHoy}
+          </p>
+          <p className="text-sm text-gray-300">Total facturado hoy</p>
         </div>
 
         {/* Habitaciones disponibles */}
         <div className="bg-[#1A2E44] p-6 rounded-xl shadow-lg">
           <h3 className="text-xl font-semibold">Disponibles Ahora</h3>
-          <p className="text-4xl font-bold text-[#FF9900] mt-2">12</p>
-          <p className="text-sm text-gray-300">Habitaciones listas</p>
+          <p className="text-4xl font-bold text-[#FF9900] mt-2">
+            {habitacionesDisponibles}
+          </p>
+          <p className="text-sm text-gray-300">Habitaciones listas para usar</p>
         </div>
       </section>
 
