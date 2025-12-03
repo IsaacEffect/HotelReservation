@@ -12,7 +12,7 @@ import ClienteForm from "../../modules/usuarios/components/ClientForm";
 import RolesPage from "../../modules/usuarios/pages/RolesPage";
 import RoleForm from "../../modules/usuarios/components/RoleForm";
 import ReservasPage from "../../modules/reservas/pages/ReservasPage";
-import ReservaForm from "../../modules/reservas/components/ReservaForm"
+import ReservaForm from "../../modules/reservas/components/ReservaForm";
 import ReservaDetallePage from "../../modules/reservas/pages/ReservaDetallePage";
 import CheckPage from "../../modules/checkin/pages/CheckPage";
 import CheckInPage from "../../modules/checkin/pages/CheckInPage";
@@ -22,7 +22,10 @@ import HabitacionesPage from "../../modules/habitaciones/pages/HabitacionesPage"
 import HabitacionForm from "../../modules/habitaciones/components/HabitacionForm";
 import CategoriasPage from "../../modules/categorias/pages/CategoriasPage";
 import CategoriaForm from "../../modules/categorias/components/CategoriaForm";
-import ReportesPage from "../../modules/facturacion/pages/ReportesPage";
+import FacturasListado from "../../modules/facturacion/pages/FacturasListado";
+import FacturaCrear from "../../modules/facturacion/pages/FacturaCrear";
+import FacturaDetalle from "../../modules/facturacion/pages/FacturaDetalle";
+import FacturasReportes from "../../modules/facturacion/pages/FacturasReportes";
 
 import { useAuth } from "../context/useAuth";
 
@@ -167,13 +170,6 @@ export const AppRouter = () => {
           }
         />
 
-        <Route
-          path="/reportes"
-          element={
-            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-              <ReportesPage />
-            </ProtectedRoute>
-          }
         />
         <Route
           path="/clientes"
@@ -255,6 +251,44 @@ export const AppRouter = () => {
             </ProtectedRoute>
           }
         />
+
+ {/** ======================= FACTURACIÓN ======================= */}
+
+                <Route
+                    path="/facturacion"
+                    element={
+                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+                            <FacturasListado />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/facturacion/nueva"
+                    element={
+                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+                            <FacturaCrear />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/facturacion/detalle/:id"
+                    element={
+                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+                            <FacturaDetalle />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/reportes"
+                    element={
+                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+                            <FacturasReportes />
+                        </ProtectedRoute>
+                    }
+                />
       </Routes>
     </BrowserRouter>
   );
