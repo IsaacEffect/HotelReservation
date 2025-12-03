@@ -119,3 +119,65 @@ select {
     text-align: center;
     margin-top: 20px;
 }
+
+.filtros-box {
+    background: rgba(255,255,255,0.08);
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 25px;
+    margin-bottom: 35px;
+}
+
+.filtros-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.filtros-box label {
+    font-weight: bold;
+    color: #FFCC33;
+}
+
+.recibo {
+    background: white;
+    color: black;
+    padding: 25px;
+    border-radius: 12px;
+    max-width: 500px;
+    margin: auto;
+}
+
+.recibo-item {
+    display: flex;
+    justify-content: space-between;
+    margin: 6px 0;
+}
+
+.total {
+    font-size: 28px;
+    font-weight: bold;
+    color: #0B1623;
+}
+
+.reporte-filtros {
+    background: rgba(255,255,255,0.08);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+}
+
+    .reporte-filtros label {
+        font-weight: bold;
+    }
+
+    .reporte-filtros input,
+    .reporte-filtros select {
+        padding: 10px;
+        border-radius: 8px;
+        border: none;
+        width: 180px;
+    }

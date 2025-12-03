@@ -13,7 +13,7 @@ export default function LayoutDashboard({ children }) {
             Reservas
           </a>
           <a href="/check" className="hover:text-[#FF9900]">
-            Check-in / Check-out
+            Check-In / Check-Out
           </a>
           <a href="/clientes" className="hover:text-[#FF9900]">
             Clientes
@@ -23,6 +23,9 @@ export default function LayoutDashboard({ children }) {
           </a>
           <a href="/reportes" className="hover:text-[#FF9900]">
             Reportes
+          </a>
+          <a href="/facturacion" className="hover:text-[#FF9900]">
+            Facturacion
           </a>
           <a href="/usuarios" className="hover:text-[#FF9900]">
             Equipo

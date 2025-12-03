@@ -1,6 +1,7 @@
+// src/modules/facturacion/service/facturacionService.js
 import axios from "axios";
 
-const API_URL = "https://localhost:7095/api/facturacion";
+const API_URL = "https://localhost:7284/api/facturacion";
 
 export const facturacionService = {
     listar: async () => {

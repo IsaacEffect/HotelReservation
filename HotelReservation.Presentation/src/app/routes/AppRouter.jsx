@@ -11,11 +11,21 @@ import ClientesPage from "../../modules/usuarios/pages/ClientsPage";
 import ClienteForm from "../../modules/usuarios/components/ClientForm";
 import RolesPage from "../../modules/usuarios/pages/RolesPage";
 import RoleForm from "../../modules/usuarios/components/RoleForm";
+
 import ReservasPage from "../../modules/reservas/pages/ReservasPage";
 import ReservaForm from "../../modules/reservas/components/ReservaForm";
 import ReservaDetallePage from "../../modules/reservas/pages/ReservaDetallePage";
+
 import CheckPage from "../../modules/checkin/pages/CheckPage";
+import CheckInPage from "../../modules/checkin/pages/CheckInPage";
+import CheckOutPage from "../../modules/checkin/pages/CheckOutPage";
+import HistoryPage from "../../modules/checkin/pages/HistoryPage";
+
 import HabitacionesPage from "../../modules/habitaciones/pages/HabitacionesPage";
+import HabitacionForm from "../../modules/habitaciones/components/HabitacionForm";
+
+import CategoriasPage from "../../modules/categorias/pages/CategoriasPage";
+import CategoriaForm from "../../modules/categorias/components/CategoriaForm";
 
 import FacturasListado from "../../modules/facturacion/pages/FacturasListado";
 import FacturaCrear from "../../modules/facturacion/pages/FacturaCrear";
@@ -28,7 +38,9 @@ export const AppRouter = () => {
     const { isAuthenticated, loading } = useAuth();
 
     return (
+        <BrowserRouter>
             <Routes>
+                {/** ======================= PUBLIC ======================= */}
                 <Route
                     path="/login"
                     element={
@@ -38,6 +50,7 @@ export const AppRouter = () => {
                     }
                 />
 
+                {/** ======================= DASHBOARD ======================= */}
                 <Route
                     path="/"
                     element={
@@ -47,6 +60,7 @@ export const AppRouter = () => {
                     }
                 />
 
+                {/** ======================= RESERVAS ======================= */}
                 <Route
                     path="/reservas"
                     element={
@@ -74,6 +88,7 @@ export const AppRouter = () => {
                     }
                 />
 
+                {/** ======================= CHECKIN / CHECKOUT ======================= */}
                 <Route
                     path="/check"
                     element={
@@ -84,6 +99,34 @@ export const AppRouter = () => {
                 />
 
                 <Route
+                    path="/checkin"
+                    element={
+                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+                            <CheckInPage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/checkout"
+                    element={
+                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+                            <CheckOutPage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/historial"
+                    element={
+                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+                            <HistoryPage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/** ======================= HABITACIONES ======================= */}
+                <Route
                     path="/habitaciones"
                     element={
                         <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
@@ -92,7 +135,53 @@ export const AppRouter = () => {
                     }
                 />
 
+                <Route
+                    path="/habitaciones/nueva"
+                    element={
+                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+                            <HabitacionForm />
+                        </ProtectedRoute>
+                    }
+                />
 
+                <Route
+                    path="/habitaciones/editar/:id"
+                    element={
+                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+                            <HabitacionForm />
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/** ======================= CATEGORÍAS ======================= */}
+                <Route
+                    path="/categorias"
+                    element={
+                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+                            <CategoriasPage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/categorias/nueva"
+                    element={
+                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+                            <CategoriaForm />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/categorias/editar/:id"
+                    element={
+                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+                            <CategoriaForm />
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/** ======================= CLIENTES ======================= */}
                 <Route
                     path="/clientes"
                     element={
@@ -120,6 +209,7 @@ export const AppRouter = () => {
                     }
                 />
 
+                {/** ======================= USUARIOS ======================= */}
                 <Route
                     path="/usuarios"
                     element={
@@ -156,6 +246,7 @@ export const AppRouter = () => {
                     }
                 />
 
+                {/** ======================= ROLES ======================= */}
                 <Route
                     path="/roles"
                     element={
@@ -174,8 +265,7 @@ export const AppRouter = () => {
                     }
                 />
 
-                {/** ======================= FACTURACI�N ======================= */}
-
+                {/** ======================= FACTURACIÓN ======================= */}
                 <Route
                     path="/facturacion"
                     element={
@@ -204,7 +294,7 @@ export const AppRouter = () => {
                 />
 
                 <Route
-                    path="/reportes"
+                    path="reportes"
                     element={
                         <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
                             <FacturasReportes />
@@ -212,7 +302,7 @@ export const AppRouter = () => {
                     }
                 />
 
-
             </Routes>
+        </BrowserRouter>
     );
 };
