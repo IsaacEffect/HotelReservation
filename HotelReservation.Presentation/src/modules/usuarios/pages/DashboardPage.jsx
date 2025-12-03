@@ -73,6 +73,13 @@ export default function DashboardPage() {
           </button>
 
           <button
+            onClick={() => navigate("/facturacion")}
+            className="bg-[#1A2E44] hover:bg-[#243b56] p-6 rounded-xl shadow-lg text-center"
+          >
+            <p className="text-lg font-semibold text-[#FF9900]">Facturacion</p>
+          </button>
+
+          <button
             onClick={() => navigate("/usuarios")}
             className="bg-[#1A2E44] hover:bg-[#243b56] p-6 rounded-xl shadow-lg text-center"
           >

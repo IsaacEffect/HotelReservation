@@ -25,7 +25,7 @@ export default function FacturasListado() {
 
     return (
         <div className="facturacion-container">
-            <h1 className="titulo">Gestión de Facturas</h1>
+            <h1 className="titulo">Gestion de Facturas</h1>
 
             <button
                 className="btn-crear"
@@ -36,10 +36,10 @@ export default function FacturasListado() {
 
             <div className="tabla">
                 <div className="tabla-header">
-                    <span>Número</span>
+                    <span>Numero</span>
                     <span>Fecha</span>
                     <span>Monto</span>
-                    <span>Método</span>
+                    <span>Metodo</span>
                     <span></span>
                 </div>
 
