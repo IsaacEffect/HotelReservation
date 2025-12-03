@@ -79,16 +79,6 @@ CREATE TABLE Reservas (
 );
 GO
 
-CREATE TABLE DetalleReserva (
-    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    ReservaId UNIQUEIDENTIFIER NOT NULL,
-    Descripcion NVARCHAR(200),
-    Cantidad INT NOT NULL DEFAULT 1 CHECK (Cantidad > 0),
-    PrecioUnitario DECIMAL(10,2) NOT NULL DEFAULT 0 CHECK (PrecioUnitario >= 0),
-    Subtotal AS (Cantidad * PrecioUnitario) PERSISTED,
-    CONSTRAINT FK_DetalleReserva_Reservas FOREIGN KEY (ReservaId) REFERENCES Reservas(Id) ON DELETE CASCADE
-);
-GO
 
 -- FACTURACI�N
 
@@ -148,17 +138,20 @@ GO
 
 
 INSERT INTO Roles (NombreRol)
-VALUES ('Administrador'), ('Empleado'), ('Cliente');
+VALUES ('Administrador'), ('Empleado');
 GO
 
 -- 2. Usuarios
-INSERT INTO Usuarios (Nombre, Apellido, Correo, Contraseña, RolId)
-SELECT TOP 1 'Isaac', 'Gil', 'Isaacgil87@hotmail.com', 'Admin1234*', Id
+
+--Contra: Admin1234*
+INSERT INTO Usuarios (Nombre, Apellido, Correo, Contrasena, RolId)
+SELECT TOP 1 'Isaac', 'Gil', 'Isaacgil87@hotmail.com', 'TsqVX8ewsyIA9J8xGmZ46R2N45e9UPByq7j0lGj476k=', Id
 FROM Roles WHERE NombreRol = 'Administrador';
 GO
 
-INSERT INTO Usuarios (Nombre, Apellido, Correo, Contraseña, RolId)
-SELECT TOP 1 'Luis', 'Pérez', 'Luisperez87o@gmail.com', 'Empleado5412*', Id
+--Contra: Empleado5412*
+INSERT INTO Usuarios (Nombre, Apellido, Correo, Contrasena, RolId)
+SELECT TOP 1 'Luis', 'Pérez', 'Luisperez87o@gmail.com', 'a3keKaVzAPidSjzYuZe2Fafh23UQ7KAr1YLrRebw9HE=', Id
 FROM Roles WHERE NombreRol = 'Empleado';
 GO
 
