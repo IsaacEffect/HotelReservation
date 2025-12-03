@@ -24,6 +24,9 @@ export default function LayoutDashboard({ children }) {
           <a href="/reportes" className="hover:text-[#FF9900]">
             Reportes
           </a>
+          <a href="/facturacion" className="hover:text-[#FF9900]">
+            Facturacion
+          </a>
           <a href="/usuarios" className="hover:text-[#FF9900]">
             Equipo
           </a>
