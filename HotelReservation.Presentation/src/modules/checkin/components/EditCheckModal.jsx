@@ -1,17 +1,22 @@
 import { useState, useEffect } from "react";
 
-export default function EditCheckModal({ open, onClose, record, room, onSave }) {
+export default function EditCheckModal({ open, onClose, record, room, categoria, onSave }) {
     const [form, setForm] = useState({
-        fechaEntrada: "",
-        fechaSalida: "",
+        fechaCheckIn: "",
+        fechaCheckOut: "",
         observaciones: "",
     });
 
+    // Cargar datos al abrir modal
     useEffect(() => {
         if (record) {
             setForm({
-                fechaEntrada: record.fechaEntrada?.substring(0, 16) || "",
-                fechaSalida: record.fechaSalida?.substring(0, 16) || "",
+                fechaCheckIn: record.fechaCheckIn
+                    ? record.fechaCheckIn.substring(0, 16)
+                    : "",
+                fechaCheckOut: record.fechaCheckOut
+                    ? record.fechaCheckOut.substring(0, 16)
+                    : "",
                 observaciones: record.observaciones || "",
             });
         }
@@ -19,15 +24,21 @@ export default function EditCheckModal({ open, onClose, record, room, onSave }) 
 
     if (!open) return null;
 
+    // Manejar cambios en inputs
     const handleChange = (e) =>
         setForm({ ...form, [e.target.name]: e.target.value });
 
     const handleSubmit = () => {
-        if (form.fechaSalida && form.fechaSalida < form.fechaEntrada) {
+        if (form.fechaCheckOut && form.fechaCheckOut < form.fechaCheckIn) {
             alert("La fecha de salida no puede ser menor que la de entrada.");
             return;
         }
-        onSave(form);
+
+        onSave({
+            fechaCheckIn: form.fechaCheckIn,
+            fechaCheckOut: form.fechaCheckOut,
+            observaciones: form.observaciones,
+        });
     };
 
     return (
@@ -41,18 +52,19 @@ export default function EditCheckModal({ open, onClose, record, room, onSave }) 
                 <p className="text-gray-300 mb-4">
                     Habitación <strong>{room?.numero}</strong> · Precio:{" "}
                     <strong className="text-[#FF9900]">
-                        ${room?.precioPorNoche}
+                        ${categoria?.precioPorNoche}
                     </strong>
                 </p>
 
                 {/* Formulario */}
                 <div className="space-y-4">
+
                     <div>
                         <label className="text-gray-300 text-sm">Fecha Check-In</label>
                         <input
                             type="datetime-local"
-                            name="fechaEntrada"
-                            value={form.fechaEntrada}
+                            name="fechaCheckIn"
+                            value={form.fechaCheckIn}
                             onChange={handleChange}
                             className="bg-[#0F1A2B] p-3 w-full rounded text-white"
                         />
@@ -62,8 +74,8 @@ export default function EditCheckModal({ open, onClose, record, room, onSave }) 
                         <label className="text-gray-300 text-sm">Fecha Check-Out</label>
                         <input
                             type="datetime-local"
-                            name="fechaSalida"
-                            value={form.fechaSalida}
+                            name="fechaCheckOut"
+                            value={form.fechaCheckOut}
                             onChange={handleChange}
                             className="bg-[#0F1A2B] p-3 w-full rounded text-white"
                         />
@@ -78,6 +90,7 @@ export default function EditCheckModal({ open, onClose, record, room, onSave }) 
                             className="bg-[#0F1A2B] p-3 w-full rounded text-white"
                         ></textarea>
                     </div>
+
                 </div>
 
                 <div className="flex justify-end gap-3 mt-6">
@@ -95,6 +108,7 @@ export default function EditCheckModal({ open, onClose, record, room, onSave }) 
                         Guardar Cambios
                     </button>
                 </div>
+
             </div>
         </div>
     );
