@@ -11,6 +11,7 @@ export const AuthProvider = ({ children }) => {
   const fetchUser = async (token) => {
     try {
       const decoded = jwtDecode(token);
+
       const idUsuario =
         decoded[
           "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
@@ -19,7 +20,9 @@ export const AuthProvider = ({ children }) => {
       if (!idUsuario) return;
 
       const res = await getUserById(idUsuario);
-      setUser(res.data.data);
+      const usuarioBD = res.data.data;
+
+      setUser(usuarioBD);
     } catch (err) {
       console.error("Error cargando usuario:", err);
     }
