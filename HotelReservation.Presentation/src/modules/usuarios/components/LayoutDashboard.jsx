@@ -1,5 +1,6 @@
 import { useState } from "react";
 import HeaderDashboard from "./HeaderDashboard";
+import { useAuth } from "../../../app/context/useAuth";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   CalendarCheck,
@@ -17,6 +18,8 @@ export default function LayoutDashboard({ children }) {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const esAdmin = user?.rol?.nombreRol === "Administrador";
 
   const menuItems = [
     { name: "Reservas", path: "/reservas", icon: CalendarCheck },
@@ -25,8 +28,14 @@ export default function LayoutDashboard({ children }) {
     { name: "Habitaciones", path: "/habitaciones", icon: BedDouble },
     { name: "Reportes", path: "/reportes", icon: FileText },
     { name: "Facturación", path: "/facturacion", icon: CreditCard },
-    { name: "Equipo", path: "/usuarios", icon: Users },
-    { name: "Roles", path: "/roles", icon: Shield },
+
+    // SOLO SI ES ADMIN
+    ...(esAdmin
+      ? [
+          { name: "Equipo", path: "/usuarios", icon: Users },
+          { name: "Roles", path: "/roles", icon: Shield },
+        ]
+      : []),
   ];
 
   return (

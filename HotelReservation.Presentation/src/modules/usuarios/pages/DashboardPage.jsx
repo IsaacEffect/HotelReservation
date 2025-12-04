@@ -5,6 +5,7 @@ import { getReporteIngresos } from "../../../api/reportes.api";
 import { getAllReservations } from "../../../api/reservas.api";
 import AgendaCalendar from "../components/AgendaCalendar";
 import LayoutDashboard from "../components/LayoutDashboard";
+import { useAuth } from "../../../app/context/useAuth";
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -13,6 +14,8 @@ export default function DashboardPage() {
   const [ingresosHoy, setIngresosHoy] = useState(0);
   const [ocupadasHoy, setOcupadasHoy] = useState(0);
   const [totalHabitacionesState, setTotalHabitacionesState] = useState(0);
+  const { user } = useAuth();
+  const esAdmin = user?.rol?.nombreRol === "Administrador";
 
   useEffect(() => {
     cargarKPIs();
@@ -154,19 +157,23 @@ export default function DashboardPage() {
             <p className="text-lg font-semibold text-[#FF9900]">Facturacion</p>
           </button>
 
-          <button
-            onClick={() => navigate("/usuarios")}
-            className="bg-[#1A2E44] hover:bg-[#243b56] p-6 rounded-xl shadow-lg text-center"
-          >
-            <p className="text-lg font-semibold text-[#FF9900]">Equipo</p>
-          </button>
+          {esAdmin && (
+            <button
+              onClick={() => navigate("/usuarios")}
+              className="bg-[#1A2E44] hover:bg-[#243b56] p-6 rounded-xl shadow-lg text-center"
+            >
+              <p className="text-lg font-semibold text-[#FF9900]">Equipo</p>
+            </button>
+          )}
 
-          <button
-            onClick={() => navigate("/roles")}
-            className="bg-[#1A2E44] hover:bg-[#243b56] p-6 rounded-xl shadow-lg text-center"
-          >
-            <p className="text-lg font-semibold text-[#FF9900]">Roles</p>
-          </button>
+          {esAdmin && (
+            <button
+              onClick={() => navigate("/roles")}
+              className="bg-[#1A2E44] hover:bg-[#243b56] p-6 rounded-xl shadow-lg text-center"
+            >
+              <p className="text-lg font-semibold text-[#FF9900]">Roles</p>
+            </button>
+          )}
         </div>
       </section>
 
