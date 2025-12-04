@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { facturacionService } from "../service/facturacionService";
+import { useNavigate } from "react-router-dom";
 import "../styles/facturacion.css";
 
 export default function FacturasReportes() {
@@ -7,6 +8,7 @@ export default function FacturasReportes() {
     const [filtradas, setFiltradas] = useState([]);
     const [filtroFecha, setFiltroFecha] = useState("");
     const [filtroMetodo, setFiltroMetodo] = useState("");
+    const navigate = useNavigate();
 
     useEffect(() => {
         cargarFacturas();
@@ -54,6 +56,15 @@ export default function FacturasReportes() {
 
     return (
         <div className="facturacion-container">
+            {/* BOTÓN VOLVER */}
+            <button 
+                onClick={() => navigate("/")} 
+                className="btn-blanco"
+                style={{ marginBottom: "15px" }}
+            >
+                ← Volver
+            </button>
+
             <h1 className="titulo">Reportes de Facturacion</h1>
 
             {/* FILTROS */}
