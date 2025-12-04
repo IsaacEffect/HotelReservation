@@ -1,0 +1,84 @@
+.facturas-container {
+    padding: 40px;
+    background: #0B1623;
+    min-height: 100vh;
+    color: white;
+}
+
+.titulo {
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 25px;
+}
+
+.filtros {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+    .filtros label {
+        font-size: 14px;
+        color: #FFCC33;
+    }
+
+    .filtros input,
+    .filtros select {
+        width: 100%;
+        padding: 7px;
+        border-radius: 8px;
+        border: none;
+    }
+
+.botones {
+    grid-column: span 3;
+    text-align: center;
+}
+
+.btn-amarillo {
+    background: #FFCC33;
+    padding: 10px 22px;
+    border: none;
+    border-radius: 10px;
+    margin-right: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-blanco {
+    background: white;
+    color: black;
+    padding: 10px 22px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.tabla table {
+    width: 100%;
+    background: white;
+    color: black;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.tabla th {
+    background: #0B1623;
+    color: white;
+    padding: 12px;
+}
+
+.tabla td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.ver-detalle {
+    background: #FFCC33;
+    padding: 6px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    color: black;
+}

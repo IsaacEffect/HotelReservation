@@ -8,6 +8,8 @@ namespace HotelReservation.Domain.Interfaces
         Task<CheckInOut> AddAsync(CheckInOut entity);
         Task<CheckInOut> UpdateAsync(CheckInOut entity);
         Task DeleteAsync(Guid id);
+        Task<IEnumerable<CheckInOut>> GetAllAsync();
+        Task<CheckInOut?> GetByIdAsync(Guid id);
     }
 
 }

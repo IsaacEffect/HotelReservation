@@ -1,18 +1,36 @@
 import { useEffect, useState } from "react";
 import { AuthContext } from "./AuthContextInstance";
+import { getUserById } from "../../api/users.api";
+import { jwtDecode } from "jwt-decode";
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);               // el backend no devuelve user
+  const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Carga inicial: solo valida el token
+  const fetchUser = async (token) => {
+    try {
+      const decoded = jwtDecode(token);
+      const idUsuario =
+        decoded[
+          "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+        ];
+
+      if (!idUsuario) return;
+
+      const res = await getUserById(idUsuario);
+      setUser(res.data.data);
+    } catch (err) {
+      console.error("Error cargando usuario:", err);
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("token");
 
     if (token) {
       setIsAuthenticated(true);
-      setUser(null); // por ahora no hay user
+      fetchUser(token);
     } else {
       setIsAuthenticated(false);
       setUser(null);
@@ -21,22 +39,14 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  // LOGIN
-  const login = (token) => {
+  const login = async (token) => {
     localStorage.setItem("token", token);
-
-    // No existe user en la respuesta del backend
-    localStorage.removeItem("user");
-
-    setUser(null);
     setIsAuthenticated(true);
+    await fetchUser(token);
   };
 
-  // LOGOUT
   const logout = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("user");
-
     setUser(null);
     setIsAuthenticated(false);
   };

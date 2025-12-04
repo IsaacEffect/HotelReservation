@@ -126,9 +126,9 @@ namespace HotelReservation.Application.Services
         }
 
         // UPDATE - Actualizar fechas
-        public async Task ActualizarReservaAsync(ActualizarReservaDTO dto)
+        public async Task ActualizarReservaAsync(Guid id, ActualizarReservaDTO dto)
         {
-            var reserva = await _repo.ObtenerReservaPorIdAsync(dto.ReservaId);
+            var reserva = await _repo.ObtenerReservaPorIdAsync(id);
             if (reserva == null)
                 throw new KeyNotFoundException("Reserva no encontrada");
 
@@ -139,7 +139,7 @@ namespace HotelReservation.Application.Services
                 reserva.HabitacionId,
                 dto.FechaInicio,
                 dto.FechaFin,
-                dto.ReservaId);
+                id);
 
             if (!disponible)
                 throw new InvalidOperationException("La habitación no está disponible para las nuevas fechas");
@@ -163,9 +163,9 @@ namespace HotelReservation.Application.Services
         }
 
         // UPDATE - Cambiar estado
-        public async Task CambiarEstadoReservaAsync(ActualizarEstadoReservaDTO dto)
+        public async Task CambiarEstadoReservaAsync(Guid id, ActualizarEstadoReservaDTO dto)
         {
-            var reserva = await _repo.ObtenerReservaPorIdAsync(dto.ReservaId);
+            var reserva = await _repo.ObtenerReservaPorIdAsync(id);
             if (reserva == null)
                 throw new KeyNotFoundException("Reserva no encontrada");
 

@@ -12,6 +12,7 @@ namespace HotelReservation.Persistence.Base
         public IUsuarioRepository Usuarios { get; }
         public IRolRepository Roles { get; }
         public ICategoriaHabitacionRepository Categorias { get; }
+        public IHabitacionRepository Habitaciones { get; }
         public IFacturaRepository Facturas { get; }
         public IReservaRepository Reservas { get; }
 
@@ -21,6 +22,7 @@ namespace HotelReservation.Persistence.Base
             IUsuarioRepository usuarioRepository,
             IRolRepository rolRepository,
             ICategoriaHabitacionRepository categoriaRepository,
+            IHabitacionRepository habitacionRepository,
             IFacturaRepository facturaRepository,
             IReservaRepository reservaRepository
             )
@@ -31,6 +33,7 @@ namespace HotelReservation.Persistence.Base
             Usuarios = usuarioRepository;
             Roles = rolRepository;
             Categorias = categoriaRepository;
+            Habitaciones = habitacionRepository;
             Facturas = facturaRepository;
             Reservas = reservaRepository;
         }

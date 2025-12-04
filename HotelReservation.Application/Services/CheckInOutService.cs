@@ -9,6 +9,10 @@ namespace HotelReservation.Application.Services
         Task<CheckInOutDto?> GetByReservaIdAsync(Guid reservaId);
         Task<CheckInOutDto> RegisterCheckInAsync(CreateCheckInRequest request);
         Task<CheckInOutDto> RegisterCheckOutAsync(CreateCheckOutRequest request);
+        Task<IEnumerable<CheckInOutDto>> GetAllAsync();
+        Task<CheckInOutDto?> GetByIdAsync(Guid id);
+        Task<CheckInOutDto?> UpdateAsync(Guid id, UpdateCheckInOutRequest request);
+        Task<bool> DeleteAsync(Guid id);
     }
 
     public class CheckInOutService : ICheckInOutService
@@ -218,6 +222,65 @@ namespace HotelReservation.Application.Services
                 FechaCheckOut = existing.FechaCheckOut,
                 Observaciones = existing.Observaciones
             };
+        }
+
+        public async Task<IEnumerable<CheckInOutDto>> GetAllAsync()
+        {
+            var list = await _checkRepo.GetAllAsync();
+
+            return list.Select(ent => new CheckInOutDto
+            {
+                Id = ent.Id,
+                ReservaId = ent.ReservaId,
+                FechaCheckIn = ent.FechaCheckIn,
+                FechaCheckOut = ent.FechaCheckOut,
+                Observaciones = ent.Observaciones
+            });
+        }
+
+        public async Task<CheckInOutDto?> GetByIdAsync(Guid id)
+        {
+            var ent = await _checkRepo.GetByIdAsync(id);
+            if (ent == null) return null;
+
+            return new CheckInOutDto
+            {
+                Id = ent.Id,
+                ReservaId = ent.ReservaId,
+                FechaCheckIn = ent.FechaCheckIn,
+                FechaCheckOut = ent.FechaCheckOut,
+                Observaciones = ent.Observaciones
+            };
+        }
+
+        public async Task<CheckInOutDto?> UpdateAsync(Guid id, UpdateCheckInOutRequest request)
+        {
+            var ent = await _checkRepo.GetByIdAsync(id);
+            if (ent == null) return null;
+
+            ent.FechaCheckIn = request.FechaCheckIn;
+            ent.FechaCheckOut = request.FechaCheckOut;
+            ent.Observaciones = request.Observaciones;
+
+            var updated = await _checkRepo.UpdateAsync(ent);
+
+            return new CheckInOutDto
+            {
+                Id = updated.Id,
+                ReservaId = updated.ReservaId,
+                FechaCheckIn = updated.FechaCheckIn,
+                FechaCheckOut = updated.FechaCheckOut,
+                Observaciones = updated.Observaciones
+            };
+        }
+
+        public async Task<bool> DeleteAsync(Guid id)
+        {
+            var ent = await _checkRepo.GetByIdAsync(id);
+            if (ent == null) return false;
+
+            await _checkRepo.DeleteAsync(id);
+            return true;
         }
     }
 }

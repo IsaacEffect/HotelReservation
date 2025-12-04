@@ -1,0 +1,67 @@
+.reportes-container {
+    padding: 40px;
+    background: #0B1623;
+    min-height: 100vh;
+    color: white;
+}
+
+.titulo-reportes {
+    text-align: center;
+    font-size: 34px;
+    margin-bottom: 25px;
+}
+
+.filtros-reportes {
+    display: flex;
+    gap: 25px;
+    margin-bottom: 30px;
+    align-items: flex-end;
+}
+
+    .filtros-reportes label {
+        font-size: 14px;
+        color: #FFCC33;
+    }
+
+    .filtros-reportes input {
+        padding: 8px;
+        border-radius: 8px;
+        border: none;
+    }
+
+.btn-filtrar {
+    background: #FFCC33;
+    padding: 10px 25px;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.totales-panel {
+    background: white;
+    color: black;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.total-monto {
+    font-size: 35px;
+    font-weight: bold;
+    color: #0B1623;
+}
+
+.graficas-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.grafica {
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    color: black;
+}
