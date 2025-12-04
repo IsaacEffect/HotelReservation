@@ -32,310 +32,275 @@ import FacturasReportes from "../../modules/facturacion/pages/FacturasReportes";
 import { useAuth } from "../context/useAuth";
 
 export const AppRouter = () => {
-    const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
 
-    return (
-        <BrowserRouter>
-            <Routes>
-                {/** ======================= PUBLIC ======================= */}
-                <Route
-                    path="/login"
-                    element={
-                        <PublicRoute isAuth={isAuthenticated} loading={loading}>
-                            <LoginPage />
-                        </PublicRoute>
-                    }
-                />
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/** ======================= PUBLIC ======================= */}
+        <Route
+          path="/login"
+          element={
+            <PublicRoute isAuth={isAuthenticated} loading={loading}>
+              <LoginPage />
+            </PublicRoute>
+          }
+        />
 
-                {/** ======================= DASHBOARD ======================= */}
-                <Route
-                    path="/"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <DashboardPage />
-                        </ProtectedRoute>
-                    }
-                />
+        {/** ======================= DASHBOARD ======================= */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
 
-                {/** ======================= RESERVAS ======================= */}
-                <Route
-                    path="/reservas"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <ReservasPage />
-                        </ProtectedRoute>
-                    }
-                />
+        {/** ======================= RESERVAS ======================= */}
+        <Route
+          path="/reservas"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <ReservasPage />
+            </ProtectedRoute>
+          }
+        />
 
-                <Route
-                    path="/reservas/nueva"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <ReservaForm />
-                        </ProtectedRoute>
-                    }
-                />
+        <Route
+          path="/reservas/nueva"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <ReservaForm />
+            </ProtectedRoute>
+          }
+        />
 
-                <Route
-                    path="/reservas/detalle/:id"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <ReservaDetallePage />
-                        </ProtectedRoute>
-                    }
-                />
+        <Route
+          path="/reservas/detalle/:id"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <ReservaDetallePage />
+            </ProtectedRoute>
+          }
+        />
 
-                {/** ======================= CHECKIN / CHECKOUT ======================= */}
-                <Route
-                    path="/check"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <CheckPage />
-                        </ProtectedRoute>
-                    }
-                />
+        {/** ======================= CHECKIN / CHECKOUT ======================= */}
+        <Route
+          path="/check"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <CheckPage />
+            </ProtectedRoute>
+          }
+        />
 
-                <Route
-                    path="/checkin"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <CheckInPage />
-                        </ProtectedRoute>
-                    }
-                />
+        <Route
+          path="/checkin"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <CheckInPage />
+            </ProtectedRoute>
+          }
+        />
 
-                <Route
-                    path="/checkout"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <CheckOutPage />
-                        </ProtectedRoute>
-                    }
-                />
+        <Route
+          path="/checkout"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <CheckOutPage />
+            </ProtectedRoute>
+          }
+        />
 
-                <Route
-                    path="/historial"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <HistoryPage />
-                        </ProtectedRoute>
-                    }
-                />
+        <Route
+          path="/historial"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <HistoryPage />
+            </ProtectedRoute>
+          }
+        />
 
-                {/** ======================= HABITACIONES ======================= */}
-                <Route
-                    path="/habitaciones"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <HabitacionesPage />
-                        </ProtectedRoute>
-                    }
-                />
+        {/** ======================= HABITACIONES ======================= */}
+        <Route
+          path="/habitaciones"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <HabitacionesPage />
+            </ProtectedRoute>
+          }
+        />
 
-                <Route
-                    path="/habitaciones/nueva"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <HabitacionForm />
-                        </ProtectedRoute>
-                    }
-                />
+        <Route
+          path="/habitaciones/nueva"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <HabitacionForm />
+            </ProtectedRoute>
+          }
+        />
 
-                <Route
-                    path="/habitaciones/editar/:id"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <HabitacionForm />
-                        </ProtectedRoute>
-                    }
-                />
+        <Route
+          path="/habitaciones/editar/:id"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <HabitacionForm />
+            </ProtectedRoute>
+          }
+        />
 
-                <Route
-                    path="/categorias"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <CategoriasPage />
-                        </ProtectedRoute>
-                    }
-                />
+        {/** ======================= CATEGORÍAS ======================= */}
 
-                <Route
-                    path="/categorias/nueva"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <CategoriaForm />
-                        </ProtectedRoute>
-                    }
-                />
+        <Route
+          path="/categorias"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <CategoriasPage />
+            </ProtectedRoute>
+          }
+        />
 
-                <Route
-                    path="/categorias/editar/:id"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <CategoriaForm />
-                        </ProtectedRoute>
-                    }
-                />
+        <Route
+          path="/categorias/nueva"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <CategoriaForm />
+            </ProtectedRoute>
+          }
+        />
 
-                <Route
-                    path="/habitaciones/editar/:id"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <HabitacionForm />
-                        </ProtectedRoute>
-                    }
-                />
+        <Route
+          path="/categorias/editar/:id"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <CategoriaForm />
+            </ProtectedRoute>
+          }
+        />
 
-                {/** ======================= CATEGORÍAS ======================= */}
-                <Route
-                    path="/categorias"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <CategoriasPage />
-                        </ProtectedRoute>
-                    }
-                />
+        {/** ======================= CLIENTES ======================= */}
+        <Route
+          path="/clientes"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <ClientesPage />
+            </ProtectedRoute>
+          }
+        />
 
-                <Route
-                    path="/categorias/nueva"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <CategoriaForm />
-                        </ProtectedRoute>
-                    }
-                />
+        <Route
+          path="/clientes/nuevo"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <ClienteForm />
+            </ProtectedRoute>
+          }
+        />
 
-                <Route
-                    path="/categorias/editar/:id"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <CategoriaForm />
-                        </ProtectedRoute>
-                    }
-                />
+        <Route
+          path="/clientes/editar/:id"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <ClienteForm />
+            </ProtectedRoute>
+          }
+        />
 
-                {/** ======================= CLIENTES ======================= */}
-                <Route
-                    path="/clientes"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <ClientesPage />
-                        </ProtectedRoute>
-                    }
-                />
+        {/** ======================= USUARIOS ======================= */}
+        <Route
+          path="/usuarios"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <UsersPage />
+            </ProtectedRoute>
+          }
+        />
 
-                <Route
-                    path="/clientes/nuevo"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <ClienteForm />
-                        </ProtectedRoute>
-                    }
-                />
+        <Route
+          path="/usuarios/nuevo"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <UserForm />
+            </ProtectedRoute>
+          }
+        />
 
-                <Route
-                    path="/clientes/editar/:id"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <ClienteForm />
-                        </ProtectedRoute>
-                    }
-                />
+        <Route
+          path="/usuarios/editar/:id"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <UserForm />
+            </ProtectedRoute>
+          }
+        />
 
-                {/** ======================= USUARIOS ======================= */}
-                <Route
-                    path="/usuarios"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <UsersPage />
-                        </ProtectedRoute>
-                    }
-                />
+        <Route
+          path="/usuarios/cambiar-pass/:id"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <ChangePassword />
+            </ProtectedRoute>
+          }
+        />
 
-                <Route
-                    path="/usuarios/nuevo"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <UserForm />
-                        </ProtectedRoute>
-                    }
-                />
+        {/** ======================= ROLES ======================= */}
+        <Route
+          path="/roles"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <RolesPage />
+            </ProtectedRoute>
+          }
+        />
 
-                <Route
-                    path="/usuarios/editar/:id"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <UserForm />
-                        </ProtectedRoute>
-                    }
-                />
+        <Route
+          path="/roles/nuevo"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <RoleForm />
+            </ProtectedRoute>
+          }
+        />
 
-                <Route
-                    path="/usuarios/cambiar-pass/:id"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <ChangePassword />
-                        </ProtectedRoute>
-                    }
-                />
+        {/** ======================= FACTURACIÓN ======================= */}
 
-                {/** ======================= ROLES ======================= */}
-                <Route
-                    path="/roles"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <RolesPage />
-                        </ProtectedRoute>
-                    }
-                />
+        <Route
+          path="/facturacion"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <FacturasListado />
+            </ProtectedRoute>
+          }
+        />
 
-                <Route
-                    path="/roles/nuevo"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <RoleForm />
-                        </ProtectedRoute>
-                    }
-                />
+        <Route
+          path="/facturacion/nueva"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <FacturaCrear />
+            </ProtectedRoute>
+          }
+        />
 
-                {/** ======================= FACTURACIÓN ======================= */}
+        <Route
+          path="/facturacion/detalle/:id"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <FacturaDetalle />
+            </ProtectedRoute>
+          }
+        />
 
-                <Route
-                    path="/facturacion"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <FacturasListado />
-                        </ProtectedRoute>
-                    }
-                />
-
-                <Route
-                    path="/facturacion/nueva"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <FacturaCrear />
-                        </ProtectedRoute>
-                    }
-                />
-
-                <Route
-                    path="/facturacion/detalle/:id"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <FacturaDetalle />
-                        </ProtectedRoute>
-                    }
-                />
-
-                <Route
-                    path="reportes"
-                    element={
-                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
-                            <FacturasReportes />
-                        </ProtectedRoute>
-                    }
-                />
-            </Routes>
-        </BrowserRouter>
-    );
+        <Route
+          path="reportes"
+          element={
+            <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+              <FacturasReportes />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
+  );
 };
