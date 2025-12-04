@@ -1,66 +1,104 @@
 import { useNavigate } from "react-router-dom";
 import LayoutDashboard from "../../usuarios/components/LayoutDashboard";
-import { useHistorial } from "../hooks/useHistorial";
 import { useEffect, useState } from "react";
 import { getRooms } from "../../../api/habitaciones.api";
+import { getCategorias } from "../../../api/categorias.api";
+import { getReservationById } from "../../../api/reservas.api";
 import EditCheckModal from "../components/EditCheckModal";
-import { updateHistoryRecord } from "../../../api/checkInOut.api";
+
+import {
+    getAllCheckInOut,
+    updateHistoryRecord,
+    deleteHistoryRecord,
+} from "../../../api/checkInOut.api";
 
 export default function CheckPage() {
     const navigate = useNavigate();
 
-    const { data, loadAll, remove } = useHistorial();
+    const [checks, setChecks] = useState([]);
     const [rooms, setRooms] = useState([]);
+    const [categorias, setCategorias] = useState([]);
+
     const [lastEvent, setLastEvent] = useState(null);
     const [animate, setAnimate] = useState(false);
 
-    // --- Modal states ---
+    // Modal
     const [openModal, setOpenModal] = useState(false);
     const [selected, setSelected] = useState(null);
     const [selectedRoom, setSelectedRoom] = useState(null);
+    const [selectedCategoria, setSelectedCategoria] = useState(null);
 
-    // Cargar historial + habitaciones
+    // Cargar registros CheckInOut y sus habitaciones
+    const loadChecks = async () => {
+        const res = await getAllCheckInOut();
+        const rawChecks = res.data;
+
+        const checksWithRoom = await Promise.all(
+            rawChecks.map(async (c) => {
+                const reserva = await getReservationById(c.reservaId);
+                return {
+                    ...c,
+                    habitacionId: reserva.data.habitacionId,
+                };
+            })
+        );
+
+        setChecks(checksWithRoom);
+    };
+
+    // Cargar habitaciones y categorías
     useEffect(() => {
-        loadAll();
+        loadChecks();
+
         getRooms().then((res) => setRooms(res.data.data));
-    }, [loadAll]);
+        getCategorias().then((res) => setCategorias(res.data.data));
+    }, []);
 
-    // Detectar ultimo check-in/check-out
+    // Detectar ultimo evento
     useEffect(() => {
-        if (data.length > 0) {
-            const last = [...data].sort(
-                (a, b) => new Date(b.fechaEntrada) - new Date(a.fechaEntrada)
+        if (checks.length > 0) {
+            const last = [...checks].sort(
+                (a, b) => new Date(b.fechaCheckIn) - new Date(a.fechaCheckIn)
             )[0];
 
             setLastEvent(last);
 
             setAnimate(true);
-            const timeout = setTimeout(() => setAnimate(false), 500);
-            return () => clearTimeout(timeout);
+            setTimeout(() => setAnimate(false), 500);
         }
-    }, [data]);
+    }, [checks]);
 
-    // --- Abrir modal EDITAR ---
+    // Abrir modal editar
     const openEdit = (record) => {
         const room = rooms.find((r) => r.id === record.habitacionId);
+        const categoria = categorias.find((c) => c.id === room?.categoriaId);
+
         setSelected(record);
         setSelectedRoom(room);
+        setSelectedCategoria(categoria);
         setOpenModal(true);
     };
 
     const closeModal = () => setOpenModal(false);
 
-    // --- Guardar cambios ---
+    // Guardar cambios
     const handleSave = async (form) => {
         await updateHistoryRecord(selected.id, form);
         closeModal();
-        loadAll();
+        loadChecks();
     };
 
+    // Eliminar registro
     const handleDelete = async (id) => {
         if (!window.confirm("¿Seguro que deseas eliminar este registro?")) return;
-        await remove(id);
-        loadAll();
+
+        try {
+            await deleteHistoryRecord(id);
+            loadChecks();
+        } catch (error) {
+            console.error("Error", error);
+            alert("No se pudo eliminar el registro.");
+        }
     };
 
     return (
@@ -69,9 +107,8 @@ export default function CheckPage() {
 
                 <h1 className="text-3xl font-bold mb-8">Check-In / Check-Out</h1>
 
+                {/* Tarjetas */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-
-                    {/* CARD CHECK-IN */}
                     <button
                         onClick={() => navigate("/checkin")}
                         className="bg-[#1A2E44] p-8 rounded-xl shadow-lg hover:bg-[#243b56] text-center"
@@ -80,7 +117,6 @@ export default function CheckPage() {
                         <p className="text-gray-300 mt-2">Registrar llegada del huésped</p>
                     </button>
 
-                    {/* CARD CHECK-OUT */}
                     <button
                         onClick={() => navigate("/checkout")}
                         className="bg-[#1A2E44] p-8 rounded-xl shadow-lg hover:bg-[#243b56] text-center"
@@ -89,25 +125,25 @@ export default function CheckPage() {
                         <p className="text-gray-300 mt-2">Registrar salida del huésped</p>
                     </button>
 
-                    {/* CARD HISTORIAL */}
                     <button
                         onClick={() => navigate("/historial")}
                         className="bg-[#1A2E44] p-8 rounded-xl shadow-lg hover:bg-[#243b56] text-center"
                     >
                         <h3 className="text-xl font-semibold text-[#FF9900]">Historial Reservas</h3>
-                        <p className="text-gray-300 mt-2 whitespace-nowrap">Consulta estancias completadas</p>
+                        <p className="text-gray-300 mt-2 whitespace-nowrap">
+                            Consulta estancias completadas
+                        </p>
                     </button>
-
                 </div>
 
-                {/* TABLA DE ULTIMOS REGISTROS */}
+                {/* Tabla */}
                 {lastEvent && (
                     <div
                         className={`mt-16 transition-all duration-500 ${animate ? "opacity-0 translate-y-3" : "opacity-100 translate-y-0"
                             }`}
                     >
                         <h2 className="text-2xl font-bold mb-4">
-                            {lastEvent.fechaSalida
+                            {lastEvent.fechaCheckOut
                                 ? "Se realizó check-out para:"
                                 : "Se realizó check-in para:"}
                         </h2>
@@ -125,27 +161,27 @@ export default function CheckPage() {
                                 </thead>
 
                                 <tbody>
-                                    {data.map((h) => {
+                                    {checks.map((h) => {
                                         const room = rooms.find((r) => r.id === h.habitacionId);
+                                        const categoria = categorias.find(
+                                            (c) => c.id === room?.categoriaId
+                                        );
 
                                         return (
                                             <tr
                                                 key={h.id}
                                                 className="border-b border-[#243b56] hover:bg-[#223650] transition"
                                             >
-                                                {/* Habitacion */}
                                                 <td className="p-3 font-semibold">
                                                     {room ? `Hab. ${room.numero}` : "—"}
                                                 </td>
 
-                                                {/* Costo */}
                                                 <td className="p-3 font-semibold text-[#FF9900]">
-                                                    {room ? `$${room.precioPorNoche}` : "—"}
+                                                    {categoria ? `$${categoria.precioPorNoche}` : "—"}
                                                 </td>
 
-                                                {/* Check-In */}
                                                 <td className="p-3">
-                                                    {h.fechaEntrada ? (
+                                                    {h.fechaCheckIn ? (
                                                         <span className="text-green-400 font-semibold">
                                                             Completado ✓
                                                         </span>
@@ -154,9 +190,8 @@ export default function CheckPage() {
                                                     )}
                                                 </td>
 
-                                                {/* Check-Out */}
                                                 <td className="p-3">
-                                                    {h.fechaSalida ? (
+                                                    {h.fechaCheckOut ? (
                                                         <span className="text-green-400 font-semibold">
                                                             Completado ✓
                                                         </span>
@@ -165,9 +200,7 @@ export default function CheckPage() {
                                                     )}
                                                 </td>
 
-                                                {/* Acciones */}
                                                 <td className="p-3 flex gap-2">
-
                                                     <button
                                                         onClick={() => openEdit(h)}
                                                         className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded"
@@ -188,7 +221,6 @@ export default function CheckPage() {
                                 </tbody>
                             </table>
                         </div>
-
                     </div>
                 )}
 
@@ -197,6 +229,7 @@ export default function CheckPage() {
                     onClose={closeModal}
                     record={selected}
                     room={selectedRoom}
+                    categoria={selectedCategoria}
                     onSave={handleSave}
                 />
             </div>
