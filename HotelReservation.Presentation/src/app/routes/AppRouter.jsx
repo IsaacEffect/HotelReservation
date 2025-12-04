@@ -11,9 +11,11 @@ import ClientesPage from "../../modules/usuarios/pages/ClientsPage";
 import ClienteForm from "../../modules/usuarios/components/ClientForm";
 import RolesPage from "../../modules/usuarios/pages/RolesPage";
 import RoleForm from "../../modules/usuarios/components/RoleForm";
+
 import ReservasPage from "../../modules/reservas/pages/ReservasPage";
 import ReservaForm from "../../modules/reservas/components/ReservaForm";
 import ReservaDetallePage from "../../modules/reservas/pages/ReservaDetallePage";
+
 import CheckPage from "../../modules/checkin/pages/CheckPage";
 import CheckInPage from "../../modules/checkin/pages/CheckInPage";
 import CheckOutPage from "../../modules/checkin/pages/CheckOutPage";
@@ -35,6 +37,7 @@ export const AppRouter = () => {
     return (
         <BrowserRouter>
             <Routes>
+                {/** ======================= PUBLIC ======================= */}
                 <Route
                     path="/login"
                     element={
@@ -44,6 +47,7 @@ export const AppRouter = () => {
                     }
                 />
 
+                {/** ======================= DASHBOARD ======================= */}
                 <Route
                     path="/"
                     element={
@@ -53,6 +57,7 @@ export const AppRouter = () => {
                     }
                 />
 
+                {/** ======================= RESERVAS ======================= */}
                 <Route
                     path="/reservas"
                     element={
@@ -80,6 +85,7 @@ export const AppRouter = () => {
                     }
                 />
 
+                {/** ======================= CHECKIN / CHECKOUT ======================= */}
                 <Route
                     path="/check"
                     element={
@@ -116,6 +122,7 @@ export const AppRouter = () => {
                     }
                 />
 
+                {/** ======================= HABITACIONES ======================= */}
                 <Route
                     path="/habitaciones"
                     element={
@@ -171,6 +178,44 @@ export const AppRouter = () => {
                 />
 
                 <Route
+                    path="/habitaciones/editar/:id"
+                    element={
+                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+                            <HabitacionForm />
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/** ======================= CATEGORÍAS ======================= */}
+                <Route
+                    path="/categorias"
+                    element={
+                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+                            <CategoriasPage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/categorias/nueva"
+                    element={
+                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+                            <CategoriaForm />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/categorias/editar/:id"
+                    element={
+                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+                            <CategoriaForm />
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/** ======================= CLIENTES ======================= */}
+                <Route
                     path="/clientes"
                     element={
                         <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
@@ -197,6 +242,7 @@ export const AppRouter = () => {
                     }
                 />
 
+                {/** ======================= USUARIOS ======================= */}
                 <Route
                     path="/usuarios"
                     element={
@@ -233,6 +279,7 @@ export const AppRouter = () => {
                     }
                 />
 
+                {/** ======================= ROLES ======================= */}
                 <Route
                     path="/roles"
                     element={
@@ -281,7 +328,7 @@ export const AppRouter = () => {
                 />
 
                 <Route
-                    path="/reportes"
+                    path="reportes"
                     element={
                         <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
                             <FacturasReportes />
