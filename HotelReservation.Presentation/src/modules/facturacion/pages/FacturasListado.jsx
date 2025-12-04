@@ -1,71 +1,142 @@
 import React, { useEffect, useState } from "react";
 import { facturacionService } from "../service/facturacionService";
-import { useNavigate } from "react-router-dom";
-import "../styles/facturacion.css";
+import "../styles/facturasListado.css";
 
 export default function FacturasListado() {
     const [facturas, setFacturas] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
+
+    // Filtros
+    const [filtros, setFiltros] = useState({
+        fechaDesde: "",
+        fechaHasta: "",
+        metodoPago: "",
+        huesped: "",
+        montoMin: "",
+        montoMax: ""
+    });
 
     useEffect(() => {
-        cargarFacturas();
+        obtenerFacturas();
     }, []);
 
-    async function cargarFacturas() {
+    async function obtenerFacturas() {
+        setLoading(true);
         try {
-            const data = await facturacionService.listar();
+            const data = await facturacionService.listar(filtros);
             setFacturas(data);
-        } catch (e) {
-            console.error("Error cargando facturas", e);
+        } catch (error) {
+            console.error("Error obteniendo facturas:", error);
         } finally {
             setLoading(false);
         }
     }
 
+    const handleChange = (e) => {
+        setFiltros({ ...filtros, [e.target.name]: e.target.value });
+    };
+
+    const limpiar = async () => {
+        const reset = {
+            fechaDesde: "",
+            fechaHasta: "",
+            metodoPago: "",
+            huesped: "",
+            montoMin: "",
+            montoMax: ""
+        };
+        setFiltros(reset);
+        const data = await facturacionService.listar(reset);
+        setFacturas(data);
+    };
+
     return (
-        <div className="facturacion-container">
-            <h1 className="titulo">Gestion de Facturas</h1>
+        <div className="facturas-container">
+            <h2 className="titulo">Listado de Facturas</h2>
 
-            <button
-                className="btn-crear"
-                onClick={() => navigate("/facturacion/crear")}
-            >
-                Crear factura
-            </button>
-
-            <div className="tabla">
-                <div className="tabla-header">
-                    <span>Numero</span>
-                    <span>Fecha</span>
-                    <span>Monto</span>
-                    <span>Metodo</span>
-                    <span></span>
+            {/* FILTROS */}
+            <div className="filtros">
+                <div>
+                    <label>Desde:</label>
+                    <input name="fechaDesde" type="date" value={filtros.fechaDesde} onChange={handleChange} />
                 </div>
 
-                {loading ? (
-                    <p className="cargando">Cargando...</p>
-                ) : facturas.length === 0 ? (
-                    <p>No hay facturas.</p>
-                ) : (
-                    facturas.map((f) => (
-                        <div key={f.id} className="tabla-row">
-                            <span>{f.numeroFactura}</span>
-                            <span>{f.fecha}</span>
-                            <span>${f.montoTotal}</span>
-                            <span>{f.metodoPago}</span>
-                            <button
-                                className="btn-detalle"
-                                onClick={() =>
-                                    navigate(`/facturacion/detalle/${f.id}`)
-                                }
-                            >
-                                Detalle
-                            </button>
-                        </div>
-                    ))
-                )}
+                <div>
+                    <label>Hasta:</label>
+                    <input name="fechaHasta" type="date" value={filtros.fechaHasta} onChange={handleChange} />
+                </div>
+
+                <div>
+                    <label>Metodo de pago:</label>
+                    <select name="metodoPago" value={filtros.metodoPago} onChange={handleChange}>
+                        <option value="">Todos</option>
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Tarjeta">Tarjeta</option>
+                        <option value="Transferencia">Transferencia</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Huesped:</label>
+                    <input name="huesped" type="text" placeholder="Nombre" value={filtros.huesped} onChange={handleChange} />
+                </div>
+
+                <div>
+                    <label>Monto Min:</label>
+                    <input name="montoMin" type="number" value={filtros.montoMin} onChange={handleChange} />
+                </div>
+
+                <div>
+                    <label>Monto Max:</label>
+                    <input name="montoMax" type="number" value={filtros.montoMax} onChange={handleChange} />
+                </div>
+
+                <div className="botones">
+                    <button onClick={obtenerFacturas} className="btn-amarillo">Filtrar</button>
+                    <button onClick={limpiar} className="btn-blanco">Limpiar</button>
+                </div>
+            </div>
+
+            {/* LISTADO */}
+            <div className="tabla">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Fecha</th>
+                            <th>Cliente</th>
+                            <th>Metodo</th>
+                            <th>Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {loading ? (
+                            <tr><td colSpan="6" style={{ textAlign: "center" }}>Cargando...</td></tr>
+                        ) : facturas.length === 0 ? (
+                            <tr><td colSpan="6" style={{ textAlign: "center" }}>No hay resultados</td></tr>
+                        ) : (
+                            facturas.map((f) => (
+                                <tr key={f.id}>
+                                    <td>{f.id}</td>
+                                    <td>{new Date(f.fechaEmision).toLocaleDateString()}</td>
+                                    <td>{f.huespedNombre}</td>
+                                    <td>{f.metodoPago}</td>
+                                    <td>RD${f.montoTotal}</td>
+                                    <td>
+                                        <a className="ver-detalle" href={`/facturacion/detalle/${f.id}`}>
+                                            Ver
+                                        </a>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
+                    </tbody>
+
+                </table>
             </div>
         </div>
     );
 }
+
