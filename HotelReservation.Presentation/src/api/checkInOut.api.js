@@ -18,9 +18,16 @@ export const getHistoryByRoom = (id) =>
 export const getByReservation = (id) =>
     httpClient.get(`/CheckInOut/${id}`);
 
+export const getAllCheckInOut = () =>
+    httpClient.get("/CheckInOut");
+
 export const updateHistoryRecord = (id, data) =>
-    httpClient.put(`/CheckInOut/update/${id}`, data);
+    httpClient.put(`/CheckInOut/${id}`, {
+        fechaCheckIn: data.fechaCheckIn ?? null,
+        fechaCheckOut: data.fechaCheckOut ?? null,
+        observaciones: data.observaciones ?? "",
+    });
 
 export const deleteHistoryRecord = (id) =>
-    httpClient.delete(`/CheckInOut/delete/${id}`);
+    httpClient.delete(`/CheckInOut/${id}`);;
 

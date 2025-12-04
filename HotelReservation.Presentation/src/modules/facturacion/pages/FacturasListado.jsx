@@ -67,7 +67,7 @@ export default function FacturasListado() {
                 </div>
 
                 <div>
-                    <label>Método de pago:</label>
+                    <label>Metodo de pago:</label>
                     <select name="metodoPago" value={filtros.metodoPago} onChange={handleChange}>
                         <option value="">Todos</option>
                         <option value="Efectivo">Efectivo</option>
@@ -77,7 +77,7 @@ export default function FacturasListado() {
                 </div>
 
                 <div>
-                    <label>Huésped:</label>
+                    <label>Huesped:</label>
                     <input name="huesped" type="text" placeholder="Nombre" value={filtros.huesped} onChange={handleChange} />
                 </div>
 
@@ -105,7 +105,7 @@ export default function FacturasListado() {
                             <th>ID</th>
                             <th>Fecha</th>
                             <th>Cliente</th>
-                            <th>Método</th>
+                            <th>Metodo</th>
                             <th>Total</th>
                             <th></th>
                         </tr>

@@ -83,6 +83,11 @@ namespace HotelReservation.Application.Services
             {
                 var nueva = _mapper.Map<Habitacion>(dto);
 
+                // Validar si ya existe el numero
+                var existe = await _unitOfWork.Habitaciones.GetByNumberAsync(nueva.Numero);
+                if (existe != null)
+                    return OperationResult<Guid>.Fail("El número de habitación ya existe.");
+
                 await _unitOfWork.Habitaciones.AddAsync(nueva);
                 await _unitOfWork.SaveChangesAsync();
 
@@ -104,6 +109,11 @@ namespace HotelReservation.Application.Services
                     return OperationResult.Fail("Habitación no encontrada.");
 
                 _mapper.Map(dto, habitacion);
+
+                // Validar duplicado en update
+                var existe = await _unitOfWork.Habitaciones.GetByNumberAsync(habitacion.Numero);
+                if (existe != null && existe.Id != id)
+                    return OperationResult.Fail("El número de habitación ya existe.");
 
                 await _unitOfWork.Habitaciones.UpdateAsync(habitacion);
                 await _unitOfWork.SaveChangesAsync();

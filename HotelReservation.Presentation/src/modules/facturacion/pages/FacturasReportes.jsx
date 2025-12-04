@@ -16,7 +16,7 @@ export default function FacturasReportes() {
         try {
             const data = await facturacionService.listar();
 
-            // Ajustar campos según tu JSON real
+            // Ajustar campos segun tu JSON real
             const normalizadas = data.map(f => ({
                 id: f.id,
                 numeroFactura: f.id?.substring(0, 6) ?? "N/A",
@@ -54,7 +54,7 @@ export default function FacturasReportes() {
 
     return (
         <div className="facturacion-container">
-            <h1 className="titulo">Reportes de Facturación</h1>
+            <h1 className="titulo">Reportes de Facturacion</h1>
 
             {/* FILTROS */}
             <div className="reporte-filtros" style={{ marginBottom: "30px" }}>
@@ -68,7 +68,7 @@ export default function FacturasReportes() {
                 </div>
 
                 <div>
-                    <label>Método de Pago:</label>
+                    <label>Metodo de Pago:</label>
                     <select
                         value={filtroMetodo}
                         onChange={(e) => setFiltroMetodo(e.target.value)}
@@ -96,10 +96,10 @@ export default function FacturasReportes() {
             {/* TABLA SIMPLE */}
             <div className="tabla">
                 <div className="tabla-header">
-                    <span>Número</span>
+                    <span>Numero</span>
                     <span>Fecha</span>
                     <span>Monto</span>
-                    <span>Método</span>
+                    <span>Metodo</span>
                 </div>
 
                 {filtradas.length === 0 ? (

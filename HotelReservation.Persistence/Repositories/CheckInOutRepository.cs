@@ -13,6 +13,16 @@ namespace HotelReservation.Persistence.Repositories
             _context = context;
         }
 
+        public async Task<IEnumerable<CheckInOut>> GetAllAsync()
+        {
+            return await _context.CheckInOut.ToListAsync();
+        }
+
+        public async Task<CheckInOut?> GetByIdAsync(Guid id)
+        {
+            return await _context.CheckInOut.FindAsync(id);
+        }
+
         public async Task<CheckInOut> AddAsync(CheckInOut entity)
         {
             _context.CheckInOut.Add(entity);

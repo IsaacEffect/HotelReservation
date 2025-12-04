@@ -20,13 +20,10 @@ import CheckPage from "../../modules/checkin/pages/CheckPage";
 import CheckInPage from "../../modules/checkin/pages/CheckInPage";
 import CheckOutPage from "../../modules/checkin/pages/CheckOutPage";
 import HistoryPage from "../../modules/checkin/pages/HistoryPage";
-
 import HabitacionesPage from "../../modules/habitaciones/pages/HabitacionesPage";
 import HabitacionForm from "../../modules/habitaciones/components/HabitacionForm";
-
 import CategoriasPage from "../../modules/categorias/pages/CategoriasPage";
 import CategoriaForm from "../../modules/categorias/components/CategoriaForm";
-
 import FacturasListado from "../../modules/facturacion/pages/FacturasListado";
 import FacturaCrear from "../../modules/facturacion/pages/FacturaCrear";
 import FacturaDetalle from "../../modules/facturacion/pages/FacturaDetalle";
@@ -153,6 +150,42 @@ export const AppRouter = () => {
                     }
                 />
 
+                <Route
+                    path="/categorias"
+                    element={
+                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+                            <CategoriasPage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/categorias/nueva"
+                    element={
+                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+                            <CategoriaForm />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/categorias/editar/:id"
+                    element={
+                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+                            <CategoriaForm />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/habitaciones/editar/:id"
+                    element={
+                        <ProtectedRoute isAuth={isAuthenticated} loading={loading}>
+                            <HabitacionForm />
+                        </ProtectedRoute>
+                    }
+                />
+
                 {/** ======================= CATEGORÍAS ======================= */}
                 <Route
                     path="/categorias"
@@ -266,6 +299,7 @@ export const AppRouter = () => {
                 />
 
                 {/** ======================= FACTURACIÓN ======================= */}
+
                 <Route
                     path="/facturacion"
                     element={
@@ -301,7 +335,6 @@ export const AppRouter = () => {
                         </ProtectedRoute>
                     }
                 />
-
             </Routes>
         </BrowserRouter>
     );
