@@ -172,8 +172,6 @@ export default function DashboardPage() {
 
       {/* CALENDARIO */}
       <section>
-        <h2 className="text-2xl font-bold mb-4">Llegadas y Salidas de Hoy</h2>
-
         <div className="bg-[#1A2E44] p-6 rounded-xl shadow-lg">
           <section>
             <h2 className="text-2xl font-bold mb-4">

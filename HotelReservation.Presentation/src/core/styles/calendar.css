@@ -1,0 +1,44 @@
+/* --- EVENTO BASE --- */
+.fc-event.custom-event {
+    border: none !important;
+    padding: 6px 10px;
+    border-radius: 10px;
+    color: white;
+    font-weight: 600;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+    transition: transform 0.1s ease-in-out;
+}
+
+.fc-event.custom-event:hover {
+    transform: scale(1.03);
+}
+
+/* --- CONTENIDO PERSONALIZADO --- */
+.fc-event-content-custom {
+    display: flex;
+    flex-direction: column;
+}
+
+.fc-event-icon {
+    font-size: 18px;
+    line-height: 18px;
+}
+
+.fc-event-title {
+    font-size: 13px;
+    margin-top: 3px;
+    line-height: 1.2;
+}
+
+/* --- COLORES POR TIPO DE EVENTO (gradientes premium) --- */
+.event-checkin {
+    background: linear-gradient(135deg, #ff9900, #ffbf5e) !important;
+}
+
+.event-checkout {
+    background: linear-gradient(135deg, #1e90ff, #7ab8ff) !important;
+}
+
+.event-stay {
+    background: linear-gradient(135deg, #00c851, #44e38c) !important;
+}
