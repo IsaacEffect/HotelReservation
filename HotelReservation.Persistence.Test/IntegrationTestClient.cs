@@ -18,13 +18,14 @@ namespace HotelReservation.Persistence.Test
                 .Options;
 
             using var context = new HotelReservationDBContext(options);
-            var repository = new ClienteRepository(context);
+            var repo = new ClienteRepository(context);
 
             var cliente = new Cliente { Nombre = "Manny", Apellido = "Ramirez", Correo = "mramirez@gmail.com" };
-            await repository.AddAsync(cliente);
+
+            await repo.AddAsync(cliente);
             await context.SaveChangesAsync();
 
-            var result = await repository.GetAllAsync();
+            var result = await repo.GetAllAsync();
 
             Assert.Contains(result, c => c.Correo == "mramirez@gmail.com");
         }
@@ -37,17 +38,16 @@ namespace HotelReservation.Persistence.Test
                 .Options;
 
             using var context = new HotelReservationDBContext(options);
-            var repository = new ClienteRepository(context);
+            var repo = new ClienteRepository(context);
 
             var cliente = new Cliente { Nombre = "Bartolo", Apellido = "Colon", Correo = "bcolon@gmail.com" };
-            await repository.AddAsync(cliente);
+            await repo.AddAsync(cliente);
             await context.SaveChangesAsync();
 
-            await repository.DeleteAsync(cliente.IdCliente);
+            await repo.DeleteAsync(cliente.IdCliente);
             await context.SaveChangesAsync();
 
-            var result = await repository.GetByIdAsync(cliente.IdCliente);
-            Assert.False(result.Estado);
+            await Assert.ThrowsAsync<KeyNotFoundException>(() => repo.GetByIdAsync(cliente.IdCliente));
         }
     }
 }

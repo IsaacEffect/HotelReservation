@@ -1,67 +1,76 @@
-﻿//// PRUEBA UNITARIA
-//// Para verificar el comportamiento del servicio sin usar base de datos real.
+﻿using AutoMapper;
+using HotelReservation.Application.Dtos;
+using HotelReservation.Application.Services;
+using HotelReservation.Domain.Entities;
+using HotelReservation.Domain.Interfaces;
+using Microsoft.Extensions.Logging;
+using Moq;
 
-//using HotelReservation.Application.Services;
-//using HotelReservation.Domain.Entities;
-//using HotelReservation.Domain.Interfaces;
-//using Moq;
+namespace HotelReservation.Application.Test
+{
+    public class UnitTestClientApp
+    {
+        private readonly Mock<IUnitOfWork> _mockUoW;
+        private readonly Mock<IClienteRepository> _mockRepo;
+        private readonly Mock<IMapper> _mockMapper;
+        private readonly Mock<ILogger<ClienteService>> _mockLogger;
+        private readonly ClienteService _service;
 
-//namespace HotelReservation.Application.Test
-//{
-//    public class UnitTestClientApp
-//    {
-//        [Fact]
-//        public async Task AddClient_ShouldCallRepositoryAndSave()
-//        {
-//            // Arrange
-//            var mockRepo = new Mock<IClienteRepository>();
-//            var mockUoW = new Mock<IUnitOfWork>();
-//            mockUoW.Setup(u => u.Clientes).Returns(mockRepo.Object);
+        public UnitTestClientApp()
+        {
+            _mockUoW = new Mock<IUnitOfWork>();
+            _mockRepo = new Mock<IClienteRepository>();
+            _mockMapper = new Mock<IMapper>();
+            _mockLogger = new Mock<ILogger<ClienteService>>();
 
-//            var service = new ClienteService(mockUoW.Object);
-//            var cliente = new Cliente { Nombre = "David", Apellido = "Ortiz", Correo = "davidortiz@gmail.com" };
+            _mockUoW.Setup(u => u.Clientes).Returns(_mockRepo.Object);
 
-//            // Act
-//            await service.AddAsync(cliente);
+            _service = new ClienteService(_mockUoW.Object, _mockMapper.Object, _mockLogger.Object);
+        }
 
-//            // Assert
-//            mockRepo.Verify(r => r.AddAsync(It.IsAny<Cliente>()), Times.Once);
-//            mockUoW.Verify(u => u.SaveChangesAsync(), Times.Once);
-//        }
+        [Fact]
+        public async Task AddClient_ShouldCallRepositoryAndSave()
+        {
+            var dto = new InsertarClienteDto { Nombre = "David" };
+            var cliente = new Cliente { Nombre = "David" };
 
-//        [Fact]
-//        public async Task DeleteClient_ShouldCallDeleteAndSave()
-//        {
-//            var mockRepo = new Mock<IClienteRepository>();
-//            var mockUoW = new Mock<IUnitOfWork>();
-//            mockUoW.Setup(u => u.Clientes).Returns(mockRepo.Object);
+            _mockMapper.Setup(m => m.Map<Cliente>(dto)).Returns(cliente);
 
-//            var service = new ClienteService(mockUoW.Object);
-//            var id = Guid.NewGuid();
+            await _service.AddAsync(dto);
 
-//            await service.DeleteAsync(id);
+            _mockRepo.Verify(r => r.AddAsync(It.IsAny<Cliente>()), Times.Once);
+            _mockUoW.Verify(u => u.SaveChangesAsync(), Times.Once);
+        }
 
-//            mockRepo.Verify(r => r.DeleteAsync(id), Times.Once);
-//            mockUoW.Verify(u => u.SaveChangesAsync(), Times.Once);
-//        }
+        [Fact]
+        public async Task DeleteClient_ShouldCallDeleteAndSave()
+        {
+            var id = Guid.NewGuid();
 
-//        [Fact]
-//        public async Task GetAllClients_ShouldReturnList()
-//        {
-//            var mockRepo = new Mock<IClienteRepository>();
-//            mockRepo.Setup(r => r.GetAllAsync()).ReturnsAsync(new List<Cliente>
-//            {
-//                new() { Nombre = "Albert", Apellido = "Pujols", Correo = "pujols@gmail.com" }
-//            });
+            await _service.DeleteAsync(id);
 
-//            var mockUoW = new Mock<IUnitOfWork>();
-//            mockUoW.Setup(u => u.Clientes).Returns(mockRepo.Object);
+            _mockRepo.Verify(r => r.DeleteAsync(id), Times.Once);
+            _mockUoW.Verify(u => u.SaveChangesAsync(), Times.Once);
+        }
 
-//            var service = new ClienteService(mockUoW.Object);
+        [Fact]
+        public async Task GetAllClients_ShouldReturnList()
+        {
+            var data = new List<Cliente>()
+            {
+                new Cliente { Nombre = "Albert", Correo = "pujols@gmail.com" }
+            };
 
-//            var result = await service.GetAllAsync();
+            _mockRepo.Setup(r => r.GetAllAsync()).ReturnsAsync(data);
 
-//            Assert.NotEmpty(result);
-//        }
-//    }
-//}
+            _mockMapper.Setup(m => m.Map<IEnumerable<ObtenerClienteDto>>(data))
+                       .Returns(new List<ObtenerClienteDto> { new ObtenerClienteDto { Nombre = "Albert" } });
+
+            var result = await _service.GetAllAsync();
+
+            Assert.True(result.Success);
+            Assert.NotNull(result.Data);
+            Assert.NotEmpty(result.Data!);
+        }
+    }
+}
