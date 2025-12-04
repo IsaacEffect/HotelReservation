@@ -1,27 +1,28 @@
-import axios from "axios";
+// src/modules/facturacion/service/facturacionService.js
+import httpClient from "../../../api/httpClient";
 
-const API_URL = "https://localhost:7095/api/facturacion";
+const baseUrl = "/facturacion";
 
 export const facturacionService = {
-    listar: async () => {
-        const r = await axios.get(`${API_URL}/listar`);
-        return r.data;
-    },
+  listar: async () => {
+    const r = await httpClient.get(`${baseUrl}/listar`);
+    return r.data;
+  },
 
-    crear: async (factura) => {
-        const r = await axios.post(`${API_URL}/crear`, factura);
-        return r.data;
-    },
+  crear: async (factura) => {
+    const r = await httpClient.post(`${baseUrl}/crear`, factura);
+    return r.data;
+  },
 
-    detalle: async (id) => {
-        const r = await axios.get(`${API_URL}/detalle/${id}`);
-        return r.data;
-    },
+  detalle: async (id) => {
+    const r = await httpClient.get(`${baseUrl}/detalle/${id}`);
+    return r.data;
+  },
 
-    generarPdf: async (id) => {
-        const r = await axios.get(`${API_URL}/pdf/${id}`, {
-            responseType: "blob",
-        });
-        return r.data;
-    },
+  generarPdf: async (id) => {
+    const r = await httpClient.get(`${baseUrl}/pdf/${id}`, {
+      responseType: "blob",
+    });
+    return r.data;
+  },
 };

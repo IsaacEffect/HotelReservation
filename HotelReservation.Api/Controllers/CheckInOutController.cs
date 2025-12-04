@@ -45,6 +45,45 @@ namespace HotelReservation.Api.Controllers
             return Ok(res);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var list = await _checkService.GetAllAsync();
+            return Ok(list);
+        }
+
+        [HttpGet("registro/{id:guid}")]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            var result = await _checkService.GetByIdAsync(id);
+            if (result == null) return NotFound();
+
+            return Ok(result);
+        }
+
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateCheckInOutRequest request)
+        {
+            if (request == null)
+                return BadRequest("Datos inválidos.");
+
+            var updated = await _checkService.UpdateAsync(id, request);
+            if (updated == null) return NotFound();
+
+            return Ok(updated);
+        }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var deleted = await _checkService.DeleteAsync(id);
+
+            if (!deleted)
+                return NotFound();
+
+            return NoContent();
+        }
+
         [HttpGet("history")]
         public async Task<IActionResult> GetHistory()
         {
