@@ -3,6 +3,10 @@
 Plataforma diseñada para optimizar la gestión de habitaciones, clientes y reservas.
 Incluye funcionalidades para **check-in / check-out**, **facturación automática** y **reportes de ocupación**, con una arquitectura moderna y escalable basada en **Clean Architecture**.
 
+<img width="1366" height="768" alt="Captura de pantalla (120)" src="https://github.com/user-attachments/assets/102cadfc-240c-4918-ae68-f7471d672628" />
+<img width="1366" height="768" alt="Captura de pantalla (122)" src="https://github.com/user-attachments/assets/d2e3be29-982e-4209-b175-efad0f624939" />
+<img width="1366" height="768" alt="Captura de pantalla (124)" src="https://github.com/user-attachments/assets/f10ebd31-8b95-4338-916f-90661643e088" />
+
 ---
 
 ## 📚 Tabla de Contenidos
