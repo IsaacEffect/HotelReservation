@@ -109,10 +109,10 @@ El proyecto fue desarrollado utilizando el siguiente *stack*:
 
 Desarrollado por el equipo:
 
-  * **Eduardo Alexander Ortiz Suncar**
+  * **Angel Isaac Mejia Martinez**
   * **Eileen Abigail Valdéz Vargas**
   * **Charleny Contreras Ogando**
-  * **Angel Isaac Mejia Martinez**
+  * **Eduardo Alexander Ortiz Suncar**
   * **Willy Gerson Alcantara Muñoz**
 
 -----
